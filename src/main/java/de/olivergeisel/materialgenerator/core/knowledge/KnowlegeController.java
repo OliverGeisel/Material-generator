@@ -1,4 +1,4 @@
-package de.olivergeisel.materialgenerator.knowledge;
+package de.olivergeisel.materialgenerator.core.knowledge;
 
 import org.springframework.stereotype.Controller;
 
