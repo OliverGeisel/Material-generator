@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Generator</title>
+</head>
+<body>
+<main>
+
+    <section>
+        <form action="generator-auto/complete" enctype="multipart/form-data" method="post">
+            <p> Bitte Vorlagen eingeben</p>
+            <select name="template" >
+                <option th:each="option: ${templates}" th:value="${option}" th:text="${option}">
+                </option>
+            </select>
+            <br>
+            <p> Bitte den Lehrplan angeben</p>
+            <input type="file" name="curriculum">
+            <input type="submit">
+        </form>
+    </section>
+</main>
+
+
+</body>
+</html>
