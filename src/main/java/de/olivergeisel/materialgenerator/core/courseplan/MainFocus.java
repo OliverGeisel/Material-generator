@@ -1,6 +1,7 @@
 package de.olivergeisel.materialgenerator.core.courseplan;
 
 public class MainFocus {
+	// Deutsch Schwerpunkt
 
 	private Comment comment;
 	private CurriculumGoal goal;

@@ -1,4 +1,4 @@
-package de.olivergeisel.materialgenerator.core.courseplan;
+package de.olivergeisel.materialgenerator.core.courseplan.meta;
 
 import java.util.HashMap;
 import java.util.Map;

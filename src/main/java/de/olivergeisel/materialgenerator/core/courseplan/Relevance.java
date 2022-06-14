@@ -1,15 +1,15 @@
 package de.olivergeisel.materialgenerator.core.courseplan;
 
-public enum Weight {
+public enum Relevance {
 
 	/**
-	 * Not part of course but extra knowledge that can help to understand the topic
+	 * Not part of course but extra knowledge that can help to understand the topic.
 	 */
-	EXTRA,
+	INFORMATIONAL,
 	/**
 	 * Part of the topic but not essential part and can be skipped by the user.
 	 */
-	SKIPPABLE,
+	OPTIONAL,
 	/**
 	 * Part of the course but if it's missing a warning should appear.
 	 */

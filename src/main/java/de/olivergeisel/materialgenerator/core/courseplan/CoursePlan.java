@@ -1,5 +1,8 @@
 package de.olivergeisel.materialgenerator.core.courseplan;
 
+import de.olivergeisel.materialgenerator.core.courseplan.meta.CourseMetadata;
+import de.olivergeisel.materialgenerator.core.courseplan.structure.CourseStructure;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;

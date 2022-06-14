@@ -1,9 +1,13 @@
 package de.olivergeisel.materialgenerator.core.courseplan;
 
+import de.olivergeisel.materialgenerator.core.courseplan.meta.CourseMetadata;
 import org.apache.tomcat.util.json.JSONParser;
 import org.apache.tomcat.util.json.ParseException;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 
