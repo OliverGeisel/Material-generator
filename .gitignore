@@ -25,3 +25,4 @@ replay_pid*
 /src/main/java/de/olivergeisel/materialgenerator/test/
 .idea
 target/
+Material generator.iml
