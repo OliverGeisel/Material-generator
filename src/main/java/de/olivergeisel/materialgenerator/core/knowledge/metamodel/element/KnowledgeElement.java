@@ -14,7 +14,7 @@ public abstract class KnowledgeElement {
 
 	private final Set<String> relations = new HashSet<>();
 
-	public KnowledgeElement(String content, String id, String type, Collection<String> relations) {
+	protected KnowledgeElement(String content, String id, String type, Collection<String> relations) {
 		this.content = content;
 		this.id = id;
 		this.type = KnowlegeType.valueOf(type.toUpperCase());
