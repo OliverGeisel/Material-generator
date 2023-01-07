@@ -1,29 +1,48 @@
 package de.olivergeisel.materialgenerator.core.courseplan.structure;
 
-import de.olivergeisel.materialgenerator.core.courseplan.CurriculumGoal;
 import de.olivergeisel.materialgenerator.core.courseplan.Relevance;
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeStructure;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class StructureElement {
 
 
-	private CurriculumGoal goal;
-	private final Relevance relevance;
+	private final List<KnowledgeStructure> areas = new ArrayList<>();
+	protected Relevance relevance;
 
-	private String name;
-
-	protected StructureElement(CurriculumGoal goal, Relevance relevance, String name) {
-		this.goal = goal;
+	protected StructureElement(Relevance relevance, String name) {
 		this.relevance = relevance;
 		this.name = name;
 	}
 
-	public CurriculumGoal getGoal() {
-		return goal;
+	public boolean addAlias(KnowledgeStructure alias) {
+		return areas.add(alias);
 	}
 
-	public Relevance getWeight() {
+	public boolean removeAlias(KnowledgeStructure alias) {
+		return areas.remove(alias);
+	}
+
+	public abstract void updateRelevance();
+
+	private String name;
+
+//
+	public List<KnowledgeStructure> getAreas() {
+		return Collections.unmodifiableList(areas);
+	}
+
+	public Relevance getRelevance() {
 		return relevance;
 	}
+
+	public boolean isValid() {
+		return relevance != Relevance.TO_SET;
+	}
+//
 
 	public String getName() {
 		return name;

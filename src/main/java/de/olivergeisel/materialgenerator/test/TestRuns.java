@@ -9,12 +9,13 @@ public class TestRuns {
 
 	public static void main(String[] args){
 		CoursePlanParser parser = new CoursePlanParser();
-		File jsonFile = new File("src/main/resources/data/curriculum/Plan1.json");
-		jsonFile.canRead();
-		try {
-			parser.parseFromFile(jsonFile);
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException(e);
+		File jsonFile = new File("src/main/resources/data/curriculum/Test-Plan.json");
+		if (jsonFile.canRead()) {
+			try {
+				parser.parseFromFile(jsonFile);
+			} catch (FileNotFoundException e) {
+				throw new RuntimeException(e);
+			}
 		}
 	}
 }

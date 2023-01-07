@@ -1,31 +1,42 @@
 package de.olivergeisel.materialgenerator.core.courseplan.structure;
 
-import de.olivergeisel.materialgenerator.core.courseplan.CurriculumGoal;
 import de.olivergeisel.materialgenerator.core.courseplan.Relevance;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class StructureGroup extends StructureElement {
+public class StructureGroup extends StructureElementPart {
 
-	private List<StructureElement> parts;
+	private final List<StructureElementPart> parts;
 
-	public StructureGroup(CurriculumGoal goal, Relevance relevance, String name) {
-		super(goal, relevance, name);
+	public StructureGroup(Relevance relevance, String name) {
+		super(relevance, name);
 		parts = new ArrayList<>();
 	}
 
-	public boolean add(StructureElement element) throws IllegalArgumentException {
-		if (element instanceof StructureChapter chapter) {
-			throw new IllegalArgumentException(String.format("%s can't be addet to a group", chapter.getName()));
-		}
+	@Override
+	public String toString() {
+		return "StructureGroup{" +
+				"name=" + getName() +
+				", parts=" + parts +
+				", relevance=" + relevance +
+				'}';
+	}
+
+	@Override
+	public void updateRelevance() {
+		relevance = parts.stream().map(StructureElement::getRelevance).max(Enum::compareTo).orElseThrow();
+	}
+
+
+	public boolean add(StructureElementPart element) throws IllegalArgumentException {
 		if (element == this || contains(element)) {
 			return false;
 		}
 		return parts.add(element);
 	}
 
-	public boolean contains(StructureElement element) {
+	public boolean contains(StructureElementPart element) {
 		for (StructureElement part : parts) {
 			if (part instanceof StructureGroup group && group.contains(element))
 				return true;

@@ -11,19 +11,21 @@ public class MainFocusSet {
 		return Collections.unmodifiableList(focuses);
 	}
 
-	public Set<CurriculumGoal> getGoals() {
-		Set<CurriculumGoal> back = new HashSet<>();
-		for (MainFocus focus : focuses) {
-			back.add(focus.getGoal());
-		}
-		return Collections.unmodifiableSet(back);
-	}
-
+//
 	public Map<MainFocus, CurriculumGoal> getFocusGoalMapping() {
 		Map<MainFocus, CurriculumGoal> back = new HashMap<>();
 		for (MainFocus focus : focuses) {
-			back.put(focus, focus.getGoal());
+			back.put(focus, focus.getGoals());
 		}
 		return back;
 	}
+
+	public Set<CurriculumGoal> getGoals() {
+		Set<CurriculumGoal> back = new HashSet<>();
+		for (MainFocus focus : focuses) {
+			back.add(focus.getGoals());
+		}
+		return Collections.unmodifiableSet(back);
+	}
+//
 }

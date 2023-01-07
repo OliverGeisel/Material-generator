@@ -3,6 +3,10 @@ package de.olivergeisel.materialgenerator.core.courseplan;
 public enum Relevance {
 
 	/**
+	 * State that is not allowed. Only for creation used.
+	 */
+	TO_SET,
+	/**
 	 * Not part of course but extra knowledge that can help to understand the topic.
 	 */
 	INFORMATIONAL,
@@ -17,6 +21,6 @@ public enum Relevance {
 	/**
 	 * Without these part the course isn't complete and can't be created.
 	 */
-	MANDATORY,
+	MANDATORY
 
 }

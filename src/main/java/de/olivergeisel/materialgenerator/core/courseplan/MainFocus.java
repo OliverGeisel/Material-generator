@@ -4,20 +4,22 @@ public class MainFocus {
 	// Deutsch Schwerpunkt
 
 	private Comment comment;
-	private CurriculumGoal goal;
+	private CurriculumGoal goals;
 	private FocusType type;
 
 	public MainFocus(Comment comment, CurriculumGoal goals, FocusType type) {
 		this.comment = comment;
-		this.goal = goal;
+		this.goals = goals;
 		this.type = type;
 	}
 
-	public CurriculumGoal getGoal() {
-		return goal;
+//
+	public CurriculumGoal getGoals() {
+		return goals;
 	}
+//
 
-	private enum FocusType{
+	private enum FocusType {
 
 		DEFINITION,
 		THEOREM,
