@@ -135,8 +135,8 @@ public class CoursePlanParser {
 		return back;
 	}
 
-	public CoursePlan parseFromFile(File file) throws FileNotFoundException {
-		InputStream input = new FileInputStream(file);
+	public CoursePlan parseFromFile(InputStream file) throws FileNotFoundException {
+		InputStream input = file;
 		CoursePlan back = null;
 		parser = new JSONParser(input);
 		Object parsedObject;
@@ -165,6 +165,11 @@ public class CoursePlanParser {
 					parseCourseStructure(courseStructure), targets);
 		}
 		return back;
+
 	}
 
+	public CoursePlan parseFromFile(File file) throws FileNotFoundException {
+		FileInputStream input = new FileInputStream(file);
+		return parseFromFile(input);
+	}
 }

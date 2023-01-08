@@ -1,108 +1,111 @@
 [
   {
-    "typ": "Definition",
-    "id": "Netzwerk-def",
+    "typ": "DEFINITION",
+    "id": "Netzwerk-DEF",
     "content": "Ein Netzwerk ist ein Verbund von Systemen, die miteinander kommunizieren.",
     "relations": [
-      "Verbund-term",
-      "ComputerSystem-term"
+      "Verbund-TERM",
+      "ComputerSystem-TERM"
     ]
   },
   {
-    "typ": "Term",
-    "id": "Netzwerk-term",
+    "typ": "TERM",
+    "id": "Netzwerk-TERM",
     "content": "",
     "relations": [
-      "Netzwerk-def"
+      "Netzwerk-DEF"
     ]
   },
   {
-    "typ": "Term",
-    "id": "Verbund-Term",
+    "typ": "TERM",
+    "id": "Verbund-TERM",
     "content": "",
     "relations": [
-      "Verbund-def"
+      "Verbund-DEF"
     ]
   },
   {
-    "typ": "Definition",
-    "id": "Verbund-def",
+    "typ": "DEFINITION",
+    "id": "Verbund-DEF",
     "content": "Ein Verbund ist eine Ansammlung von Dingen",
     "relations": []
   },
   {
-    "typ": "Definition",
-    "id": "ComputerSystem-def",
+    "typ": "DEFINITION",
+    "id": "ComputerSystem-DEF",
     "content": "Ein Computersystem ist ein Computer"
   },
   {
-    "typ": "Term",
-    "id": "Computersystem-term",
+    "typ": "TERM",
+    "id": "Computersystem-TERM",
     "content": "",
     "relations": [
-      "ComputerSystem-def"
+      "ComputerSystem-DEF"
     ]
   },
   {
-    "typ": "Synonym",
-    "id": "Computer-syn",
+    "typ": "SYNONYM",
+    "id": "Computer-SYN",
     "content": "",
-    "relations": "ComputerSystem-term"
+    "relations": "ComputerSystem-TERM"
   },
   {
-    "typ": "Fact",
-    "id": "Funkwellen-fact",
+    "typ": "FACT",
+    "id": "Funkwellen-FACT",
     "content": "Funkwellen sind Datenübertragungsmedien"
-  },{
-    "typ": "Fact",
-    "id": "Lichtwellen-fact",
+  },
+  {
+    "typ": "FACT",
+    "id": "Lichtwellen-FACT",
     "content": "Lichtwellen sind Datenübertragungsmedien"
-  },{
-    "typ": "Fact",
-    "id": "elektrischer-Strom-fact",
+  },
+  {
+    "typ": "FACT",
+    "id": "elektrischer-Strom-FACT",
     "content": "Elektrischer Strom ist ein Datenübertragungsmedium"
   },
   {
-    "typ": "Term",
-    "id": "Medium-term",
+    "typ": "TERM",
+    "id": "Medium-TERM",
     "content": "",
     "relations": [
-      "Medium-def"
+      "Medium-DEF"
     ]
   },
   {
-    "typ": "Definition",
-    "id": "Medium-def",
+    "typ": "DEFINITION",
+    "id": "Medium-DEF",
     "content": "Ein Medium ist ein Objekt, dass physikalische eigenschaften, Informationen enthält bzw. übermittelt",
     "relations": []
   },
   {
-    "typ": "Term",
-    "id": "Datenübertragung-term",
+    "typ": "TERM",
+    "id": "Datenübertragung-TERM",
     "relations": [
-      "Datenübertragung-def"
+      "Datenübertragung-DEF"
     ]
   },
   {
-    "type": "Term",
-    "id": "DSL-term",
+    "type": "TERM",
+    "id": "DSL-TERM",
     "relation": [
-      "DSL-def"
-    ]
-  },  {
-    "type": "Definition",
-    "id": "DSL-def",
-  "content": "Ist ein Standrad, der zu Kommunikation über Kupferkabel genutzt wird",
-    "relation": [
-      "Kommunikation-term"
+      "DSL-DEF"
     ]
   },
   {
-    "typ": "Acronym",
-    "id": "DSL-acr",
+    "type": "DEFINITION",
+    "id": "DSL-DEF",
+    "content": "Ist ein Standrad, der zu Kommunikation über Kupferkabel genutzt wird",
+    "relation": [
+      "Kommunikation-TERM"
+    ]
+  },
+  {
+    "typ": "ACRONYM",
+    "id": "DSL-ACR",
     "content": "Digital subscription line",
     "relations": [
-      "DSL-term"
+      "DSL-TERM"
     ]
   }
 ]
