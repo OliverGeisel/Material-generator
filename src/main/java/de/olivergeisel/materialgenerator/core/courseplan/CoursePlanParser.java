@@ -1,7 +1,11 @@
 package de.olivergeisel.materialgenerator.core.courseplan;
 
+import de.olivergeisel.materialgenerator.core.courseplan.content.ContentGoal;
+import de.olivergeisel.materialgenerator.core.courseplan.content.ContentGoalExpression;
+import de.olivergeisel.materialgenerator.core.courseplan.content.ContentTarget;
 import de.olivergeisel.materialgenerator.core.courseplan.meta.CourseMetadata;
 import de.olivergeisel.materialgenerator.core.courseplan.structure.*;
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeStructure;
 import org.apache.tomcat.util.json.JSONParser;
 import org.apache.tomcat.util.json.ParseException;
 
@@ -14,8 +18,11 @@ import java.util.regex.Pattern;
 
 public class CoursePlanParser {
 
+	private static final String TOPIC = "topic";
 	private static final String[] META_ATTRIBUTES = {"name", "year", "grade", "type", "description"};
 	JSONParser parser;
+
+	private final List<ContentTarget> targets = new ArrayList<>();
 
 	private CourseMetadata parseMetadata(HashMap<String, ?> mapping) {
 		String name = (String) mapping.get("name");
@@ -30,14 +37,20 @@ public class CoursePlanParser {
 
 	}
 
-	private StructureChapter createChapter(Map<String, ?> chapterJson, List<CurriculumGoal> goals) {
+	private StructureChapter createChapter(Map<String, ?> chapterJson) {
 		List<Map<String, ?>> groups = (List<Map<String, ?>>) chapterJson.get("groups");
 		String name = chapterJson.get("name").toString();
 		String weight = chapterJson.get("weight").toString();
-		List<Map<String, ?>> knowledgeAreas = (List<Map<String, ?>>) chapterJson.get("knowledgeAreas");
-		var back = new StructureChapter(Relevance.TO_SET, name, Double.parseDouble(weight));
+		String topicName = chapterJson.get(TOPIC) != null ? chapterJson.get(TOPIC).toString() : "";
+		var topic = findTopic(topicName);
+		var back = new StructureChapter(topic, Relevance.TO_SET, name, Double.parseDouble(weight));
 		for (var group : groups) {
-			back.add(createGroup(group, goals));
+			back.add(createGroup(group));
+		}
+		List<String> knowledgeAreasJSON = (List<String>) chapterJson.get("knowledgeAreas");
+		var knowledgeAreas = crateAreas(knowledgeAreasJSON);
+		for (var elem : knowledgeAreas) {
+			back.addAlias(elem);
 		}
 		back.updateRelevance();
 		if (!back.isValid()) {
@@ -46,13 +59,28 @@ public class CoursePlanParser {
 		return back;
 	}
 
-	private StructureElementPart createGroup(Map<String, ?> groupJSON, List<CurriculumGoal> goals) {
+	private List<KnowledgeStructure> crateAreas(List<String> knowledgeAreasJSON) {
+		var back = new ArrayList<KnowledgeStructure>();
+		for (var elem : knowledgeAreasJSON) {
+			back.add(new PotenzialKnowledgeStructure(elem));
+		}
+		return back;
+	}
+
+	private StructureElementPart createGroup(Map<String, ?> groupJSON) {
 		String name = groupJSON.get("name").toString();
-		var back = new StructureGroup(Relevance.TO_SET, name);
+		String topicName = groupJSON.get(TOPIC) != null ? groupJSON.get(TOPIC).toString() : "";
+		var topic = findTopic(topicName);
+		var back = new StructureGroup(topic, Relevance.TO_SET, name);
 		List<Map<String, ?>> tasks = (List<Map<String, ?>>) groupJSON.get("tasks");
 		for (var task : tasks) {
 			// Todo decide between group and task!
-			back.add(createTask(task, goals));
+			back.add(createTask(task));
+		}
+		List<String> knowledgeAreasJSON = (List<String>) groupJSON.get("knowledgeAreas");
+		var knowledgeAreas = crateAreas(knowledgeAreasJSON);
+		for (var elem : knowledgeAreas) {
+			back.addAlias(elem);
 		}
 		back.updateRelevance();
 		if (!back.isValid()) {
@@ -61,37 +89,48 @@ public class CoursePlanParser {
 		return back;
 	}
 
-	private StructureTask createTask(Map<String, ?> task, List<CurriculumGoal> goals) {
+	private StructureTask createTask(Map<String, ?> task) {
 		Relevance relevance = Relevance.valueOf(task.get("relevance").toString());
 		String name = task.get("name").toString();
-		String goalName = task.get("topic").toString();
-		CurriculumGoal goal = findGoal(goals, goalName);
-		return new StructureTask(goal, relevance, name);
+		String topicName = task.get(TOPIC) != null ? task.get(TOPIC).toString() : "";
+		ContentTarget topic = findTopic(topicName);
+
+		var back = new StructureTask(topic, relevance, name);
+		List<String> knowledgeAreasJSON = (List<String>) task.get("knowledgeAreas");
+		var knowledgeAreas = crateAreas(knowledgeAreasJSON);
+		for (var elem : knowledgeAreas) {
+			back.addAlias(elem);
+		}
+		return back;
 	}
 
-	private CurriculumGoal findGoal(List<CurriculumGoal> goals, String goal) {
-		return goals.stream().filter(goalElement -> goalElement.getId().equals(goal)).findFirst().orElse(new CurriculumGoal(CurriculumGoalExpression.CONTROL, "", List.of(), ""));
+	private ContentTarget findTopic(String goal) {
+		return targets.stream().filter(goalElement -> goalElement.getId().equals(goal)).findFirst().orElse(ContentTarget.EMPTY);
 	}
 
-	private CourseStructure parseCourseStructure(List<Map<String, ?>> structure, List<CurriculumGoal> goals) {
+	private CourseStructure parseCourseStructure(List<Map<String, ?>> structure) {
 		CourseStructure back = new CourseStructure();
 		for (var chapterJson : structure) {
-			StructureChapter newChapter = createChapter(chapterJson, goals);
+			StructureChapter newChapter = createChapter(chapterJson);
 			back.add(newChapter);
 		}
 		return back;
 	}
 
-	private List<CurriculumGoal> parseCurriculumGoals(Map<String, ?> mapping) {
-		List<CurriculumGoal> back = new LinkedList<>();
+	private List<ContentGoal> parseCurriculumGoals(Map<String, ?> mapping) {
+		List<ContentGoal> back = new LinkedList<>();
 		for (var entry : mapping.entrySet()) {
 			String goalName = entry.getKey();
 			Map<String, ?> goal = (Map<String, ?>) entry.getValue();
 			String expression = goal.get("expression").toString().toUpperCase().replace("-", "_");
 			String target = goal.get("target").toString();
 			String completeSentence = goal.get("completeSentence").toString();
-			List<String> specificWords = goal.get("content") instanceof List<?> list ? (List<String>) list : List.of();
-			back.add(new CurriculumGoal(CurriculumGoalExpression.valueOf(expression), target, specificWords, completeSentence, goalName));
+			//List<String> specificWords = goal.get("content") instanceof List<?> list ? (List<String>) list : List.of();
+			List<String> contentRaw = goal.get("content") instanceof List<?> list ? (List<String>) list : List.of();
+			var content = contentRaw.stream().map(ContentTarget::new).toList();
+			back.add(new ContentGoal(ContentGoalExpression.valueOf(expression), target, content, completeSentence, goalName));
+			// todo add targets
+			targets.addAll(content);
 		}
 		return back;
 	}
@@ -119,16 +158,13 @@ public class CoursePlanParser {
 			curriculumGoalsEntries.forEach(entry ->
 					goalsJSON.put(entry.getKey(), (Map<String, ?>) entry.getValue())
 			);
-			List<CurriculumGoal> goals = parseCurriculumGoals(goalsJSON);
+			List<ContentGoal> goals = parseCurriculumGoals(goalsJSON);
 
 			List<Map<String, ?>> courseStructure = (List<Map<String, ?>>) curriculum.get("structure");
 			back = new CoursePlan(parseMetadata(metaJSON), goals,
-					parseCourseStructure(courseStructure, goals), parseCurriculum(curriculum));
+					parseCourseStructure(courseStructure), targets);
 		}
 		return back;
 	}
 
-	private Curriculum parseCurriculum(HashMap<?, ?> curriculum) {
-		return new Curriculum();
-	}
 }

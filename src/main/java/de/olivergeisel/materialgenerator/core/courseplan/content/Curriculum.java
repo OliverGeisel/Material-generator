@@ -1,4 +1,4 @@
-package de.olivergeisel.materialgenerator.core.courseplan;
+package de.olivergeisel.materialgenerator.core.courseplan.content;
 
 public class Curriculum {
 

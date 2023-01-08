@@ -1,5 +1,6 @@
 package de.olivergeisel.materialgenerator.test;
 
+import de.olivergeisel.materialgenerator.core.courseplan.CoursePlan;
 import de.olivergeisel.materialgenerator.core.courseplan.CoursePlanParser;
 
 import java.io.File;
@@ -12,7 +13,7 @@ public class TestRuns {
 		File jsonFile = new File("src/main/resources/data/curriculum/Test-Plan.json");
 		if (jsonFile.canRead()) {
 			try {
-				parser.parseFromFile(jsonFile);
+				CoursePlan plan = parser.parseFromFile(jsonFile);
 			} catch (FileNotFoundException e) {
 				throw new RuntimeException(e);
 			}

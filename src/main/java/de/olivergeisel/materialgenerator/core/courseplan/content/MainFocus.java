@@ -1,23 +1,23 @@
-package de.olivergeisel.materialgenerator.core.courseplan;
+package de.olivergeisel.materialgenerator.core.courseplan.content;
 
 public class MainFocus {
 	// Deutsch Schwerpunkt
 
 	private Comment comment;
-	private CurriculumGoal goals;
+	private ContentGoal goals;
 	private FocusType type;
 
-	public MainFocus(Comment comment, CurriculumGoal goals, FocusType type) {
+	public MainFocus(Comment comment, ContentGoal goals, FocusType type) {
 		this.comment = comment;
 		this.goals = goals;
 		this.type = type;
 	}
 
+	//
 //
-	public CurriculumGoal getGoals() {
+	public ContentGoal getGoals() {
 		return goals;
 	}
-//
 
 	private enum FocusType {
 

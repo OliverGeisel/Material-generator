@@ -1,6 +1,6 @@
 package de.olivergeisel.materialgenerator.core.courseplan.structure;
 
-import de.olivergeisel.materialgenerator.core.courseplan.Relevance;
+import de.olivergeisel.materialgenerator.core.courseplan.content.ContentTarget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +9,8 @@ public class StructureGroup extends StructureElementPart {
 
 	private final List<StructureElementPart> parts;
 
-	public StructureGroup(Relevance relevance, String name) {
-		super(relevance, name);
+	public StructureGroup(ContentTarget topic, Relevance relevance, String name) {
+		super(topic, relevance, name);
 		parts = new ArrayList<>();
 	}
 
