@@ -24,7 +24,7 @@ public class CoursePlanParser {
 
 	private final List<ContentTarget> targets = new ArrayList<>();
 
-	private CourseMetadata parseMetadata(HashMap<String, ?> mapping) {
+	private CourseMetadata parseMetadata(Map<String, ?> mapping) {
 		String name = (String) mapping.get("name");
 		String year = mapping.get("year").toString();
 		String level = (String) mapping.get("level");
@@ -136,9 +136,8 @@ public class CoursePlanParser {
 	}
 
 	public CoursePlan parseFromFile(InputStream file) throws FileNotFoundException {
-		InputStream input = file;
 		CoursePlan back = null;
-		parser = new JSONParser(input);
+		parser = new JSONParser(file);
 		Object parsedObject;
 		try {
 			parsedObject = parser.parse();
@@ -146,13 +145,13 @@ public class CoursePlanParser {
 			throw new RuntimeException(e);
 		}
 		if (parsedObject instanceof HashMap<?, ?> curriculum) {
-			HashMap<String, ?> metaJSON;
-			HashMap<String, ?> contentJSON;
+			Map<String, ?> metaJSON;
+			Map<String, ?> contentJSON;
 			Map<String, Map<String, ?>> goalsJSON = new HashMap<>();
 			metaJSON = curriculum.get("meta") instanceof HashMap<?, ?> metaJSON_Temp
-					? (HashMap<String, ?>) metaJSON_Temp : null;
+					? (Map<String, ?>) metaJSON_Temp : null;
 
-			contentJSON = (HashMap<String, ?>) curriculum.get("content");
+			contentJSON = (Map<String, ?>) curriculum.get("content");
 			var curriculumGoalsEntries = contentJSON.entrySet()
 					.stream().filter(entry -> Pattern.matches("goal-\\d+", entry.getKey()));
 			curriculumGoalsEntries.forEach(entry ->
