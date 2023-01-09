@@ -6,7 +6,7 @@ import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relations.Basi
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relations.CustomRelation;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relations.Relation;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relations.RelationType;
-import de.olivergeisel.materialgenerator.core.knowledge.metamodel.source.KnowledgeSource;
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.source.*;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeFragment;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeLeaf;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeObject;
@@ -57,7 +57,7 @@ public class KnowledgeParser {
 		if (parsedObject instanceof Map<?, ?> knowledgeModel) {
 			Map<String, ?> structure = (Map<String, ?>) knowledgeModel.get("structure");
 			List<Map<String, ?>> knowledge = (List<Map<String, ?>>) knowledgeModel.get("knowledge");
-			Map<?, ?> source = (Map<?, ?>) knowledgeModel.get("sources");
+			List<Map<String, ?>> source = (List<Map<String, ?>>) knowledgeModel.get("sources");
 
 			var parsedStructure = parseStructure(structure);
 			var parsedSource = parseSource(source);
@@ -144,12 +144,26 @@ public class KnowledgeParser {
 
 	}
 
-	private Set<KnowledgeSource> parseSource(Map<?, ?> sourceJSON) {
+	private Set<KnowledgeSource> parseSource(List<Map<String, ?>> sourceJSON) {
 		Set<KnowledgeSource> back = new HashSet<>();
 		if (sourceJSON.isEmpty()) {
 			return back;
 		}
-		return null;
+		for (var source : sourceJSON) {
+			String type = source.get("type").toString();
+			String id = source.get("id").toString();
+			String name = source.get("name").toString();
+			String content = source.get("content").toString(); // Todo
+			back.add(switch (type) {
+						case "INTERNALMEDIA" -> new InternalMedia(id, name);
+						case "UNKNOWNSOURCE" -> UnknownSource.getInstance();
+						case "NOTRESOLVABLEREFERENCE" -> new NotResolvableReference(id, name);
+						case "RESOLVABLEREFERENCE" -> new ResolvableReference(id, name);
+						default -> throw new IllegalArgumentException("Unknown Source-type");
+					}
+			);
+		}
+		return back;
 	}
 
 	private KnowledgeStructure parseStructure(Map<String, ?> structureJSON) {
