@@ -11,4 +11,5 @@ public class BasicRelation extends Relation{
 		super(type.name());
 		this.type = type;
 	}
+
 }

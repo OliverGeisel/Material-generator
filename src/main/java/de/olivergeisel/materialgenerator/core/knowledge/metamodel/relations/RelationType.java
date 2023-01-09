@@ -8,6 +8,6 @@ public enum RelationType {
 	IS,
 	DEFINES,
 	PART_OF,
-	USE
-
+	USE,
+	CUSTOM
 }

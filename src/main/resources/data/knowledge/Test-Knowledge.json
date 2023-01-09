@@ -8,7 +8,7 @@
       "relations": []
     },
     {
-      "typ": "DEFINITION",
+      "type": "DEFINITION",
       "id": "Netzwerk-DEF",
       "content": "Ein Netzwerk ist ein Verbund von Systemen, die miteinander kommunizieren.",
       "relations": [
@@ -17,7 +17,7 @@
       ]
     },
     {
-      "typ": "TERM",
+      "type": "TERM",
       "id": "Netzwerk-TERM",
       "content": "",
       "relations": [
@@ -25,7 +25,7 @@
       ]
     },
     {
-      "typ": "TERM",
+      "type": "TERM",
       "id": "Verbund-TERM",
       "content": "",
       "relations": [
@@ -33,18 +33,18 @@
       ]
     },
     {
-      "typ": "DEFINITION",
+      "type": "DEFINITION",
       "id": "Verbund-DEF",
       "content": "Ein Verbund ist eine Ansammlung von Dingen",
       "relations": []
     },
     {
-      "typ": "DEFINITION",
+      "type": "DEFINITION",
       "id": "ComputerSystem-DEF",
       "content": "Ein Computersystem ist ein Computer"
     },
     {
-      "typ": "TERM",
+      "type": "TERM",
       "id": "Computersystem-TERM",
       "content": "",
       "relations": [
@@ -52,28 +52,28 @@
       ]
     },
     {
-      "typ": "SYNONYM",
+      "type": "SYNONYM",
       "id": "Computer-SYN",
       "content": "",
       "relations": "ComputerSystem-TERM"
     },
     {
-      "typ": "FACT",
+      "type": "FACT",
       "id": "Funkwellen-FACT",
       "content": "Funkwellen sind Datenübertragungsmedien"
     },
     {
-      "typ": "FACT",
+      "type": "FACT",
       "id": "Lichtwellen-FACT",
       "content": "Lichtwellen sind Datenübertragungsmedien"
     },
     {
-      "typ": "FACT",
+      "type": "FACT",
       "id": "elektrischer-Strom-FACT",
       "content": "Elektrischer Strom ist ein Datenübertragungsmedium"
     },
     {
-      "typ": "TERM",
+      "type": "TERM",
       "id": "Medium-TERM",
       "content": "",
       "relations": [
@@ -81,13 +81,13 @@
       ]
     },
     {
-      "typ": "DEFINITION",
+      "type": "DEFINITION",
       "id": "Medium-DEF",
       "content": "Ein Medium ist ein Objekt, dass physikalische eigenschaften, Informationen enthält bzw. übermittelt",
       "relations": []
     },
     {
-      "typ": "TERM",
+      "type": "TERM",
       "id": "Datenübertragung-TERM",
       "relations": [
         "Datenübertragung-DEF"
@@ -109,7 +109,7 @@
       ]
     },
     {
-      "typ": "ACRONYM",
+      "type": "ACRONYM",
       "id": "DSL-ACR",
       "content": "Digital subscription line",
       "relations": [

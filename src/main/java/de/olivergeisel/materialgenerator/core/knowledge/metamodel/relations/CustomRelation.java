@@ -2,14 +2,16 @@ package de.olivergeisel.materialgenerator.core.knowledge.metamodel.relations;
 
 public class CustomRelation extends Relation {
 
-	private final String customeType;
+	private final RelationType customType;
 
-	protected CustomRelation(String name, String type) {
+	public CustomRelation(String name, RelationType type) {
 		super(name);
-		customeType = type;
+		customType = type;
 	}
 
-	public String getType() {
-		return customeType;
+//
+	public RelationType getType() {
+		return customType;
 	}
+//
 }

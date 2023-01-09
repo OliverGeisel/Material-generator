@@ -38,18 +38,29 @@ public class KnowledgeModel {
 		return true;
 	}
 
+	public boolean add(Collection<KnowledgeElement> elements) {
+		if (elements.isEmpty()) {
+			return false;
+		}
+		return elements.stream().map(this::add).max(Boolean::compareTo).orElseThrow();
+	}
+
 	public boolean add(KnowledgeElement element) {
+		if (element == null) {
+			throw new IllegalArgumentException("KnowledgeElement was null!");
+		}
 		var result = elements.add(element);
 		test.addVertex(element);
-		List<String> ids = getIDs();
-		for (String id : element.getRelations()) {
-			if (!ids.contains(id)) {
-				if (unknownRelations.containsKey(id)) {
-					unknownRelations.get(id).add(element);
+		List<String> allRelations = getID();
+		for (String linkedElement : element.getRelations().stream().map(it -> it.getTo().getId()).toList()) {
+			// todo check
+			if (!allRelations.contains(linkedElement)) {
+				if (unknownRelations.containsKey(linkedElement)) {
+					unknownRelations.get(linkedElement).add(element);
 				} else {
 					var newSet = new HashSet<KnowledgeElement>();
 					newSet.add(element);
-					unknownRelations.put(id, newSet);
+					unknownRelations.put(linkedElement, newSet);
 				}
 			}
 		}
@@ -65,20 +76,18 @@ public class KnowledgeModel {
 	}
 
 	private Collection<String> findMatchingIDs(String element) {
-		return getIDs().stream().filter(it -> it.split("-")[0].equals(element)).toList();
+		return getID().stream().filter(it -> it.split("-")[0].equals(element)).toList();
 	}
 
 	public void findAll(String element) {
 		var matchingIDs = findMatchingIDs(element);
-
-
 	}
 
-	//
 //
-	public List<String> getIDs() {
+	public List<String> getID() {
 		return test.vertexSet().stream().map(KnowledgeElement::getId).toList();
 	}
+//
 
 	public String getName() {
 		return name;

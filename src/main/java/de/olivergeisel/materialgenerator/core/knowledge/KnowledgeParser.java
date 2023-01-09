@@ -1,7 +1,11 @@
 package de.olivergeisel.materialgenerator.core.knowledge;
 
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.KnowledgeModel;
-import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement;
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.*;
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relations.BasicRelation;
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relations.CustomRelation;
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relations.Relation;
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relations.RelationType;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.source.KnowledgeSource;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeFragment;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeLeaf;
@@ -22,9 +26,19 @@ import java.util.Map;
 import java.util.Set;
 
 public class KnowledgeParser {
+
+	private static final String TERM = "TERM";
+	private static final String DEFINITION = "DEFINITION";
+	private static final String FACT = "FACT";
+	private static final String PROOF = "PROOF";
+	private static final String EXERCISE = "EXERCISE";
+	private static final String EXAMPLE = "EXAMPLE";
+	private static final String EXPLANATION = "EXPLANATION";
+	private static final String NODE = "NODE";
 	Logger logger = LoggerFactory.getLogger(KnowledgeParser.class);
 
 	JSONParser parser;
+
 
 	public KnowledgeModel parseFromFile(File jsonFile) throws FileNotFoundException {
 		FileInputStream input = new FileInputStream(jsonFile);
@@ -42,8 +56,8 @@ public class KnowledgeParser {
 		}
 		if (parsedObject instanceof Map<?, ?> knowledgeModel) {
 			Map<String, ?> structure = (Map<String, ?>) knowledgeModel.get("structure");
-			List<?> knowledge = (List<?>) knowledgeModel.get("knowledge");
-			List<?> source = (List<?>) knowledgeModel.get("source");
+			List<Map<String, ?>> knowledge = (List<Map<String, ?>>) knowledgeModel.get("knowledge");
+			Map<?, ?> source = (Map<?, ?>) knowledgeModel.get("sources");
 
 			var parsedStructure = parseStructure(structure);
 			var parsedSource = parseSource(source);
@@ -59,13 +73,83 @@ public class KnowledgeParser {
 		return back;
 	}
 
-	private KnowledgeElement parseKnowledge(List<?> knowledgeJSON) {
-		return null;
+	private Set<KnowledgeElement> parseKnowledge(List<Map<String, ?>> knowledgeJSON) {
+		if (knowledgeJSON.isEmpty()) {
+			return new HashSet<>();
+		}
+		Set<KnowledgeElement> back = new HashSet<>();
+		for (Map<String, ?> element : knowledgeJSON) {
+			String type = element.get("type").toString();
+			String id = element.get("id").toString();
+			String structure = element.get("structure").toString();
+			String content = element.get("content").toString();
+			List<Map<String, String>> relations = (List<Map<String, String>>) element.get("relations");
+			back.add(createElement(type, id, structure, content, relations));
+		}
+		return back;
+
 	}
 
-	private Set<KnowledgeSource> parseSource(List<?> sourceJSON) {
-		Set<KnowledgeSource> back = new HashSet<>();
+	private KnowledgeElement getKnowledgeElement(Map<String, ?> jsonElement) {
+		var type = jsonElement.get("typ").toString();
+		var content = jsonElement.get("content").toString();
+		var id = jsonElement.get("id").toString();
+		var relationsJSON = (List<Map<String, String>>) jsonElement.get("relations");
+		var relations = createRelation(relationsJSON);
+		return switch (type.toUpperCase()) {
+			case TERM -> new Term(content, id, type, relations);
+			case DEFINITION -> new Definition(content, id, type, relations);
+			case FACT -> new Fact(content, id, type, relations);
+			case PROOF -> new Proof(content, id, type, relations);
+			case EXERCISE -> new Exercise(content, id, type, relations);
+			case EXPLANATION -> new Explanation(content, id, type, relations);
+			case "STATEMENT" -> new Statement(content, id, type, relations);
+			case EXAMPLE -> new Example(content, id, type, relations);
+			default -> throw new IllegalStateException("Unexpected KnowledgeElement: " + type);
+		};
+	}
+
+	private Set<Relation> createRelation(List<Map<String, String>> relationsJSON) {
+		var back = new HashSet<Relation>();
+		for (var relation : relationsJSON) {
+			var id = relation.get("relation-id");
+			RelationType type;
+			try {
+				type = RelationType.valueOf(relation.get("relation-type"));
+			} catch (IllegalArgumentException iae) {
+				type = RelationType.CUSTOM;
+			}
+			Relation newRelation;
+			if (type != RelationType.CUSTOM) {
+
+				newRelation = new BasicRelation(type);
+			} else {
+				newRelation = new CustomRelation(id, type);
+			}
+			back.add(newRelation);
+		}
 		return back;
+	}
+
+	private KnowledgeElement createElement(String type, String id, String structure, String content, List<Map<String, String>> relationsJSON) {
+		KnowlegeType kType = KnowlegeType.valueOf(type.toUpperCase());
+		var relations = createRelation(relationsJSON);
+		return switch (kType) {
+			case FACT -> new Fact(content, id, type, relations);
+			case DEFINITION -> new Definition(content, id, type, relations);
+			case TERM -> new Term(content, id, type, relations);
+			case PROOF -> new Proof(content, id, type, relations);
+			default -> throw new IllegalStateException("Unexpected KnowledgeElement: " + type);
+		};
+
+	}
+
+	private Set<KnowledgeSource> parseSource(Map<?, ?> sourceJSON) {
+		Set<KnowledgeSource> back = new HashSet<>();
+		if (sourceJSON.isEmpty()) {
+			return back;
+		}
+		return null;
 	}
 
 	private KnowledgeStructure parseStructure(Map<String, ?> structureJSON) {

@@ -1,5 +1,6 @@
 package de.olivergeisel.materialgenerator.core.knowledge.metamodel.element;
 
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relations.Relation;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeLeaf;
 
 import java.util.Collection;
@@ -12,9 +13,9 @@ public abstract class KnowledgeElement {
 	private final String id;
 	private final KnowlegeType type;
 
-	private final Set<String> relations = new HashSet<>();
+	private final Set<Relation> relations = new HashSet<>();
 
-	protected KnowledgeElement(String content, String id, String type, Collection<String> relations) {
+	protected KnowledgeElement(String content, String id, String type, Collection<Relation> relations) {
 		this.content = content;
 		this.id = id;
 		this.type = KnowlegeType.valueOf(type.toUpperCase());
@@ -25,9 +26,11 @@ public abstract class KnowledgeElement {
 		return structure;
 	}
 
-	public Set<String> getRelations() {
+//
+	public Set<Relation> getRelations() {
 		return relations;
 	}
+//
 
 	public void setStructure(KnowledgeLeaf structure) {
 		this.structure = structure;
