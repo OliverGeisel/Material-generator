@@ -20,6 +20,8 @@ public enum RelationType {
 	DESCRIBED_AS,
 	EXAMPLE_FOR,
 	PROVEN_BY,
+
+	CUSTOM
 }
 
 /**

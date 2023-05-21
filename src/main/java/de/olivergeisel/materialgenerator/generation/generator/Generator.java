@@ -1,6 +1,6 @@
 package de.olivergeisel.materialgenerator.generation.generator;
 
-import de.olivergeisel.materialgenerator.core.courseplan.Curriculum;
+import de.olivergeisel.materialgenerator.core.courseplan.CoursePlan;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.KnowledgeModel;
 import de.olivergeisel.materialgenerator.generation.template.TemplateSet;
 
@@ -13,7 +13,7 @@ public interface Generator {
 	 * @param model      The current KnowledgeModel.
 	 * @param curriculum Curriculum for which the generator should generate materials.
 	 */
-	void input(TemplateSet templates, KnowledgeModel model, Curriculum curriculum);
+	void input(TemplateSet templates, KnowledgeModel model, CoursePlan curriculum);
 
 	/**
 	 * Initial method to set the input for the generator. This needs only the GeneratorInput object.
@@ -21,13 +21,6 @@ public interface Generator {
 	 * @param input Alle needed input for the generator. Must be valid and not be null.
 	 */
 	void input(GeneratorInput input);
-
-	/**
-	 * Method to check if the generator is ready to start the generation process. This method should be called after the input method and before the update method.
-	 *
-	 * @return True if all inputs are valid and not null, false if not.
-	 */
-	public boolean isReady();
 
 	/**
 	 * Method to start the generation process. This method should be called after the input method.
@@ -43,4 +36,16 @@ public interface Generator {
 	 */
 	GeneratorOutput output();
 
+//
+
+	/**
+	 * Method to check if the generator is ready to start the generation process. This method should be called after the input method and before the update method.
+	 *
+	 * @return True if all inputs are valid and not null, false if not.
+	 */
+	public boolean isReady();
+//
+
 }
+
+

@@ -1,7 +1,6 @@
 package de.olivergeisel.materialgenerator.core.courseplan.structure;
 
-import de.olivergeisel.materialgenerator.core.courseplan.CurriculumGoal;
-import de.olivergeisel.materialgenerator.core.courseplan.Relevance;
+import de.olivergeisel.materialgenerator.core.courseplan.content.ContentTarget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,21 +8,53 @@ import java.util.List;
 public class StructureChapter extends StructureElement {
 
 
-	private List<StructureElement> parts;
+	private final List<StructureElement> parts;
+	private double weight;
 
-	public StructureChapter(CurriculumGoal goal, Relevance relevance, String name) {
-		super(goal, relevance, name);
+	public StructureChapter(ContentTarget topic, Relevance relevance, String name, double weight) {
+		super(topic, relevance, name);
+		this.weight = weight;
 		parts = new ArrayList<>();
 	}
 
-	public boolean add(StructureElement element) throws IllegalArgumentException {
-		if (element instanceof StructureChapter chapter) {
-			throw new IllegalArgumentException(String.format("%s can't be addet to a chapter", chapter.getName()));
-		}
+	@Override
+	public String toString() {
+		return "StructureChapter{" +
+				"name=" + getName() +
+				", parts=" + parts.size() +
+				", weight=" + weight +
+				", relevance=" + relevance +
+				'}';
+	}
+
+	@Override
+	public void updateRelevance() {
+		relevance = parts.stream().map(StructureElement::getRelevance).max(Enum::compareTo).orElseThrow();
+	}
+
+	public boolean add(StructureElementPart element) throws IllegalArgumentException {
 		if (contains(element)) {
 			return false;
 		}
 		return parts.add(element);
+	}
+
+	public boolean contains(StructureElementPart element) {
+		for (StructureElement element1 : parts) {
+			if (element1 instanceof StructureGroup group && group.contains(element))
+				return true;
+			else {
+				if (element1.equals(element)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+//
+	public double getWeight() {
+		return weight;
 	}
 
 	public int size() {
@@ -38,17 +69,10 @@ public class StructureChapter extends StructureElement {
 		return back;
 	}
 
-	public boolean contains(StructureElement element) {
-		for (StructureElement element1 : parts) {
-			if (element1 instanceof StructureGroup group && group.contains(element))
-				return true;
-			else {
-				if (element1.equals(element)) {
-					return true;
-				}
-			}
-		}
-		return false;
+	public void setWeight(int weight) {
+		this.weight = weight;
 	}
+//
+
 
 }

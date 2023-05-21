@@ -1,0 +1,153 @@
+{
+  "meta": {
+    "name": "Neuer Testkurs",
+    "description": "Hallo,\nDas ist ein Testkurs f\u00fcr Debugging und Tests",
+    "year": 2023,
+    "type": "Universit\u00e4t",
+    "level": "Anfang",
+    "extra": [
+      {
+        "name": "Extra-Wert",
+        "value": "Hallo"
+      },
+      {
+        "name": "Studentenzahl",
+        "value": "15"
+      }
+    ]
+  },
+  "content": {
+    "goal-1": {
+      "key": "goal-1",
+      "expression": "Know",
+      "target": "MasterKey-Word",
+      "completeSentence": "Complete text!",
+      "content": [
+        "Inhalt 1",
+        "Inhalt 2"
+      ]
+    },
+    "goal-2": {
+      "key": "goal-2",
+      "expression": "Translate",
+      "target": "Algorithmus",
+      "completeSentence": "\u00dcbertrage einen Algorithmus in eine beliebige Progammierprache.",
+      "content": [
+        "Algorithmus-Begriff",
+        "Programmiersprache"
+      ]
+    }
+  },
+  "structure": [
+    {
+      "key": "chapter-1",
+      "name": "Kapitel 1",
+      "weight": 8.0,
+      "knowledgeAreas": [],
+      "topic": "Inhalt 1",
+      "groups": [
+        {
+          "key": "group-1-1",
+          "name": "Gruppe 1-1",
+          "knowledgeAreas": [],
+          "topic": "",
+          "tasks": [
+            {
+              "key": "task-1-1-1",
+              "name": "Name",
+              "topic": "",
+              "relevance": "MANDATORY",
+              "knowledgeAreas": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "chapter-2",
+      "name": "Algorithmen",
+      "weight": 6.0,
+      "knowledgeAreas": [],
+      "topic": "Algorithmus-Begriff",
+      "groups": [
+        {
+          "key": "group-2-1",
+          "name": "Algorithmus Definition",
+          "knowledgeAreas": [
+            "Algorithmus"
+          ],
+          "topic": "Algorithmus-TERM",
+          "tasks": [
+            {
+              "key": "task-2-1-1",
+              "name": "Definition Algorithmus",
+              "topic": "Algorithmus-Begriff",
+              "relevance": "MANDATORY",
+              "knowledgeAreas": []
+            },
+            {
+              "key": "task-2-1-2",
+              "name": "Geschichte Algorithmus",
+              "topic": "Algorithmus-Begriff",
+              "relevance": "MANDATORY",
+              "knowledgeAreas": []
+            }
+          ]
+        },
+        {
+          "key": "group-2-2",
+          "name": "Programmierung",
+          "knowledgeAreas": [
+            "Programmiersprache"
+          ],
+          "topic": "Programmiersprache-TERM",
+          "tasks": [
+            {
+              "key": "task-2-2-1",
+              "name": "Programmier Paradigmen",
+              "topic": "Programmiersprache",
+              "relevance": "MANDATORY",
+              "knowledgeAreas": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "chapter-3",
+      "name": "Kapitel 3",
+      "weight": 2.0,
+      "knowledgeAreas": [],
+      "groups": [
+        {
+          "key": "group-3-1",
+          "name": "Gruppe 3-1",
+          "knowledgeAreas": [],
+          "tasks": [
+            {
+              "key": "task-3-1-1",
+              "name": "",
+              "topic": "Thema",
+              "relevance": "MANDATORY",
+              "knowledgeAreas": []
+            },
+            {
+              "key": "task-3-1-2",
+              "name": "",
+              "topic": "Thema",
+              "relevance": "MANDATORY",
+              "knowledgeAreas": []
+            },
+            {
+              "key": "task-3-1-3",
+              "name": "Programmier Paradigmen",
+              "topic": "Programmiersprache",
+              "relevance": "MANDATORY",
+              "knowledgeAreas": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

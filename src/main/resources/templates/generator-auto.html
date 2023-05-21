@@ -16,7 +16,7 @@
             </select>
             <br>
             <p> Bitte den Lehrplan angeben</p>
-            <input type="file" name="curriculum">
+            <input type="file" name="plan">
             <select name="curriculum">
                 <option th:each="option: ${curriculums}" th:value="${option}" th:text="${option}">
                 </option>

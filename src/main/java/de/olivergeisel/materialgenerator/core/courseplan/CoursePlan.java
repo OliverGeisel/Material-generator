@@ -1,57 +1,49 @@
 package de.olivergeisel.materialgenerator.core.courseplan;
 
+import de.olivergeisel.materialgenerator.core.courseplan.content.ContentGoal;
+import de.olivergeisel.materialgenerator.core.courseplan.content.ContentTarget;
 import de.olivergeisel.materialgenerator.core.courseplan.meta.CourseMetadata;
 import de.olivergeisel.materialgenerator.core.courseplan.structure.CourseStructure;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class CoursePlan {
 	//-----------METATDATA---------------------
 	private final CourseMetadata metadata;
 
 	//-----------CONTENT-----------------------
-	private final Set<CurriculumGoal> goals;
-	private final Curriculum curriculum;
-
+	private final Set<ContentGoal> goals;
+	private final List<ContentTarget> targets;
 	//-----------STRUCTURE---------------------
 	private final CourseStructure structure;
 
-	public CoursePlan(CourseMetadata metadata, Collection<CurriculumGoal> goals, CourseStructure structure, Curriculum curriculum) {
+	public CoursePlan(CourseMetadata metadata, Collection<ContentGoal> goals, CourseStructure structure, Collection<ContentTarget> targets) {
 		this.metadata = metadata;
 		this.goals = new HashSet<>();
 		this.goals.addAll(goals);
 		this.structure = structure;
-		this.curriculum = curriculum;
+		this.targets = new ArrayList<>();
+		this.targets.addAll(targets);
+
 	}
 
-
-
-
-
-
-
-
+//
+public Set<ContentGoal> getGoals() {
+	return goals;
+}
 
 	public CourseMetadata getMetadata() {
 		return metadata;
-	}
-
-	public Set<CurriculumGoal> getGoal() {
-		return Collections.unmodifiableSet(goals);
 	}
 
 	public CourseStructure getStructure() {
 		return structure;
 	}
 
-	public Curriculum getCurriculum() {
-		return curriculum;
+	public List<ContentTarget> getTargets() {
+		return targets;
 	}
-
-
+//
 
 
 }

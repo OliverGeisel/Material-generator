@@ -17,8 +17,8 @@ public class MaterialGeneratorApplication {
 
 	@Bean
 	CommandLineRunner init(StorageService storageService) {
-		return (args) -> {
-			storageService.deleteAll();
+		return args -> {
+			//storageService.deleteAll();
 			storageService.init();
 		};
 	}

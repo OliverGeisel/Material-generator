@@ -1,13 +1,18 @@
 package de.olivergeisel.materialgenerator.generation.generator;
 
 
+import de.olivergeisel.materialgenerator.core.courseplan.CoursePlan;
+import de.olivergeisel.materialgenerator.core.courseplan.CoursePlanParser;
+import de.olivergeisel.materialgenerator.core.courseplan.content.ContentTarget;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.KnowledgeModel;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.*;
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.BasicRelation;
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.Relation;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.RelationType;
+import de.olivergeisel.materialgenerator.generation.template.GeneratorService;
 import de.olivergeisel.materialgenerator.generation.template.StorageService;
 import org.apache.tomcat.util.json.JSONParser;
 import org.apache.tomcat.util.json.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,10 +31,11 @@ public class GeneratorController {
 
 	private static KnowledgeModel knowledge;
 
+	private final GeneratorService service;
 	private final StorageService storageService;
 
-	@Autowired
-	public GeneratorController(StorageService storageService) {
+	public GeneratorController(GeneratorService service, StorageService storageService) {
+		this.service = service;
 		this.storageService = storageService;
 	}
 
@@ -50,24 +56,22 @@ public class GeneratorController {
 		var type = KnowledgeType.valueOf(typeString.toUpperCase());
 		var content = (String) jsonElement.get("content");
 		var id = (String) jsonElement.get("id");
-		Collection<KnowledgeElement.KnowledgeElementRelation> relations;
+		Collection<Relation> relations;
 		if (jsonElement.containsKey("relations")) {
 			relations = new LinkedList<>();
 			for (var relation : (Collection<Map<String, ?>>) jsonElement.get("relations")) {
 				var relationType = (RelationType) relation.get("rel-type");
 				var other = (String) relation.get("other");
-				relations.add(new KnowledgeElement.KnowledgeElementRelation(relationType, other));
+				relations.add(new BasicRelation(relationType, id, other));
 			}
 		} else {
 			relations = List.of();
 		}
 		return switch (type) {
 			case FACT -> new Fact(content, id, type.name(), relations);
-			case ACRONYM -> new Acronym(content, id, type.name(), relations);
 			case DEFINITION -> new Definition(content, id, type.name(), relations);
 			case TERM -> new Term(content, id, type.name(), relations);
 			case PROOF -> new Proof(content, id, type.name(), relations);
-			case SYNONYM -> new Synonym(content, id, type.name(), relations);
 			default -> throw new IllegalStateException("Unexpected value: " + type);
 		};
 	}
@@ -134,7 +138,7 @@ public class GeneratorController {
 	@GetMapping("def")
 	public String getDefinition(@RequestParam String template, @RequestParam String definition, Model model) {
 		Map<String, String> attributes = switch (template) {
-			case "plain" -> getPlain(definition);
+			case "plain" -> service.getPlain(definition);
 			case "illustrated" -> getIllustrated();
 			default -> Map.of();
 		};
@@ -142,31 +146,33 @@ public class GeneratorController {
 		return template;
 	}
 
-	@GetMapping("")
 
 	@PostMapping("generator-auto/complete")
-	public String overviewGeneration(@RequestParam MultipartFile curriculum, @RequestParam String template, Model model) {
-		List<String> objects;
-		Object parsed;
+	public String overviewGeneration(@RequestParam MultipartFile plan, @RequestParam String template, Model model) {
+		CoursePlanParser parser = new CoursePlanParser();
+		CoursePlan coursePlan;
 		try {
-			parsed = parseFromInputStream(curriculum.getInputStream());
+			coursePlan = parser.parseFromFile(plan.getInputStream());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		//var file =storageService.loadAsResource(curriculum.getName());
-		objects = (List<String>) parsed;
 
-		var tempmodel = getKnowledge();
+		//var file =storageService.loadAsResource(plan.getName());
+		storageService.store(plan);
+		var knowledge = service.getKnowledge();
 
-		for (String element : objects) {
-			findRelatedData(element);
+		//storageService.deleteAll();
+		for (ContentTarget target : coursePlan.getTargets()) {
+			// todo
+			//findRelatedData(target.());
 		}
-		storageService.store(curriculum);
+		storageService.store(plan);
 		return "overview-auto";
 	}
 
-	private void findRelatedData(String element) {
-		knowledge.findAll(element);
+	private Set<KnowledgeElement> findRelatedData(String element) {
+		return knowledge.findAll(element);
+
 	}
 
 	//

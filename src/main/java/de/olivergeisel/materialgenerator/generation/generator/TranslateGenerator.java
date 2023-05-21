@@ -1,7 +1,6 @@
 package de.olivergeisel.materialgenerator.generation.generator;
 
 import de.olivergeisel.materialgenerator.core.courseplan.CoursePlan;
-import de.olivergeisel.materialgenerator.core.courseplan.Curriculum;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.KnowledgeModel;
 import de.olivergeisel.materialgenerator.generation.template.TemplateSet;
 
@@ -30,13 +29,11 @@ public class TranslateGenerator implements Generator {
 		this.plan = input.getPlan();
 	}
 
-	public boolean isReady() {
-		return templates != null && model != null && plan != null;
-	}
-
 	@Override
-	public void input(TemplateSet templates, KnowledgeModel model, Curriculum curriculum) {
-
+	public void input(TemplateSet templates, KnowledgeModel model, CoursePlan plan) {
+		this.templates = templates;
+		this.model = model;
+		this.plan = plan;
 	}
 
 	@Override
@@ -53,16 +50,8 @@ public class TranslateGenerator implements Generator {
 		return true;
 	}
 
-	private void setUnchanged(boolean unchanged) {
-		this.unchanged = unchanged;
-	}
-
 	private void changed() {
 		setUnchanged(false);
-	}
-
-	private boolean isUnchanged() {
-		return unchanged;
 	}
 
 	@Override
@@ -70,9 +59,22 @@ public class TranslateGenerator implements Generator {
 		return null;
 	}
 
-
 	private void process() {
-		var curriculum = plan.getCurriculum();
-		var goals = plan.getGoal();
+		var curriculum = plan.getTargets();
+		var goals = plan.getGoals();
 	}
+
+	//
+	public boolean isReady() {
+		return templates != null && model != null && plan != null;
+	}
+
+	private boolean isUnchanged() {
+		return unchanged;
+	}
+
+	private void setUnchanged(boolean unchanged) {
+		this.unchanged = unchanged;
+	}
+//
 }

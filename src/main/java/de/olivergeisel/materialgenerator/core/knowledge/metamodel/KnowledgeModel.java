@@ -1,8 +1,11 @@
 package de.olivergeisel.materialgenerator.core.knowledge.metamodel;
 
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement;
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.Relation;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.source.KnowledgeSource;
-import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeObject;
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeFragment;
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeStructure;
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.RootStructureElement;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultUndirectedGraph;
@@ -11,27 +14,67 @@ import java.util.*;
 
 public class KnowledgeModel {
 	private final List<KnowledgeElement> elements = new LinkedList<>();
-	private final Map<String, Set<KnowledgeElement>> unfinishedRelations = new HashMap<>();
-
+	private final Map<Relation, Set<KnowledgeElement>> unfinishedRelations = new HashMap<>();
 	private final Set<KnowledgeSource> sources = new HashSet<>();
-	private final KnowledgeObject root;
+	private final KnowledgeFragment root;
 
 	private final Graph<KnowledgeElement, DefaultEdge> graph;
+	private String version;
+	private String name;
 
-	public KnowledgeModel(KnowledgeObject root) {
+	public KnowledgeModel() {
+		this.root = new RootStructureElement();
+		this.graph = new DefaultUndirectedGraph<>(DefaultEdge.class);
+	}
+
+	public KnowledgeModel(KnowledgeFragment root) {
 		this.root = root;
 		this.graph = new DefaultUndirectedGraph<>(DefaultEdge.class);
+	}
+
+	public KnowledgeModel(KnowledgeFragment root, String version, String name) {
+		this.root = root;
+		this.name = name;
+		this.graph = new DefaultUndirectedGraph<>(DefaultEdge.class);
+		this.version = version;
 	}
 
 	public DefaultEdge link(KnowledgeElement element1, KnowledgeElement element2) {
 		return graph.addEdge(element1, element2);
 	}
 
+	public boolean addStructure(KnowledgeStructure parsedStructure) {
+		// Todo insert to correct place
+		if (root.getElements().isEmpty()) {
+			root.addObject(parsedStructure.getRoot());
+		}
+		return true;
+	}
+
+	public boolean add(Collection<KnowledgeElement> elements) {
+		if (elements.isEmpty()) {
+			return false;
+		}
+		return elements.stream().map(this::add).max(Boolean::compareTo).orElseThrow();
+	}
+
 	public boolean add(KnowledgeElement element) {
+		if (element == null) {
+			throw new IllegalArgumentException("KnowledgeElement was null!");
+		}
 		var result = elements.add(element);
 		graph.addVertex(element);
 		return result;
 	}
+
+	public boolean addSource(Collection<KnowledgeSource> sources) {
+		return this.sources.addAll(sources);
+	}
+
+	public boolean addSource(KnowledgeSource sources) {
+		return this.sources.add(sources);
+	}
+
 
 	public boolean remove(KnowledgeElement element) {
 		var result = elements.remove(element);
@@ -63,12 +106,12 @@ public class KnowledgeModel {
 		add(element);
 		var relations = element.getRelations();
 		relations.forEach(it -> {
-			var id = it.getElement();
-			if (contains(id)) {
-				link(element, get(id));
+			var relationName = it.getName();
+			if (contains(relationName)) {
+				link(element, get(relationName));
 			} else {
-				if (unfinishedRelations.containsKey(id)) {
-					unfinishedRelations.get(id).add(element);
+				if (unfinishedRelations.containsKey(it)) {
+					unfinishedRelations.get(it).add(element);
 				} else {
 					var set = new HashSet<KnowledgeElement>();
 					set.add(element);
@@ -84,14 +127,18 @@ public class KnowledgeModel {
 		return getIDs().stream().filter(it -> it.split("-")[0].equals(element)).toList();
 	}
 
-	public void findAll(String element) {
+	public Set<KnowledgeElement> findAll(String element) {
 		var matchingIDs = findMatchingIDs(element);
-
-
+		return null; // todo
 	}
 
-	//
-//
+	public String getName() {
+		return name;
+	}
+
+	public String getVersion() {
+		return version;
+	}
 	public List<KnowledgeElement> getElements() {
 		return elements;
 	}

@@ -1,12 +1,28 @@
 package de.olivergeisel.materialgenerator.core.courseplan.structure;
 
-import de.olivergeisel.materialgenerator.core.courseplan.CurriculumGoal;
-import de.olivergeisel.materialgenerator.core.courseplan.Relevance;
+import de.olivergeisel.materialgenerator.core.courseplan.content.ContentTarget;
 
-public class StructureTask extends StructureElement {
+public class StructureTask extends StructureElementPart {
 
 
-	protected StructureTask(CurriculumGoal goal, Relevance relevance, String name) {
-		super(goal, relevance, name);
+	public StructureTask(ContentTarget topic, Relevance relevance, String name) {
+		super(topic, relevance, name);
+
 	}
+
+	@Override
+	public String toString() {
+		return "StructureTask{" +
+				"name=" + getName() +
+				", topic=" + getTopic() +
+				", relevance=" + relevance +
+				'}';
+	}
+
+	@Override
+	public void updateRelevance() {
+		// Nothing to do!
+	}
+
+
 }
