@@ -10,13 +10,17 @@
     <section>
         <form action="generator-auto/complete" enctype="multipart/form-data" method="post">
             <p> Bitte Vorlagen eingeben</p>
-            <select name="template" >
+            <select name="template">
                 <option th:each="option: ${templates}" th:value="${option}" th:text="${option}">
                 </option>
             </select>
             <br>
             <p> Bitte den Lehrplan angeben</p>
             <input type="file" name="curriculum">
+            <select name="curriculum">
+                <option th:each="option: ${curriculums}" th:value="${option}" th:text="${option}">
+                </option>
+            </select>
             <input type="submit">
         </form>
     </section>
