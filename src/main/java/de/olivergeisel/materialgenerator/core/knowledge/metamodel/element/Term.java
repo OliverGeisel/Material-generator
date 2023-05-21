@@ -5,7 +5,7 @@ import java.util.Collection;
 public class Term extends KnowledgeElement{
 	private String term;
 
-	public Term(String content, String id, String type, Collection<String> relations) {
-		super(content, id, type,relations);
+	public Term(String content, String id, String type, Collection<KnowledgeElementRelation> relations) {
+		super(content, id, type, relations);
 	}
 }

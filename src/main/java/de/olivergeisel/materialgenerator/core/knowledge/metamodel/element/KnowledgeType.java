@@ -1,6 +1,6 @@
 package de.olivergeisel.materialgenerator.core.knowledge.metamodel.element;
 
-public enum KnowlegeType {
+public enum KnowledgeType {
 	DEFINITION,
 	TERM,
 	FACT,

@@ -4,7 +4,7 @@ import java.util.Collection;
 
 public class Synonym extends KnowledgeElement{
 
-	public Synonym(String content, String id, String type, Collection<String> relations) {
-		super(content, id, type,relations);
+	public Synonym(String content, String id, String type, Collection<KnowledgeElementRelation> relations) {
+		super(content, id, type, relations);
 	}
 }
