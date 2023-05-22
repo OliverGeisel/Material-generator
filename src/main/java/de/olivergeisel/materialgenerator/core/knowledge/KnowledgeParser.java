@@ -64,18 +64,14 @@ public class KnowledgeParser {
 		return back;
 	}
 
+	// ------------------ Knowledge ------------------
 	private Set<KnowledgeElement> parseKnowledge(List<Map<String, ?>> knowledgeJSON) {
 		if (knowledgeJSON.isEmpty()) {
 			return new HashSet<>();
 		}
 		Set<KnowledgeElement> back = new HashSet<>();
 		for (Map<String, ?> element : knowledgeJSON) {
-			String type = element.get("type").toString();
-			String id = element.get("id").toString();
-			String structure = element.get("structure").toString();
-			String content = element.get("content").toString();
-			List<Map<String, String>> relations = (List<Map<String, String>>) element.get("relations");
-			back.add(createElement(type, id, structure, content, relations));
+			back.add(getKnowledgeElement(element));
 		}
 		return back;
 
@@ -100,13 +96,8 @@ public class KnowledgeParser {
 		return back;
 	}
 
-	private KnowledgeElement createElement(String type, String id, String structure,
-										   String content, List<Map<String, String>> relationsJSON) {
-		var relations = createRelation(relationsJSON);
-		return ElementGenerator.create(type, id, structure, content, relations);
 
-	}
-
+	// ------------------ Source ------------------
 	private Set<KnowledgeSource> parseSource(List<Map<String, ?>> sourceJSON) {
 		Set<KnowledgeSource> back = new HashSet<>();
 		if (sourceJSON.isEmpty()) {
@@ -129,32 +120,29 @@ public class KnowledgeParser {
 		return back;
 	}
 
+	// ------------------ Structure ------------------
 	private KnowledgeStructure parseStructure(Map<String, ?> structureJSON) {
 		var back = new KnowledgeStructure();
 		var root = back.getRoot();
+		root.setKey("_root");
+		root.setName(structureJSON.get("name").toString());
 		// check if empty
 		if (structureJSON.isEmpty()) {
 			return back;
 		}
-		var parts = (List<Map<String, ?>>) structureJSON.get("parts");
-		for (var part : parts) {
-			// check if empty
-			KnowledgeObject newPart;
-			var id = part.get("id").toString();
-			if (((List<?>) part.get("parts")).isEmpty()) {
-				newPart = new KnowledgeLeaf(id);
-			} else {
-				var newFragment = new KnowledgeFragment(id);
-				for (var childParts : (List<Map<String, ?>>) part.get("parts")) {
-					newFragment.addObject(parseKnowledgeObject(childParts));
-				}
-				newPart = newFragment;
-			}
-			root.addObject(newPart);
+		var parts = (List<Map<String, ?>>) structureJSON.get("children");
+		for (var child : parts) {
+			root.addObject(parseKnowledgeObject(child));
 		}
 		return back;
 	}
 
+	/**
+	 * Parse a part of the structure and its children.
+	 *
+	 * @param part the part to parse.
+	 * @return the parsed part as KnowledgeObject or null if part is empty.
+	 */
 	private KnowledgeObject parseKnowledgeObject(Map<String, ?> part) {
 		KnowledgeObject back;
 		// check if empty
@@ -162,14 +150,14 @@ public class KnowledgeParser {
 			return null;
 		}
 		var id = part.get("id").toString();
-		var parts = (List<Map<String, ?>>) part.get("parts");
+		var children = (List<Map<String, ?>>) part.get("children");
 		// check if parts is empty
-		if (parts.isEmpty()) {
+		if (children.isEmpty()) {
 			back = new KnowledgeLeaf(id);
 		} else {
 			var newFragment = new KnowledgeFragment(id);
-			for (var childParts : parts) {
-				newFragment.addObject(parseKnowledgeObject(childParts));
+			for (var childPart : children) {
+				newFragment.addObject(parseKnowledgeObject(childPart));
 			}
 			back = newFragment;
 		}
