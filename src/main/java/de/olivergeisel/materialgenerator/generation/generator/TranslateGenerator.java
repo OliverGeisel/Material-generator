@@ -1,8 +1,13 @@
 package de.olivergeisel.materialgenerator.generation.generator;
 
 import de.olivergeisel.materialgenerator.core.courseplan.CoursePlan;
+import de.olivergeisel.materialgenerator.core.courseplan.bloom_taxo_translate.BloomTaxonomicTranslator;
+import de.olivergeisel.materialgenerator.core.courseplan.content.ContentGoal;
+import de.olivergeisel.materialgenerator.core.courseplan.content.ContentGoalExpression;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.KnowledgeModel;
 import de.olivergeisel.materialgenerator.generation.template.TemplateSet;
+
+import java.util.List;
 
 public class TranslateGenerator implements Generator {
 
@@ -59,9 +64,40 @@ public class TranslateGenerator implements Generator {
 		return null;
 	}
 
+	private void loadForExpression(ContentGoalExpression expression) {
+		switch (expression) {
+			case FIRST_LOOK:
+				break;
+			case TRANSLATE:
+				break;
+			case KNOW:
+				break;
+			case USE:
+				break;
+			case COMMENT:
+				break;
+			case CONTROL:
+				break;
+			case CREATE:
+				break;
+		}
+	}
+
 	private void process() {
-		var curriculum = plan.getTargets();
+		var targets = plan.getTargets();
 		var goals = plan.getGoals();
+
+	}
+
+	private void processGoals(List<ContentGoal> goals) {
+		for (var goal : goals) {
+			var term = goal.getMasterKeyword();
+			var expression = goal.getExpression();
+			var completeSentence = goal.getCompleteSentence();
+			var targets = goal.getContent();
+			var material = new Material();
+			var goalExpression = BloomTaxonomicTranslator.translate(expression.name());
+		}
 	}
 
 	//
