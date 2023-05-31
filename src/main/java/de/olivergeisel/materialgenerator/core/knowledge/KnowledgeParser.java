@@ -35,12 +35,11 @@ public class KnowledgeParser {
 	public static final String RELATION_ID = "relation_id";
 	// Source fields
 	public static final String NAME = "name";
-
 	// Structure fields
 	public static final String CHILDREN = "children";
+
 	Logger logger = LoggerFactory.getLogger(KnowledgeParser.class);
 
-	//region Source parsing
 	private KnowledgeElement createElement(String type, String id, String structure, String content,
 										   List<Map<String, String>> relationsJSON) {
 		var newElement = ElementGenerator.create(type, id, structure, content);
@@ -58,14 +57,18 @@ public class KnowledgeParser {
 		return back;
 	}
 
-	public KnowledgeModel parseFromFile(File jsonFile) throws FileNotFoundException {
-		FileInputStream input = new FileInputStream(jsonFile);
-		return parseFromFile(input);
+	private KnowledgeElement createKnowledgeElement(Map<String, ?> jsonElement) {
+		var type = jsonElement.get(TYPE).toString();
+		var content = jsonElement.get(CONTENT).toString();
+		var id = jsonElement.get(ID).toString();
+		String structure = jsonElement.get(STRUCTURE).toString();
+		var relationsJSON = (List<Map<String, String>>) jsonElement.get(RELATIONS);
+		return createElement(type, id, structure, content, relationsJSON);
 	}
 
 	public KnowledgeModel parseFromFile(InputStream file) {
 		KnowledgeModel back;
-		JSONParser parser = new JSONParser(file);
+		var parser = new JSONParser(file);
 		Object parsedObject;
 		try {
 			parsedObject = parser.parse();
@@ -90,46 +93,55 @@ public class KnowledgeParser {
 		return back;
 	}
 
+	public KnowledgeModel parseFromFile(File jsonFile) throws FileNotFoundException {
+		FileInputStream input = new FileInputStream(jsonFile);
+		return parseFromFile(input);
+	}
+
 	private Set<KnowledgeElement> parseKnowledge(List<Map<String, ?>> knowledgeJSON) {
 		if (knowledgeJSON.isEmpty()) {
 			return new HashSet<>();
 		}
 		Set<KnowledgeElement> back = new HashSet<>();
 		for (Map<String, ?> element : knowledgeJSON) {
-			String type = element.get(TYPE).toString();
-			String id = element.get(ID).toString();
-			String structure = element.get(STRUCTURE).toString();
-			String content = element.get(CONTENT).toString();
-			List<Map<String, String>> relationsJSON = (List<Map<String, String>>) element.get(RELATIONS);
-			back.add(createElement(type, id, structure, content, relationsJSON));
+			back.add(createKnowledgeElement(element));
 		}
 		return back;
 	}
-	//endregion
 
+	/**
+	 * Parse a part of the structure and its children.
+	 *
+	 * @param partJSON the part to parse.
+	 * @return the parsed part as KnowledgeObject or null if part is empty.
+	 */
 	private KnowledgeObject parseKnowledgeObject(Map<String, ?> partJSON) throws IncompleteJSONException {
 		KnowledgeObject back;
-		// check if empty
+		// check if json is empty
 		if (partJSON.isEmpty()) {
 			throw new IncompleteJSONException("KnowledgeObject is empty!");
 		}
 		var id = partJSON.get(ID).toString();
 		var parts = (List<Map<String, ?>>) partJSON.get(CHILDREN);
-		// check if parts is empty
+		// check if it's a Leaf or Fragment
 		if (parts.isEmpty()) {
 			back = new KnowledgeLeaf(id);
 		} else {
 			var newFragment = new KnowledgeFragment(id);
 			for (var childParts : parts) {
-				newFragment.addObject(parseKnowledgeObject(childParts));
+				try {
+					newFragment.addObject(parseKnowledgeObject(childParts));
+				} catch (IncompleteJSONException e) {
+					logger.warn("Incomplete JSON-Object: {}", e.getMessage());
+				} catch (Exception e) {
+					logger.error("Error while parsing JSON-Object: {}", e.getMessage());
+				}
 			}
 			back = newFragment;
 		}
 		return back;
 	}
-	//endregion
 
-	//region Source Parsing
 	private Set<KnowledgeSource> parseSource(List<Map<String, ?>> sourceJSON) {
 		Set<KnowledgeSource> back = new HashSet<>();
 		if (sourceJSON.isEmpty()) {
@@ -151,18 +163,19 @@ public class KnowledgeParser {
 		return back;
 	}
 
-	//region Structure Parsing
-	private KnowledgeStructure parseStructure(Map<String, ?> structureJSON) {
+	private KnowledgeStructure parseStructure(Map<String, ?> structureJSON) throws IncompleteJSONException {
 		var back = new KnowledgeStructure();
 		var root = back.getRoot();
+		root.setKey("_root");
+		root.setName(structureJSON.get(NAME).toString());
 		// check if empty
 		if (structureJSON.isEmpty()) {
-			return back;
+			throw new IncompleteJSONException("Structure is empty!");
 		}
-		var parts = (List<Map<String, ?>>) structureJSON.get(CHILDREN);
-		for (var part : parts) {
+		var children = (List<Map<String, ?>>) structureJSON.get(CHILDREN);
+		for (var child : children) {
 			try {
-				root.addObject(parseKnowledgeObject(part));
+				root.addObject(parseKnowledgeObject(child));
 			} catch (IncompleteJSONException e) {
 				logger.warn(e.getMessage());
 			} catch (Exception e) {
@@ -171,5 +184,4 @@ public class KnowledgeParser {
 		}
 		return back;
 	}
-	//endregion
 }

@@ -22,7 +22,16 @@ public class CoursePlanParser {
 	private static final String[] META_ATTRIBUTES = {"name", "year", "grade", "type", "description"};
 	private final List<ContentTarget> targets = new ArrayList<>();
 
+	/**
+	 * Parses Metadata of plan.
+	 *
+	 * @param mapping the mapping of the course plan
+	 * @return the parsed Metadata or an empty MetataDataSet if the map is empty
+	 */
 	private CourseMetadata parseMetadata(Map<String, ?> mapping) {
+		if (mapping == null) {
+			return CourseMetadata.emptyMetadata();
+		}
 		String name = (String) mapping.get("name");
 		String year = mapping.get("year").toString();
 		String level = (String) mapping.get("level");
@@ -101,18 +110,24 @@ public class CoursePlanParser {
 		return back;
 	}
 
+	/**
+	 * Parses the CurriculumGoals from the given mapping.
+	 *
+	 * @param mapping the mapping with all goals to parse
+	 * @return a list of all parsed goals
+	 */
 	private List<ContentGoal> parseCurriculumGoals(Map<String, ?> mapping) {
 		List<ContentGoal> back = new LinkedList<>();
 		for (var entry : mapping.entrySet()) {
 			String goalName = entry.getKey();
-			Map<String, ?> goal = (Map<String, ?>) entry.getValue();
-			String expression = goal.get("expression").toString().toUpperCase().replace("-", "_");
-			String target = goal.get("target").toString();
-			String completeSentence = goal.get("completeSentence").toString();
-			List<String> contentRaw = goal.get("content") instanceof List<?> list ? (List<String>) list : List.of();
-			var targets1 = contentRaw.stream().map(ContentTarget::new).toList();
-			back.add(new ContentGoal(ContentGoalExpression.valueOf(expression), target, targets1, completeSentence, goalName));
-			targets.addAll(targets1);
+			Map<String, ?> goalValues = (Map<String, ?>) entry.getValue();
+			String expression = goalValues.get("expression").toString().toUpperCase().replace("-", "_");
+			String target = goalValues.get("target").toString();
+			String completeSentence = goalValues.get("completeSentence").toString();
+			List<String> contentRaw = goalValues.get("content") instanceof List<?> list ? (List<String>) list : List.of();
+			var content = contentRaw.stream().map(ContentTarget::new).toList();
+			back.add(new ContentGoal(ContentGoalExpression.valueOf(expression), target, content, completeSentence, goalName));
+			targets.addAll(content);
 		}
 		return back;
 	}
@@ -126,24 +141,25 @@ public class CoursePlanParser {
 		} catch (ParseException e) {
 			throw new RuntimeException(e);
 		}
-		if (parsedObject instanceof HashMap<?, ?> curriculum) {
+		if (parsedObject instanceof HashMap<?, ?> parsedPlan) {
 			Map<String, ?> metaJSON;
 			Map<String, ?> contentJSON;
 			Map<String, Map<String, ?>> goalsJSON = new HashMap<>();
-			metaJSON = curriculum.get("meta") instanceof HashMap<?, ?> metaJSON_Temp
+			// META
+			metaJSON = parsedPlan.get("meta") instanceof HashMap<?, ?> metaJSON_Temp
 					? (Map<String, ?>) metaJSON_Temp : null;
-
-			contentJSON = (Map<String, ?>) curriculum.get("content");
+			var meta = parseMetadata(metaJSON);
+			// CONTENT
+			contentJSON = (Map<String, ?>) parsedPlan.get("content");
 			var curriculumGoalsEntries = contentJSON.entrySet()
 					.stream().filter(entry -> Pattern.matches("goal-\\d+", entry.getKey()));
 			curriculumGoalsEntries.forEach(entry ->
 					goalsJSON.put(entry.getKey(), (Map<String, ?>) entry.getValue())
 			);
 			List<ContentGoal> goals = parseCurriculumGoals(goalsJSON);
-
-			List<Map<String, ?>> courseStructure = (List<Map<String, ?>>) curriculum.get("structure");
-			back = new CoursePlan(parseMetadata(metaJSON), goals,
-					parseCourseStructure(courseStructure), targets);
+			// STRUCTURE
+			List<Map<String, ?>> courseStructure = (List<Map<String, ?>>) parsedPlan.get("structure");
+			back = new CoursePlan(meta, goals, parseCourseStructure(courseStructure), targets);
 		}
 		return back;
 

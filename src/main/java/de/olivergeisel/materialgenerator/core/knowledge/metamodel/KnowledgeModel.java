@@ -121,7 +121,8 @@ public class KnowledgeModel {
 	}
 
 	/**
-	 * Adds an element to the model. If the element is already in the model, nothing happens.
+	 * Adds an element to the model.  Link the element to all existing elements that are described in relations.
+	 * If the element is already in the model, nothing happens.
 	 *
 	 * @param element the element to add
 	 * @return true if the element was added, false if not
@@ -130,14 +131,28 @@ public class KnowledgeModel {
 		if (element == null) {
 			throw new IllegalArgumentException("KnowledgeElement was null!");
 		}
+		if (!element.getRelations().isEmpty()) {
+			addAndLink(element);
+		}
 		return graph.addVertex(element);
 	}
 
+	/**
+	 * Adds a collection of elements to the model. Link all new elements with all elements that are already in the model
+	 * and described in the relations.
+	 *
+	 * @param elements the elements to add.
+	 * @return true if at least one element was added, false if not.
+	 */
 	public boolean addKnowledge(Collection<KnowledgeElement> elements) {
 		if (elements.isEmpty()) {
 			return false;
 		}
-		return elements.stream().map(this::addKnowledge).max(Boolean::compareTo).orElseThrow();
+		var adding = elements.stream().map(this::addKnowledge).max(Boolean::compareTo).orElseThrow();
+		if (hasUnfinishedRelations()) {
+			tryCompleteLinking();
+		}
+		return adding;
 	}
 
 	public boolean addSource(Collection<KnowledgeSource> sources) {
@@ -171,9 +186,9 @@ public class KnowledgeModel {
 		return true;
 	}
 
-	public boolean contains(String elementId) {
+	public boolean contains(String elementId) throws IllegalArgumentException {
 		if (elementId == null) {
-			return false;
+			throw new IllegalArgumentException("ElementId was null!");
 		}
 		return graph.vertexSet().stream().anyMatch(it -> it.getId().equals(elementId));
 	}
@@ -182,7 +197,7 @@ public class KnowledgeModel {
 		if (element == null) {
 			throw new IllegalArgumentException("KnowledgeElement was null!");
 		}
-		return graph.vertexSet().contains(element);
+		return contains(element.getId());
 	}
 
 	public Set<KnowledgeElement> findAll(String elementId) {
