@@ -9,13 +9,23 @@ public enum CurriculumGoalExpression {
 	USE(5, "Wissen anwenden"),
 	COMMENT(6, "Wissen bewerten und kommentieren"),
 	CREATE(7, "Wissen erweitern und neues Wissen schaffen");
-	private int level;
-	private String description;
+
+	private final int level;
+	private final String description;
 
 	private CurriculumGoalExpression(int level, String description) {
 		this.level = level;
 		this.description = description;
 	}
 
+	//
+	public String getDescription() {
+		return description;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+//
 
 }
