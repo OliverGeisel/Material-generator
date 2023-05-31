@@ -5,7 +5,6 @@ import de.olivergeisel.materialgenerator.core.courseplan.CurriculumGoalExpressio
 public class BloomTaxonomicTranslator {
 
 	public static CurriculumGoalExpression translate(String word) {
-		CurriculumGoalExpression level = CurriculumGoalExpression.valueOf(word.toUpperCase());
-		return level;
+		return CurriculumGoalExpression.valueOf(word.toUpperCase().trim().replace(" ", "_"));
 	}
 }

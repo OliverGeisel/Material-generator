@@ -19,7 +19,6 @@ public class ContentGoal {
 	//private final List<String> specificWords;
 	private final String completeSentence;
 	private String id = "";
-
 	public ContentGoal(ContentGoalExpression expression, String masterKeyword, List<ContentTarget> content, String completeSentence) {
 		this(expression, masterKeyword, content, completeSentence, "");
 	}
@@ -49,10 +48,10 @@ public class ContentGoal {
 	public String getCompleteSentence() {
 		return completeSentence;
 	}
-//
 
-	public String getId() {
-		return id;
+//region getter / setter
+	public List<ContentTarget> getContent() {
+		return content;
 	}
 
 	/*public List<String> getSpecificWords() {
@@ -61,6 +60,11 @@ public class ContentGoal {
 	public ContentGoalExpression getExpression() {
 		return expression;
 	}
+
+	public String getId() {
+		return id;
+	}
+//endregion
 
 	public String getMasterKeyword() {
 		return masterKeyword;
