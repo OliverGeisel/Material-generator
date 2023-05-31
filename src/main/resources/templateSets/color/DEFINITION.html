@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <title th:text="'Definition für '+${term} "></title>
+</head>
+<body>
+<h1 class="text-center" style="color: var(--bs-red); " th:text="${term}"></h1>
+<hr>
+<p style="color: var(--bs-blue);font-style: italic;">Ein <span th:text="${term}"></span> ist:<br><span
+        th:text="${definition}"></span></p>
+<script src="/js/bootstrap.min.js"></script>
+</body>
+
+</html>
