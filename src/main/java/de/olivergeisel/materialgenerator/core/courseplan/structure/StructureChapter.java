@@ -1,18 +1,19 @@
 package de.olivergeisel.materialgenerator.core.courseplan.structure;
 
 import de.olivergeisel.materialgenerator.core.courseplan.content.ContentTarget;
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class StructureChapter extends StructureElement {
-
 
 	private final List<StructureElement> parts;
 	private double weight;
 
-	public StructureChapter(ContentTarget topic, Relevance relevance, String name, double weight) {
-		super(topic, relevance, name);
+	public StructureChapter(ContentTarget topic, Relevance relevance, String name, double weight, Set<KnowledgeObject> alternatives) {
+		super(topic, relevance, name, alternatives);
 		this.weight = weight;
 		parts = new ArrayList<>();
 	}

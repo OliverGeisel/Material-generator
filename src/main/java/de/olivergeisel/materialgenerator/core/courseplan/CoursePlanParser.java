@@ -5,7 +5,7 @@ import de.olivergeisel.materialgenerator.core.courseplan.content.ContentGoalExpr
 import de.olivergeisel.materialgenerator.core.courseplan.content.ContentTarget;
 import de.olivergeisel.materialgenerator.core.courseplan.meta.CourseMetadata;
 import de.olivergeisel.materialgenerator.core.courseplan.structure.*;
-import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeStructure;
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeObject;
 import org.apache.tomcat.util.json.JSONParser;
 import org.apache.tomcat.util.json.ParseException;
 
@@ -20,8 +20,6 @@ public class CoursePlanParser {
 
 	private static final String TOPIC = "topic";
 	private static final String[] META_ATTRIBUTES = {"name", "year", "grade", "type", "description"};
-	JSONParser parser;
-
 	private final List<ContentTarget> targets = new ArrayList<>();
 
 	private CourseMetadata parseMetadata(Map<String, ?> mapping) {
@@ -37,20 +35,24 @@ public class CoursePlanParser {
 
 	}
 
+	private Set<KnowledgeObject> crateAlias(List<String> knowledgeAreasJSON) {
+		var back = new HashSet<KnowledgeObject>();
+		for (var elem : knowledgeAreasJSON) {
+			back.add(new PotenzialKnowledgeObject(elem));
+		}
+		return back;
+	}
+
 	private StructureChapter createChapter(Map<String, ?> chapterJson) {
 		List<Map<String, ?>> groups = (List<Map<String, ?>>) chapterJson.get("groups");
 		String name = chapterJson.get("name").toString();
 		String weight = chapterJson.get("weight").toString();
+		var alternatives = crateAlias((List<String>) chapterJson.get("alternatives"));
 		String topicName = chapterJson.get(TOPIC) != null ? chapterJson.get(TOPIC).toString() : "";
 		var topic = findTopic(topicName);
-		var back = new StructureChapter(topic, Relevance.TO_SET, name, Double.parseDouble(weight));
+		var back = new StructureChapter(topic, Relevance.TO_SET, name, Double.parseDouble(weight), alternatives);
 		for (var group : groups) {
 			back.add(createGroup(group));
-		}
-		List<String> knowledgeAreasJSON = (List<String>) chapterJson.get("knowledgeAreas");
-		var knowledgeAreas = crateAreas(knowledgeAreasJSON);
-		for (var elem : knowledgeAreas) {
-			back.addAlias(elem);
 		}
 		back.updateRelevance();
 		if (!back.isValid()) {
@@ -59,28 +61,16 @@ public class CoursePlanParser {
 		return back;
 	}
 
-	private List<KnowledgeStructure> crateAreas(List<String> knowledgeAreasJSON) {
-		var back = new ArrayList<KnowledgeStructure>();
-		for (var elem : knowledgeAreasJSON) {
-			back.add(new PotenzialKnowledgeStructure(elem));
-		}
-		return back;
-	}
-
 	private StructureElementPart createGroup(Map<String, ?> groupJSON) {
 		String name = groupJSON.get("name").toString();
 		String topicName = groupJSON.get(TOPIC) != null ? groupJSON.get(TOPIC).toString() : "";
 		var topic = findTopic(topicName);
-		var back = new StructureGroup(topic, Relevance.TO_SET, name);
+		var alternatives = crateAlias(((List<String>) groupJSON.get("alternatives")));
+		var back = new StructureGroup(topic, Relevance.TO_SET, name, alternatives);
 		List<Map<String, ?>> tasks = (List<Map<String, ?>>) groupJSON.get("tasks");
 		for (var task : tasks) {
 			// Todo decide between group and task!
 			back.add(createTask(task));
-		}
-		List<String> knowledgeAreasJSON = (List<String>) groupJSON.get("knowledgeAreas");
-		var knowledgeAreas = crateAreas(knowledgeAreasJSON);
-		for (var elem : knowledgeAreas) {
-			back.addAlias(elem);
 		}
 		back.updateRelevance();
 		if (!back.isValid()) {
@@ -89,19 +79,13 @@ public class CoursePlanParser {
 		return back;
 	}
 
-	private StructureTask createTask(Map<String, ?> task) {
-		Relevance relevance = Relevance.valueOf(task.get("relevance").toString());
-		String name = task.get("name").toString();
-		String topicName = task.get(TOPIC) != null ? task.get(TOPIC).toString() : "";
+	private StructureTask createTask(Map<String, ?> taskJSON) {
+		Relevance relevance = Relevance.valueOf(taskJSON.get("relevance").toString());
+		String name = taskJSON.get("name").toString();
+		String topicName = taskJSON.get(TOPIC) != null ? taskJSON.get(TOPIC).toString() : "";
 		ContentTarget topic = findTopic(topicName);
-
-		var back = new StructureTask(topic, relevance, name);
-		List<String> knowledgeAreasJSON = (List<String>) task.get("knowledgeAreas");
-		var knowledgeAreas = crateAreas(knowledgeAreasJSON);
-		for (var elem : knowledgeAreas) {
-			back.addAlias(elem);
-		}
-		return back;
+		var alternatives = crateAlias((List<String>) taskJSON.get("alternatives"));
+		return new StructureTask(topic, relevance, name, alternatives);
 	}
 
 	private ContentTarget findTopic(String goal) {
@@ -125,19 +109,17 @@ public class CoursePlanParser {
 			String expression = goal.get("expression").toString().toUpperCase().replace("-", "_");
 			String target = goal.get("target").toString();
 			String completeSentence = goal.get("completeSentence").toString();
-			//List<String> specificWords = goal.get("content") instanceof List<?> list ? (List<String>) list : List.of();
 			List<String> contentRaw = goal.get("content") instanceof List<?> list ? (List<String>) list : List.of();
-			var content = contentRaw.stream().map(ContentTarget::new).toList();
-			back.add(new ContentGoal(ContentGoalExpression.valueOf(expression), target, content, completeSentence, goalName));
-			// todo add targets
-			targets.addAll(content);
+			var targets1 = contentRaw.stream().map(ContentTarget::new).toList();
+			back.add(new ContentGoal(ContentGoalExpression.valueOf(expression), target, targets1, completeSentence, goalName));
+			targets.addAll(targets1);
 		}
 		return back;
 	}
 
-	public CoursePlan parseFromFile(InputStream file) throws FileNotFoundException {
+	public CoursePlan parseFromFile(InputStream file) throws FileNotFoundException, RuntimeException {
 		CoursePlan back = null;
-		parser = new JSONParser(file);
+		var parser = new JSONParser(file);
 		Object parsedObject;
 		try {
 			parsedObject = parser.parse();
