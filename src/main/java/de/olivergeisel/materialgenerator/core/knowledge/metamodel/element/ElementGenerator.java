@@ -3,6 +3,7 @@ package de.olivergeisel.materialgenerator.core.knowledge.metamodel.element;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.Relation;
 
 import java.util.Collection;
+import java.util.List;
 
 public class ElementGenerator {
 
@@ -44,5 +45,18 @@ public class ElementGenerator {
 			case NODE -> new NodeElement(content, id, type, relations);
 			default -> new CustomElement(content, id, "CUSTOM", relations, type);
 		};
+	}
+
+	/**
+	 * Creates a new KnowledgeElement of the given type.
+	 *
+	 * @param type      The type of the element
+	 * @param id        The id of the element
+	 * @param structure The structure of the element (Not used yet)
+	 * @param content   The content of the element
+	 * @return The created element
+	 */
+	public static KnowledgeElement create(String type, String id, String structure, String content) {
+		return create(type, id, structure, content, List.of());
 	}
 }

@@ -8,4 +8,8 @@ public class NodeElement extends KnowledgeElement {
 	public NodeElement(String content, String id, String type, Collection<Relation> relations) {
 		super(content, id, type, relations);
 	}
+
+	public NodeElement(String content, String id, String type) {
+		super(content, id, type);
+	}
 }

@@ -2,15 +2,13 @@ package de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation;
 
 
 public class BasicRelation extends Relation {
-	private final RelationType type;
 
 	public BasicRelation(RelationType type, String from, String to) {
-		super(type.name(), from, to);
-		this.type = type;
+		super(idFromName(type.name(), from, to), from, to, type);
 	}
 
-	public RelationType getType() {
-		return type;
+	static String idFromName(String type, String from, String to) {
+		return type.toUpperCase() + "_" + from + "_" + to;
 	}
 
 }

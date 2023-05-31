@@ -8,4 +8,8 @@ public class Example extends KnowledgeElement {
 	public Example(String content, String id, String type, Collection<Relation> relations) {
 		super(content, id, type, relations);
 	}
+
+	public Example(String content, String id, String type) {
+		super(content, id, type);
+	}
 }

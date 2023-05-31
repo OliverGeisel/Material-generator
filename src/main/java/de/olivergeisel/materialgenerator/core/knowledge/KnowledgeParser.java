@@ -26,10 +26,37 @@ import java.util.Set;
 
 public class KnowledgeParser {
 
+	public static final String TYPE = "type";
+	public static final String ID = "id";
+	public static final String STRUCTURE = "structure";
+	public static final String CONTENT = "content";
+	public static final String RELATIONS = "relations";
+	public static final String RELATION_TYPE = "relation_type";
+	public static final String RELATION_ID = "relation_id";
+	// Source fields
+	public static final String NAME = "name";
+
+	// Structure fields
+	public static final String CHILDREN = "children";
 	Logger logger = LoggerFactory.getLogger(KnowledgeParser.class);
 
-	JSONParser parser;
+	//region Source parsing
+	private KnowledgeElement createElement(String type, String id, String structure, String content,
+										   List<Map<String, String>> relationsJSON) {
+		var newElement = ElementGenerator.create(type, id, structure, content);
+		var relations = createRelation(relationsJSON, newElement);
+		newElement.addRelations(relations);
+		return newElement;
+	}
 
+	private Set<Relation> createRelation(List<Map<String, String>> relationsJSON, KnowledgeElement fromElement) {
+		var back = new HashSet<Relation>();
+		for (var relation : relationsJSON) {
+			var newRelation = RelationGenerator.create(relation.get(RELATION_TYPE), fromElement.getId(), relation.get(RELATION_ID));
+			back.add(newRelation);
+		}
+		return back;
+	}
 
 	public KnowledgeModel parseFromFile(File jsonFile) throws FileNotFoundException {
 		FileInputStream input = new FileInputStream(jsonFile);
@@ -37,8 +64,8 @@ public class KnowledgeParser {
 	}
 
 	public KnowledgeModel parseFromFile(InputStream file) {
-		KnowledgeModel back = null;
-		parser = new JSONParser(file);
+		KnowledgeModel back;
+		JSONParser parser = new JSONParser(file);
 		Object parsedObject;
 		try {
 			parsedObject = parser.parse();
@@ -53,10 +80,9 @@ public class KnowledgeParser {
 			var parsedStructure = parseStructure(structure);
 			var parsedSource = parseSource(source);
 			var parsedKnowledge = parseKnowledge(knowledge);
-			back = new KnowledgeModel();
-			back.addStructure(parsedStructure);
+			back = new KnowledgeModel(parsedStructure.getRoot());
 			back.addSource(parsedSource);
-			back.add(parsedKnowledge);
+			back.addKnowledge(parsedKnowledge);
 		} else {
 			logger.warn("No valid knowledge-Fiel! Create empty KnowledgeModel");
 			back = new KnowledgeModel();
@@ -70,99 +96,25 @@ public class KnowledgeParser {
 		}
 		Set<KnowledgeElement> back = new HashSet<>();
 		for (Map<String, ?> element : knowledgeJSON) {
-			String type = element.get("type").toString();
-			String id = element.get("id").toString();
-			String structure = element.get("structure").toString();
-			String content = element.get("content").toString();
-			List<Map<String, String>> relations = (List<Map<String, String>>) element.get("relations");
-			back.add(createElement(type, id, structure, content, relations));
-		}
-		return back;
-
-	}
-
-	private KnowledgeElement getKnowledgeElement(Map<String, ?> jsonElement) {
-		var type = jsonElement.get("typ").toString();
-		var content = jsonElement.get("content").toString();
-		var id = jsonElement.get("id").toString();
-		String structure = jsonElement.get("structure").toString();
-		var relationsJSON = (List<Map<String, String>>) jsonElement.get("relations");
-		var relations = createRelation(relationsJSON);
-		return ElementGenerator.create(type, id, structure, content, relations);
-	}
-
-	private Set<Relation> createRelation(List<Map<String, String>> relationsJSON) {
-		var back = new HashSet<Relation>();
-		for (var relation : relationsJSON) {
-			var newRelation = RelationGenerator.create(relation.get("relation-type"), relation.get("relation-id"));
-			back.add(newRelation);
+			String type = element.get(TYPE).toString();
+			String id = element.get(ID).toString();
+			String structure = element.get(STRUCTURE).toString();
+			String content = element.get(CONTENT).toString();
+			List<Map<String, String>> relationsJSON = (List<Map<String, String>>) element.get(RELATIONS);
+			back.add(createElement(type, id, structure, content, relationsJSON));
 		}
 		return back;
 	}
+	//endregion
 
-	private KnowledgeElement createElement(String type, String id, String structure,
-										   String content, List<Map<String, String>> relationsJSON) {
-		var relations = createRelation(relationsJSON);
-		return ElementGenerator.create(type, id, structure, content, relations);
-
-	}
-
-	private Set<KnowledgeSource> parseSource(List<Map<String, ?>> sourceJSON) {
-		Set<KnowledgeSource> back = new HashSet<>();
-		if (sourceJSON.isEmpty()) {
-			return back;
-		}
-		for (var source : sourceJSON) {
-			String type = source.get("type").toString();
-			String id = source.get("id").toString();
-			String name = source.get("name").toString();
-			String content = source.get("content").toString(); // Todo
-			back.add(switch (type) {
-						case "INTERNALMEDIA" -> new InternalMedia(id, name);
-						case "UNKNOWNSOURCE" -> UnknownSource.getInstance();
-						case "NOTRESOLVABLEREFERENCE" -> new NotResolvableReference(id, name);
-						case "RESOLVABLEREFERENCE" -> new ResolvableReference(id, name);
-						default -> throw new IllegalArgumentException("Unknown Source-type");
-					}
-			);
-		}
-		return back;
-	}
-
-	private KnowledgeStructure parseStructure(Map<String, ?> structureJSON) {
-		var back = new KnowledgeStructure();
-		var root = back.getRoot();
-		// check if empty
-		if (structureJSON.isEmpty()) {
-			return back;
-		}
-		var parts = (List<Map<String, ?>>) structureJSON.get("parts");
-		for (var part : parts) {
-			// check if empty
-			KnowledgeObject newPart;
-			var id = part.get("id").toString();
-			if (((List<?>) part.get("parts")).isEmpty()) {
-				newPart = new KnowledgeLeaf(id);
-			} else {
-				var newFragment = new KnowledgeFragment(id);
-				for (var childParts : (List<Map<String, ?>>) part.get("parts")) {
-					newFragment.addObject(parseKnowledgeObject(childParts));
-				}
-				newPart = newFragment;
-			}
-			root.addObject(newPart);
-		}
-		return back;
-	}
-
-	private KnowledgeObject parseKnowledgeObject(Map<String, ?> part) {
+	private KnowledgeObject parseKnowledgeObject(Map<String, ?> partJSON) throws IncompleteJSONException {
 		KnowledgeObject back;
 		// check if empty
-		if (part.isEmpty()) {
-			return null;
+		if (partJSON.isEmpty()) {
+			throw new IncompleteJSONException("KnowledgeObject is empty!");
 		}
-		var id = part.get("id").toString();
-		var parts = (List<Map<String, ?>>) part.get("parts");
+		var id = partJSON.get(ID).toString();
+		var parts = (List<Map<String, ?>>) partJSON.get(CHILDREN);
 		// check if parts is empty
 		if (parts.isEmpty()) {
 			back = new KnowledgeLeaf(id);
@@ -175,6 +127,49 @@ public class KnowledgeParser {
 		}
 		return back;
 	}
+	//endregion
 
+	//region Source Parsing
+	private Set<KnowledgeSource> parseSource(List<Map<String, ?>> sourceJSON) {
+		Set<KnowledgeSource> back = new HashSet<>();
+		if (sourceJSON.isEmpty()) {
+			return back;
+		}
+		for (var source : sourceJSON) {
+			String type = source.get(TYPE).toString();
+			String id = source.get(ID).toString();
+			String name = source.get(NAME).toString();
+			String content = source.get(CONTENT).toString(); // Todo
+			back.add(switch (SourceType.valueOf(type.toUpperCase())) {
+						case INTERNAL_MEDIA -> new InternalMedia(id, name);
+						case UNKNOWN_SOURCE -> UnknownSource.getInstance();
+						case NOT_RESOLVABLE_REFERENCE -> new NotResolvableReference(id, name);
+						case RESOLVABLE_REFERENCE -> new ResolvableReference(id, name);
+					}
+			);
+		}
+		return back;
+	}
 
+	//region Structure Parsing
+	private KnowledgeStructure parseStructure(Map<String, ?> structureJSON) {
+		var back = new KnowledgeStructure();
+		var root = back.getRoot();
+		// check if empty
+		if (structureJSON.isEmpty()) {
+			return back;
+		}
+		var parts = (List<Map<String, ?>>) structureJSON.get(CHILDREN);
+		for (var part : parts) {
+			try {
+				root.addObject(parseKnowledgeObject(part));
+			} catch (IncompleteJSONException e) {
+				logger.warn(e.getMessage());
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
+		}
+		return back;
+	}
+	//endregion
 }

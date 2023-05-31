@@ -2,69 +2,142 @@ package de.olivergeisel.materialgenerator.core.knowledge.metamodel;
 
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.Relation;
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.RelationType;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.source.KnowledgeSource;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeFragment;
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeObject;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeStructure;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.RootStructureElement;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.DefaultUndirectedGraph;
+import org.jgrapht.graph.DirectedWeightedPseudograph;
 
 import java.util.*;
 
+/**
+ * A model of knowledge. It contains structure, all elements, relations and sources.
+ */
 public class KnowledgeModel {
-	private final List<KnowledgeElement> elements = new LinkedList<>();
-	private final Map<Relation, Set<KnowledgeElement>> unfinishedRelations = new HashMap<>();
+	private final Map<Relation, RelationIdPair> unfinishedRelations = new HashMap<>();
 	private final Set<KnowledgeSource> sources = new HashSet<>();
-	private final KnowledgeFragment root;
-
-	private final Graph<KnowledgeElement, DefaultEdge> graph;
+	private final KnowledgeStructure structure;
+	private final Graph<KnowledgeElement, RelationEdge> graph;
 	private String version;
 	private String name;
 
 	public KnowledgeModel() {
-		this.root = new RootStructureElement();
-		this.graph = new DefaultUndirectedGraph<>(DefaultEdge.class);
+		this(new RootStructureElement());
 	}
 
-	public KnowledgeModel(KnowledgeFragment root) {
-		this.root = root;
-		this.graph = new DefaultUndirectedGraph<>(DefaultEdge.class);
+	public KnowledgeModel(RootStructureElement root) {
+		this(root, "0.0.0", "");
 	}
 
-	public KnowledgeModel(KnowledgeFragment root, String version, String name) {
-		this.root = root;
+	public KnowledgeModel(RootStructureElement root, String version, String name) {
+		this.structure = new KnowledgeStructure(root);
 		this.name = name;
-		this.graph = new DefaultUndirectedGraph<>(DefaultEdge.class);
+		this.graph = new DirectedWeightedPseudograph<>(RelationEdge.class);
 		this.version = version;
 	}
 
-	public DefaultEdge link(KnowledgeElement element1, KnowledgeElement element2) {
-		return graph.addEdge(element1, element2);
+	/**
+	 * Adds a relation to the model.
+	 * If the relation is already in the model, nothing happens.
+	 *
+	 * @param relation the relation to add.
+	 * @return true if the relation was added, false if not.
+	 * @throws IllegalArgumentException if the relation was null.
+	 */
+	public boolean addAndLink(Relation relation) throws IllegalArgumentException {
+		boolean hasFrom = false;
+		boolean hasTo = false;
+		if (relation == null) {
+			throw new IllegalArgumentException("Relation was null!");
+		}
+		var fromId = relation.getFromId();
+		var fromElement = get(fromId);
+		var toId = relation.getToId();
+		var toElement = get(toId);
+		if (fromElement != null) {
+			hasFrom = true;
+			relation.setFrom(fromElement);
+		}
+		if (toElement != null) {
+			hasTo = true;
+			relation.setTo(toElement);
+		}
+		if (!(hasFrom && hasTo)) {
+			unfinishedRelations.put(relation, new RelationIdPair(fromId, toId));
+		} else {
+			return link(fromElement, toElement, relation);
+		}
+		return false;
 	}
 
-	public boolean addStructure(KnowledgeStructure parsedStructure) {
-		// Todo insert to correct place
-		if (root.getElements().isEmpty()) {
-			root.addObject(parsedStructure.getRoot());
+	/**
+	 * Link two elements with the given relation.
+	 * <p>
+	 * The elements are added to the model if they are not already in it.
+	 *
+	 * @param elementFrom the element from which the relation goes
+	 * @param elementTo   the element to which the relation goes
+	 * @param relation    the relation
+	 * @return true if both elements were added and linked, false if not. false is also returned if the relation doesn't
+	 * contain the elements.
+	 * @throws IllegalArgumentException if one of the arguments was null.
+	 */
+	public boolean addAndLink(KnowledgeElement elementFrom, KnowledgeElement elementTo, Relation relation) {
+		if (relation == null || elementFrom == null || elementTo == null) {
+			throw new IllegalArgumentException("Relation or element was null!");
 		}
+		if (!relation.getFromId().equals(elementFrom.getId()) || !relation.getToId().equals(elementTo.getId())) {
+			return false;
+		}
+		addKnowledge(elementFrom);
+		addKnowledge(elementTo);
+		var type = relation.getType();
+		link(elementFrom, elementTo, type);
 		return true;
 	}
 
-	public boolean add(Collection<KnowledgeElement> elements) {
-		if (elements.isEmpty()) {
-			return false;
-		}
-		return elements.stream().map(this::add).max(Boolean::compareTo).orElseThrow();
+	/**
+	 * Adds an element to the model and links it with all relations that are already in the model.
+	 *
+	 * @param element the element to add
+	 * @return true if the element was added, false if not
+	 */
+	public boolean addAndLink(KnowledgeElement element) {
+		addKnowledge(element);
+		var relations = element.getRelations();
+		relations.forEach(relation -> {
+			var toId = relation.getToId();
+			if (contains(toId)) {
+				link(element, get(toId), relation.getType());
+			} else {
+				unfinishedRelations.put(relation, new RelationIdPair(element.getId(), toId));
+			}
+		});
+		return true;
 	}
 
-	public boolean add(KnowledgeElement element) {
+	/**
+	 * Adds an element to the model. If the element is already in the model, nothing happens.
+	 *
+	 * @param element the element to add
+	 * @return true if the element was added, false if not
+	 */
+	public boolean addKnowledge(KnowledgeElement element) {
 		if (element == null) {
 			throw new IllegalArgumentException("KnowledgeElement was null!");
 		}
-		var result = elements.add(element);
-		graph.addVertex(element);
-		return result;
+		return graph.addVertex(element);
+	}
+
+	public boolean addKnowledge(Collection<KnowledgeElement> elements) {
+		if (elements.isEmpty()) {
+			return false;
+		}
+		return elements.stream().map(this::addKnowledge).max(Boolean::compareTo).orElseThrow();
 	}
 
 	public boolean addSource(Collection<KnowledgeSource> sources) {
@@ -75,61 +148,108 @@ public class KnowledgeModel {
 		return this.sources.add(sources);
 	}
 
-
-	public boolean remove(KnowledgeElement element) {
-		var result = elements.remove(element);
-		graph.removeVertex(element);
-		return result;
+	/**
+	 * Adds a structure to the given structure element.
+	 *
+	 * @param structure the structure to add
+	 * @param part      the part to add to the structure
+	 * @return true if the structure was added, false if not
+	 */
+	public boolean addStructureTo(KnowledgeFragment structure, KnowledgeObject part) {
+		if (structure == null || part == null) {
+			return false;
+		}
+		if (!getRoot().contains(structure)) {
+			return false;
+		}
+		structure.addObject(part);
+		return true;
 	}
 
-	public boolean contains(KnowledgeElement element) {
-		return elements.contains(element);
+	public boolean addStructureToRoot(KnowledgeObject object) {
+		this.structure.getRoot().addObject(object);
+		return true;
 	}
 
-	public boolean contains(String id) {
-		return elements.stream().anyMatch(it -> it.getId().equals(id));
+	public boolean contains(String elementId) {
+		if (elementId == null) {
+			return false;
+		}
+		return graph.vertexSet().stream().anyMatch(it -> it.getId().equals(elementId));
 	}
 
-	public KnowledgeElement get(String id) {
+	public boolean contains(KnowledgeElement element) throws IllegalArgumentException {
+		if (element == null) {
+			throw new IllegalArgumentException("KnowledgeElement was null!");
+		}
+		return graph.vertexSet().contains(element);
+	}
+
+	public Set<KnowledgeElement> findAll(String elementId) {
+		var matchingIDs = findMatchingIDs(elementId);
+		return null; // todo
+	}
+
+	private Collection<String> findMatchingIDs(String elementId) {
+		return getIDs().stream().filter(it -> it.split("-")[0].equals(elementId)).toList();
+	}
+
+	public KnowledgeElement get(String id) throws NoSuchElementException {
 		return graph.vertexSet().stream().filter(it -> it.getId().equals(id)).findFirst()
 				.orElseThrow(() -> new NoSuchElementException("No element with id " + id + " found"));
 	}
 
-	public boolean addAndLink(KnowledgeElement element1, KnowledgeElement element2) {
-		var b1 = add(element1);
-		var b2 = add(element2);
-		var edge = link(element1, element2);
-		return b1 && b2;
+	/**
+	 * Check if there are any relations that could not be completed.
+	 *
+	 * @return true if there are unfinished relations, false if not.
+	 */
+	public boolean hasUnfinishedRelations() {
+		return !unfinishedRelations.isEmpty();
 	}
 
-	public boolean addAndLink(KnowledgeElement element) {
-		add(element);
-		var relations = element.getRelations();
-		relations.forEach(it -> {
-			var relationName = it.getName();
-			if (contains(relationName)) {
-				link(element, get(relationName));
-			} else {
-				if (unfinishedRelations.containsKey(it)) {
-					unfinishedRelations.get(it).add(element);
-				} else {
-					var set = new HashSet<KnowledgeElement>();
-					set.add(element);
-					unfinishedRelations.put(it, set);
-				}
+	public boolean link(KnowledgeElement from, KnowledgeElement to, Relation relation) {
+		var edge = new RelationEdge(relation.getType());
+		return graph.addEdge(from, to, edge);
+	}
+
+	public RelationEdge link(KnowledgeElement from, KnowledgeElement to, RelationType type) throws IllegalStateException {
+		var newEdge = new RelationEdge(type);
+		if (graph.addEdge(from, to, newEdge)) {
+			throw new IllegalStateException();
+		}
+		return newEdge;
+	}
+
+	public boolean link(KnowledgeElement from, KnowledgeElement to, RelationEdge edge) {
+		return graph.addEdge(from, to, edge);
+	}
+
+	public boolean remove(KnowledgeElement element) {
+		return graph.removeVertex(element);
+	}
+
+	/**
+	 * Tries to complete all relations that were not completed when the elements were added.
+	 */
+	public void tryCompleteLinking() {
+		for (var entry : unfinishedRelations.entrySet()) {
+			var relation = entry.getKey();
+			var fromId = relation.getFromId();
+			var toId = relation.getToId();
+			if (contains(fromId) && contains(toId)) {
+				link(get(fromId), get(toId), relation.getType());
 			}
-		});
-		return true;
+		}
 	}
 
-
-	private Collection<String> findMatchingIDs(String element) {
-		return getIDs().stream().filter(it -> it.split("-")[0].equals(element)).toList();
+	//region getter / setter
+	public KnowledgeFragment getRoot() {
+		return structure.getRoot();
 	}
 
-	public Set<KnowledgeElement> findAll(String element) {
-		var matchingIDs = findMatchingIDs(element);
-		return null; // todo
+	public List<String> getIDs() {
+		return graph.vertexSet().stream().map(KnowledgeElement::getId).toList();
 	}
 
 	public String getName() {
@@ -139,11 +259,47 @@ public class KnowledgeModel {
 	public String getVersion() {
 		return version;
 	}
-	public List<KnowledgeElement> getElements() {
-		return elements;
+
+	public Set<KnowledgeElement> getElements() {
+		return graph.vertexSet();
+	}
+//endregion
+
+	@Override
+	public int hashCode() {
+		int result = graph.hashCode();
+		result = 31 * result + version.hashCode();
+		result = 31 * result + name.hashCode();
+		return result;
 	}
 
-	public List<String> getIDs() {
-		return graph.vertexSet().stream().map(KnowledgeElement::getId).toList();
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof KnowledgeModel that)) return false;
+		if (!version.equals(that.version)) return false;
+		if (!graph.equals(that.graph)) return false;
+		return name.equals(that.name);
 	}
+
+	private record RelationIdPair(String fromId, String toId) {
+	}
+}
+
+/**
+ * A relation edge between two elements.
+ * It contains the type of the relation.
+ */
+class RelationEdge extends DefaultEdge {
+	private final RelationType type;
+
+	public RelationEdge(RelationType type) {
+		this.type = type;
+	}
+
+	//region getter / setter
+	public RelationType getRelation() {
+		return type;
+	}
+//endregion
 }

@@ -4,21 +4,30 @@ import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.Knowle
 
 public abstract class Relation {
 
+	private final RelationType type;
 	private final String name;
 	private String fromId;
 	private String toId;
 	private KnowledgeElement from;
 	private KnowledgeElement to;
 
-	protected Relation(String name, String from, String to) {
-		fromId = from;
-		toId = to;
+	protected Relation(String name, String fromId, String toId, RelationType type) {
+		if (fromId == null || toId == null || type == null || name == null) {
+			throw new IllegalArgumentException("Arguments must not be null");
+		}
+		this.type = type;
+		this.fromId = fromId;
+		this.toId = toId;
 		this.name = name;
 	}
 
-	//
-	public KnowledgeElement getElement() {
-		return from;
+//region getter / setter
+	public String getFromId() {
+		return fromId;
+	}
+
+	public String getToId() {
+		return toId;
 	}
 
 	public KnowledgeElement getFrom() {
@@ -43,4 +52,31 @@ public abstract class Relation {
 		toId = to.getId();
 	}
 
+	public RelationType getType() {
+		return type;
+	}
+//endregion
+
+	@Override
+	public int hashCode() {
+		int result = name.hashCode();
+		result = 31 * result + fromId.hashCode();
+		result = 31 * result + toId.hashCode();
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof Relation relation)) return false;
+
+		if (!name.equals(relation.name)) return false;
+		if (!fromId.equals(relation.fromId)) return false;
+		return toId.equals(relation.toId);
+	}
+
+	@Override
+	public String toString() {
+		return "Relation " + name + ": " + fromId + " → " + toId;
+	}
 }

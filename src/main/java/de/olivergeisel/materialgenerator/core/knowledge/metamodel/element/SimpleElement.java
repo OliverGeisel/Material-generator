@@ -4,8 +4,12 @@ import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.Relat
 
 import java.util.Collection;
 
-public abstract class  SimpleElement extends KnowledgeElement {
+public abstract class SimpleElement extends KnowledgeElement {
 	protected SimpleElement(String content, String id, String type, Collection<Relation> relations) {
 		super(content, id, type, relations);
+	}
+
+	protected SimpleElement(String content, String id, String type) {
+		super(content, id, type);
 	}
 }
