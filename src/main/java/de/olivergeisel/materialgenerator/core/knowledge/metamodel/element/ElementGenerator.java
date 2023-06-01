@@ -23,17 +23,17 @@ public class ElementGenerator {
 	/**
 	 * Creates a new KnowledgeElement of the given type.
 	 *
-	 * @param type      The type of the element
-	 * @param id        The id of the element
-	 * @param structure The structure of the element (Not used yet)
-	 * @param content   The content of the element
-	 * @param relations The relations of the element
+	 * @param type        The type of the element
+	 * @param id          The id of the element
+	 * @param structureId The structure of the element (Not used yet)
+	 * @param content     The content of the element
+	 * @param relations   The relations of the element
 	 * @return The created element
 	 */
-	public static KnowledgeElement create(String type, String id, String structure, String content,
+	public static KnowledgeElement create(String type, String id, String structureId, String content,
 										  Collection<Relation> relations) {
 		var kType = type.toUpperCase();
-		return switch (kType) {
+		var element = switch (kType) {
 			case FACT -> new Fact(content, id, type, relations);
 			case DEFINITION -> new Definition(content, id, type, relations);
 			case TERM -> new Term(content, id, type, relations);
@@ -45,6 +45,8 @@ public class ElementGenerator {
 			case NODE -> new NodeElement(content, id, type, relations);
 			default -> new CustomElement(content, id, "CUSTOM", relations, type);
 		};
+		element.setStructureId(structureId);
+		return element;
 	}
 
 	/**

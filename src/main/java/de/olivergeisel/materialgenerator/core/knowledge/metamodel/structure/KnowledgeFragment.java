@@ -3,9 +3,9 @@ package de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class KnowledgeFragment extends KnowledgeObject {
-
 
 	private final List<KnowledgeObject> elements;
 	private String name;
@@ -31,13 +31,6 @@ public class KnowledgeFragment extends KnowledgeObject {
 		return elements.add(object);
 	}
 
-	public boolean removeObject(KnowledgeObject object) {
-		if (!elements.contains(object)) {
-			return false;
-		}
-		return elements.remove(object);
-	}
-
 	public boolean contains(KnowledgeObject object) {
 		if (object == null) {
 			return false;
@@ -57,12 +50,59 @@ public class KnowledgeFragment extends KnowledgeObject {
 		return false;
 	}
 
-//region getter / setter
+	public boolean contains(String id) throws NoSuchElementException {
+		if (id == null) {
+			throw new NoSuchElementException("id must not be null");
+		}
+		if (id.equals(getId())) {
+			return true;
+		}
+		for (KnowledgeObject element : elements) {
+			if (element instanceof KnowledgeFragment fragment && fragment.contains(id)) {
+				return true;
+			} else {
+				if (element.getId().equals(id)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public KnowledgeObject getObjectById(String id) throws NoSuchElementException {
+		if (id == null) {
+			throw new NoSuchElementException("id must not be null");
+		}
+		if (id.equals(getId())) {
+			return this;
+		}
+		for (KnowledgeObject element : elements) {
+			if (element instanceof KnowledgeFragment fragment) {
+				KnowledgeObject object = fragment.getObjectById(id);
+				if (object != null) {
+					return object;
+				}
+			} else {
+				if (element.getId().equals(id)) {
+					return element;
+				}
+			}
+		}
+		throw new NoSuchElementException("No element with id " + id + " found");
+	}
+
+	public boolean removeObject(KnowledgeObject object) {
+		if (!elements.contains(object)) {
+			return false;
+		}
+		return elements.remove(object);
+	}
+
+	//region getter / setter
 	//
 	public List<KnowledgeObject> getElements() {
 		return Collections.unmodifiableList(elements);
 	}
-//endregion
 
 	public String getName() {
 		return name;
@@ -71,4 +111,5 @@ public class KnowledgeFragment extends KnowledgeObject {
 	public void setName(String name) {
 		this.name = name;
 	}
+//endregion
 }

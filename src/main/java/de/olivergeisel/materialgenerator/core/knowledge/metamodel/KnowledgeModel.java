@@ -11,6 +11,8 @@ import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.Root
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DirectedWeightedPseudograph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -18,6 +20,8 @@ import java.util.*;
  * A model of knowledge. It contains structure, all elements, relations and sources.
  */
 public class KnowledgeModel {
+
+	private static Logger logger = LoggerFactory.getLogger(KnowledgeModel.class);
 	private final Map<Relation, RelationIdPair> unfinishedRelations = new HashMap<>();
 	private final Set<KnowledgeSource> sources = new HashSet<>();
 	private final KnowledgeStructure structure;
@@ -152,6 +156,7 @@ public class KnowledgeModel {
 		if (hasUnfinishedRelations()) {
 			tryCompleteLinking();
 		}
+		updateStructure();
 		return adding;
 	}
 
@@ -183,6 +188,7 @@ public class KnowledgeModel {
 
 	public boolean addStructureToRoot(KnowledgeObject object) {
 		this.structure.getRoot().addObject(object);
+		updateStructure();
 		return true;
 	}
 
@@ -254,6 +260,20 @@ public class KnowledgeModel {
 			var toId = relation.getToId();
 			if (contains(fromId) && contains(toId)) {
 				link(get(fromId), get(toId), relation.getType());
+			}
+		}
+	}
+
+	private void updateStructure() {
+		for (var elem : graph.vertexSet()) {
+			var structureId = elem.getStructureId();
+			if (structureId == null) {
+				continue;
+			}
+			try {
+				structure.getObjectById(structureId).linkElement(elem);
+			} catch (NoSuchElementException e) {
+				logger.warn("Object {} is not part of the structure", elem.getId());
 			}
 		}
 	}

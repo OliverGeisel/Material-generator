@@ -123,6 +123,7 @@ public class KnowledgeParser {
 		}
 		var id = partJSON.get(ID).toString();
 		var parts = (List<Map<String, ?>>) partJSON.get(CHILDREN);
+		// todo use key-field -> define in KnowledgeObject
 		// check if it's a Leaf or Fragment
 		if (parts.isEmpty()) {
 			back = new KnowledgeLeaf(id);
@@ -151,14 +152,15 @@ public class KnowledgeParser {
 			String type = source.get(TYPE).toString();
 			String id = source.get(ID).toString();
 			String name = source.get(NAME).toString();
-			String content = source.get(CONTENT).toString(); // Todo
-			back.add(switch (SourceType.valueOf(type.toUpperCase())) {
-						case INTERNAL_MEDIA -> new InternalMedia(id, name);
-						case UNKNOWN_SOURCE -> UnknownSource.getInstance();
-						case NOT_RESOLVABLE_REFERENCE -> new NotResolvableReference(id, name);
-						case RESOLVABLE_REFERENCE -> new ResolvableReference(id, name);
-					}
-			);
+			String content = source.get(CONTENT).toString(); // Todo init content
+			var newSource = switch (SourceType.valueOf(type.toUpperCase())) {
+				case INTERNAL_MEDIA -> new InternalMedia(id, name);
+				case UNKNOWN_SOURCE -> UnknownSource.getInstance();
+				case NOT_RESOLVABLE_REFERENCE -> new NotResolvableReference(id, name);
+				case RESOLVABLE_REFERENCE -> new ResolvableReference(id, name);
+			};
+			newSource.setContent(content);
+			back.add(newSource);
 		}
 		return back;
 	}

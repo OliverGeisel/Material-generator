@@ -6,5 +6,4 @@ public class KnowledgeLeaf extends KnowledgeObject {
 		super(id);
 	}
 
-
 }
