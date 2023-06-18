@@ -14,14 +14,30 @@ public enum RelationType {
 	IS,
 	HAS,
 	USE,
-	SYNONYM,
-	ACRONYM,
-	DEFINED_AS,
+	IS_SYNONYM_FOR,
+	IS_ACRONYM_FOR,
+	DEFINES,
 	DESCRIBED_AS,
 	EXAMPLE_FOR,
 	PROVEN_BY,
+	CUSTOM;
 
-	CUSTOM
+//region getter / setter
+	public ReverseRelationType getInverted() {
+		return switch (this) {
+			case IS -> ReverseRelationType.CAN_BE;
+			case HAS -> ReverseRelationType.PART_OF;
+			case USE -> ReverseRelationType.IS_USED_BY;
+			case IS_SYNONYM_FOR -> ReverseRelationType.HAS_SYNONYM;
+			case IS_ACRONYM_FOR -> ReverseRelationType.HAS_ACRONYM;
+			case DEFINES -> ReverseRelationType.DEFINED_BY;
+			case DESCRIBED_AS -> ReverseRelationType.DESCRIBES;
+			case EXAMPLE_FOR -> ReverseRelationType.HAS_EXAMPLE;
+			case PROVEN_BY -> ReverseRelationType.PROOFS;
+			default -> throw new IllegalStateException("Unexpected value: " + this);
+		};
+	}
+//endregion
 }
 
 /**
@@ -39,5 +55,27 @@ enum ReverseRelationType {
 	CAN_BE,
 	PART_OF,
 	IS_USED_BY,
+	HAS_ACRONYM,
+	HAS_SYNONYM,
+	DEFINED_BY,
+	DESCRIBES,
+	HAS_EXAMPLE,
+	PROOFS;
 
+//region getter / setter
+	public RelationType getInverted() {
+		return switch (this) {
+			case CAN_BE -> RelationType.IS;
+			case PART_OF -> RelationType.HAS;
+			case IS_USED_BY -> RelationType.USE;
+			case HAS_ACRONYM -> RelationType.IS_ACRONYM_FOR;
+			case HAS_SYNONYM -> RelationType.IS_SYNONYM_FOR;
+			case DEFINED_BY -> RelationType.DEFINES;
+			case DESCRIBES -> RelationType.DESCRIBED_AS;
+			case HAS_EXAMPLE -> RelationType.EXAMPLE_FOR;
+			case PROOFS -> RelationType.PROVEN_BY;
+
+		};
+	}
+//endregion
 }
