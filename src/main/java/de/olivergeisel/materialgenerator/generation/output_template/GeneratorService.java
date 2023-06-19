@@ -1,4 +1,4 @@
-package de.olivergeisel.materialgenerator.generation.template;
+package de.olivergeisel.materialgenerator.generation.output_template;
 
 import de.olivergeisel.materialgenerator.core.knowledge.KnowledgeManagement;
 import org.springframework.stereotype.Service;

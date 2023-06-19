@@ -1,4 +1,4 @@
-package de.olivergeisel.materialgenerator.generation.template;
+package de.olivergeisel.materialgenerator.generation.output_template;
 
 import javax.persistence.Entity;
 import java.io.File;

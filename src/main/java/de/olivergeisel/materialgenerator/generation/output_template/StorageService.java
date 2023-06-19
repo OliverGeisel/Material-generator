@@ -1,4 +1,4 @@
-package de.olivergeisel.materialgenerator.generation.template;
+package de.olivergeisel.materialgenerator.generation.output_template;
 
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
