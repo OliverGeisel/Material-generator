@@ -8,6 +8,7 @@ import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.Know
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeObject;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeStructure;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.RootStructureElement;
+import de.olivergeisel.materialgenerator.generation.KnowledgeNode;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DirectedWeightedPseudograph;
@@ -15,13 +16,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A model of knowledge. It contains structure, all elements, relations and sources.
  */
 public class KnowledgeModel {
 
-	private static Logger logger = LoggerFactory.getLogger(KnowledgeModel.class);
+	private static final Logger logger = LoggerFactory.getLogger(KnowledgeModel.class);
 	private final Map<Relation, RelationIdPair> unfinishedRelations = new HashMap<>();
 	private final Set<KnowledgeSource> sources = new HashSet<>();
 	private final KnowledgeStructure structure;
@@ -206,18 +208,59 @@ public class KnowledgeModel {
 		return contains(element.getId());
 	}
 
+
+	/**
+	 * Returns all elements that connected with the given element in the model.
+	 *
+	 * @param elementId the id of the element
+	 * @return a set of all elements that are connected with the given element
+	 */
 	public Set<KnowledgeElement> findAll(String elementId) {
-		var matchingIDs = findMatchingIDs(elementId);
-		return null; // todo
+		var matchingIDs = findRelatedElementIDs(elementId);
+		return graph.vertexSet().stream().filter(it -> matchingIDs.contains(it.getId())).collect(Collectors.toSet());
 	}
 
-	private Collection<String> findMatchingIDs(String elementId) {
-		return getIDs().stream().filter(it -> it.split("-")[0].equals(elementId)).toList();
+	private Collection<String> findRelatedElementIDs(String elementId) {
+		var element = get(elementId);
+		return Arrays.stream(getRelatedElements(element)).map(KnowledgeElement::getId).collect(Collectors.toList());
 	}
 
 	public KnowledgeElement get(String id) throws NoSuchElementException {
 		return graph.vertexSet().stream().filter(it -> it.getId().equals(id)).findFirst()
 				.orElseThrow(() -> new NoSuchElementException("No element with id " + id + " found"));
+	}
+
+	public KnowledgeNode getKnowledgeNode(String targetId) throws NoSuchElementException {
+		if (!contains(targetId)) {
+			throw new NoSuchElementException("No element with id " + targetId + " found");
+		}
+		var element = get(targetId);
+		var structureObject = structure.getObjectById(element.getStructureId());
+		var relatedElements = getRelatedElements(element);
+		var relations = getAllRelations(element);
+
+		return new KnowledgeNode(structureObject, element, relatedElements, relations);
+	}
+
+	private Relation[] getAllRelations(KnowledgeElement element) {
+		var ownRelations = element.getRelations();
+		var elementId = element.getId();
+		var otherRelations = graph.incomingEdgesOf(element).stream().map(graph::getEdgeSource)
+				.map(KnowledgeElement::getRelations).flatMap(
+						it -> it.stream().filter(relation -> relation.getToId().equals(elementId))).toList();
+		var returnList = new ArrayList<Relation>();
+		returnList.addAll(ownRelations);
+		returnList.addAll(otherRelations);
+		return returnList.toArray(new Relation[0]);
+	}
+
+	private KnowledgeElement[] getRelatedElements(KnowledgeElement element) {
+		var outgoing = graph.outgoingEdgesOf(element).stream().map(graph::getEdgeTarget).toList();
+		var incoming = graph.incomingEdgesOf(element).stream().map(graph::getEdgeSource).toList();
+		var returnList = new ArrayList<KnowledgeElement>();
+		returnList.addAll(outgoing);
+		returnList.addAll(incoming);
+		return returnList.toArray(new KnowledgeElement[0]);
 	}
 
 	/**
@@ -283,6 +326,11 @@ public class KnowledgeModel {
 		return structure.getRoot();
 	}
 
+	/**
+	 * Returns a list of all ids of the elements in the model.
+	 *
+	 * @return a list of all ids of the elements in the model
+	 */
 	public List<String> getIDs() {
 		return graph.vertexSet().stream().map(KnowledgeElement::getId).toList();
 	}

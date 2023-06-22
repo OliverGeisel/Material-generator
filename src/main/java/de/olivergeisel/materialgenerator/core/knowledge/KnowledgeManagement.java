@@ -5,12 +5,9 @@ import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.*;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.BasicRelation;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.Relation;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.RelationType;
-import org.apache.tomcat.util.json.JSONParser;
-import org.apache.tomcat.util.json.ParseException;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.*;
@@ -20,7 +17,11 @@ public class KnowledgeManagement {
 
 	private static final String KNOWLEDGE_PATH = "src/main/resources/data/knowledge/knowledgedata.json";
 
-	private static KnowledgeModel knowledge;
+	private final KnowledgeModel knowledge;
+
+	public KnowledgeManagement() {
+		knowledge = parseFromPath(KNOWLEDGE_PATH);
+	}
 
 	private static KnowledgeModel createKnowledgeModel(Object parsed) {
 		KnowledgeModel back = new KnowledgeModel();
@@ -58,64 +59,39 @@ public class KnowledgeManagement {
 		};
 	}
 
-	private static Object parseFromInputStream(InputStream input) {
-		var parser = new JSONParser(input);
-		Object parsedObject;
+	private static KnowledgeModel parseFromInputStream(InputStream input) {
+		KnowledgeParser parser = new KnowledgeParser();
 		try {
-			parsedObject = parser.parse();
-		} catch (ParseException e) {
+			return parser.parseFromFile(input);
+		} catch (RuntimeException e) {
 			throw new RuntimeException(e);
 		}
-		return parsedObject;
 	}
 
-	private static Object parseFile(File file) {
-		InputStream input;
+	private static KnowledgeModel parseFromFile(File file) {
+		KnowledgeParser parser = new KnowledgeParser();
 		try {
-			input = new FileInputStream(file);
-			return parseFromInputStream(input);
+			return parser.parseFromFile(file);
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	private static Object pareseFromPath(String path) {
+	private static KnowledgeModel parseFromPath(String path) {
 		File file = new File(path);
-		return parseFile(file);
+		return parseFromFile(file);
 	}
 
-	private Set<KnowledgeElement> findRelatedData(String element) {
-		return knowledge.findAll(element);
+	//region getter / setter
 
-	}
-
-	private Map<String, String> getPlain(String definition) {
-		Map<String, String> back = new HashMap<>();
-		List<Map<String, ?>> objects = (List<Map<String, ?>>) pareseFromPath(KNOWLEDGE_PATH);
-		for (var element : objects) {
-			var type = KnowledgeType.valueOf(element.get("typ").toString().toUpperCase());
-			if (type == KnowledgeType.DEFINITION && ((String) element.get("id")).contains(definition)) {
-				back.put("term", definition.split("-")[0]);
-				back.put("definition", (String) element.get("content"));
-				break;
-			}
-		}
-		return back;
-	}
-
-//region getter / setter
-	//
-	private static KnowledgeModel getKnowledge() {
-		if (knowledge == null) {
-			var parsed = pareseFromPath(KNOWLEDGE_PATH);
-			knowledge = createKnowledgeModel(parsed);
-		}
+	private KnowledgeModel getKnowledge() {
 		return knowledge;
 	}
 
-	public List<Map<String, ?>> getNewModelAsJSON() {
-		return (List<Map<String, ?>>) pareseFromPath(KNOWLEDGE_PATH);
+	public Set<KnowledgeElement> findRelatedData(String elementId) {
+		return getKnowledge().findAll(elementId);
 	}
+
 //endregion
-//
+
 }

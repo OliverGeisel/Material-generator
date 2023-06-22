@@ -66,7 +66,7 @@ public class KnowledgeParser {
 		return createElement(type, id, structure, content, relationsJSON);
 	}
 
-	public KnowledgeModel parseFromFile(InputStream file) {
+	public KnowledgeModel parseFromFile(InputStream file) throws RuntimeException {
 		KnowledgeModel back;
 		var parser = new JSONParser(file);
 		Object parsedObject;
