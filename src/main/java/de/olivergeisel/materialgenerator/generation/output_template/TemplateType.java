@@ -9,6 +9,7 @@ public record TemplateType(String type) {
 	public static final TemplateType EXERCISE = new TemplateType("EXERCISE");
 	public static final TemplateType SOLUTION = new TemplateType("SOLUTION");
 	public static final TemplateType TEXT = new TemplateType("TEXT");
+	public static final TemplateType LIST = new TemplateType("LIST");
 	public static final TemplateType EXAMPLE = new TemplateType("EXAMPLE");
 
 	public TemplateType() {
@@ -21,6 +22,7 @@ public record TemplateType(String type) {
 			case "EXERCISE" -> EXERCISE;
 			case "SOLUTION" -> SOLUTION;
 			case "TEXT" -> TEXT;
+			case "LIST" -> LIST;
 			case "EXAMPLE" -> EXAMPLE;
 			default -> new TemplateType(typeString);
 		};

@@ -2,7 +2,7 @@ package de.olivergeisel.materialgenerator.generation.generator;
 
 import de.olivergeisel.materialgenerator.core.courseplan.CoursePlan;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.KnowledgeModel;
-import de.olivergeisel.materialgenerator.generation.template.TemplateSet;
+import de.olivergeisel.materialgenerator.generation.output_template.TemplateSet;
 
 public class GeneratorInput {
 	private TemplateSet templates;

@@ -2,7 +2,7 @@ package de.olivergeisel.materialgenerator.generation.generator;
 
 import de.olivergeisel.materialgenerator.core.courseplan.CoursePlan;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.KnowledgeModel;
-import de.olivergeisel.materialgenerator.generation.template.TemplateSet;
+import de.olivergeisel.materialgenerator.generation.output_template.TemplateSet;
 
 public interface Generator {
 
@@ -18,7 +18,7 @@ public interface Generator {
 	/**
 	 * Initial method to set the input for the generator. This needs only the GeneratorInput object.
 	 *
-	 * @param input Alle needed input for the generator. Must be valid and not be null.
+	 * @param input All input to be needed for the generator. Must be valid and not be null.
 	 */
 	void input(GeneratorInput input);
 
