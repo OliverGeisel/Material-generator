@@ -32,10 +32,10 @@ public class CoursePlanParser {
 		if (mapping == null) {
 			return CourseMetadata.emptyMetadata();
 		}
-		String name = (String) mapping.get("name");
+		String name = mapping.get("name").toString();
 		String year = mapping.get("year").toString();
-		String level = (String) mapping.get("level");
-		String type = (String) mapping.get("type");
+		String level = mapping.get("level").toString();
+		String type = mapping.get("type").toString();
 		String description = (String) mapping.get("description");
 		var computed = mapping.entrySet().stream().filter(x -> Arrays.stream(META_ATTRIBUTES).noneMatch(y -> y.equals(x.getKey())));
 		Map<String, String> rest = new HashMap<>();
@@ -44,9 +44,9 @@ public class CoursePlanParser {
 
 	}
 
-	private Set<KnowledgeObject> crateAlias(List<String> knowledgeAreasJSON) {
+	private Set<KnowledgeObject> crateAlias(List<String> alternativesJSON) {
 		var back = new HashSet<KnowledgeObject>();
-		for (var elem : knowledgeAreasJSON) {
+		for (var elem : alternativesJSON) {
 			back.add(new PotenzialKnowledgeObject(elem));
 		}
 		return back;

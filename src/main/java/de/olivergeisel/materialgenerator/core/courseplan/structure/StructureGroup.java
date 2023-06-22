@@ -16,6 +16,10 @@ public class StructureGroup extends StructureElementPart {
 		parts = new ArrayList<>();
 	}
 
+	public List<StructureElementPart> getParts() {
+		return parts;
+	}
+
 	@Override
 	public String toString() {
 		return "StructureGroup{" +

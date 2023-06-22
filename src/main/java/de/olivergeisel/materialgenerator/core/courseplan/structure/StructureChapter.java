@@ -18,6 +18,10 @@ public class StructureChapter extends StructureElement {
 		parts = new ArrayList<>();
 	}
 
+	public List<StructureElement> getParts() {
+		return parts;
+	}
+
 	@Override
 	public String toString() {
 		return "StructureChapter{" +
@@ -53,9 +57,13 @@ public class StructureChapter extends StructureElement {
 		return false;
 	}
 
-//
+	//
 	public double getWeight() {
 		return weight;
+	}
+
+	public void setWeight(int weight) {
+		this.weight = weight;
 	}
 
 	public int size() {
@@ -68,10 +76,6 @@ public class StructureChapter extends StructureElement {
 			}
 		}
 		return back;
-	}
-
-	public void setWeight(int weight) {
-		this.weight = weight;
 	}
 //
 
