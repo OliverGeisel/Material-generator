@@ -30,7 +30,7 @@ public class RelationGenerator {
 	public static Relation create(String typeName, String fromId, String toId) {
 		RelationType type;
 		try {
-			type = RelationType.valueOf(typeName);
+			type = RelationType.valueOf(typeName.toUpperCase().replace("-", "_"));
 		} catch (IllegalArgumentException iae) {
 			type = RelationType.CUSTOM;
 		}

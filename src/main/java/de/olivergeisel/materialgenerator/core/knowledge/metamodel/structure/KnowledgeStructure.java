@@ -37,6 +37,13 @@ public class KnowledgeStructure {
 		return root.contains(id);
 	}
 
+	/**
+	 * Find the structure Object with the given id
+	 *
+	 * @param id id of the object to get
+	 * @return the object with the given id
+	 * @throws NoSuchElementException if no object with the given id exists
+	 */
 	public KnowledgeObject getObjectById(String id) throws NoSuchElementException {
 		return root.getObjectById(id);
 	}
