@@ -1,6 +1,6 @@
 package de.olivergeisel.materialgenerator;
 
-import de.olivergeisel.materialgenerator.generation.template.StorageService;
+import de.olivergeisel.materialgenerator.generation.output_template.StorageService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
