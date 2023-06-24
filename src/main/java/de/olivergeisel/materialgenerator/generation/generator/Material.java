@@ -1,23 +1,38 @@
 package de.olivergeisel.materialgenerator.generation.generator;
 
+import de.olivergeisel.materialgenerator.core.course.MaterialOrderPart;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeType;
-import de.olivergeisel.materialgenerator.generation.output_template.Template;
+import de.olivergeisel.materialgenerator.generation.output_template.TemplateInfo;
 
+import javax.persistence.*;
 import java.util.Map;
 import java.util.UUID;
 
-public class Material {
+@Entity
+public class Material extends MaterialOrderPart {
 
-	private final String id;
+	/**
+	 * The term name of the material, which is used in the template
+	 */
 	private String term;
+	/**
+	 * The unique term id of the material, which is used in the template
+	 */
 	private String termId;
+	@Enumerated(EnumType.ORDINAL)
 	private MaterialType type;
-	private Template template;
+	@Embedded
+	@AttributeOverrides({
+			@AttributeOverride(name = "templateType", column = @Column(name = "template_type")),
+			@AttributeOverride(name = "file", column = @Column(name = "template_file")),
+			@AttributeOverride(name = "name", column = @Column(name = "template_name")),
+			@AttributeOverride(name = "content", column = @Column(name = "template_content"))
+	})
+	private TemplateInfo template;
 
 	public Material(MaterialType type, String term, String termId) {
 		this.type = type;
-		id = UUID.randomUUID().toString();
 		template = null;
 		this.termId = termId;
 		this.term = term;
@@ -25,7 +40,6 @@ public class Material {
 
 	public Material(MaterialType type, KnowledgeElement element) {
 		this.type = type;
-		id = UUID.randomUUID().toString();
 		template = null;
 		if (element == null) {
 			throw new IllegalArgumentException("element must not be null");
@@ -36,10 +50,13 @@ public class Material {
 		this.termId = element.getId();
 		this.term = element.getContent();
 	}
+	@ElementCollection
+	private Map<String, String> values;
 
-	public String getId() {
-		return id;
+	protected Material() {
+
 	}
+
 
 	public String getTerm() {
 		return term;
@@ -48,7 +65,12 @@ public class Material {
 	public void setTerm(String term) {
 		this.term = term;
 	}
-	private Map<String, String> values;
+
+	@Override
+	public Object find(UUID id) {
+		if (this.getId().equals(id)) return this;
+		return null;
+	}
 
 	public String getTermId() {
 		return termId;
@@ -76,11 +98,11 @@ public class Material {
 		this.type = type;
 	}
 
-	public Template getTemplate() {
+	public TemplateInfo getTemplate() {
 		return template;
 	}
 
-	public void setTemplate(Template template) {
+	public void setTemplate(TemplateInfo template) {
 		this.template = template;
 	}
 //endregion

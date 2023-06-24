@@ -1,8 +1,10 @@
 package de.olivergeisel.materialgenerator.generation.output_template;
 
+import javax.persistence.Embeddable;
 import java.io.File;
 
-public class AcronymTemplate extends Template {
+@Embeddable
+public class AcronymTemplate extends TemplateInfo {
 
 	private String acronym;
 

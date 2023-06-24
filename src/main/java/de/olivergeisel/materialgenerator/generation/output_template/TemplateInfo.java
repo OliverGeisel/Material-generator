@@ -1,37 +1,56 @@
 package de.olivergeisel.materialgenerator.generation.output_template;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.Embeddable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.UUID;
 
-@Entity
-public abstract class Template {
-	protected final TemplateType type;
-	@Id
-	@Column(name = "id", nullable = false)
-	private UUID id;
+@Embeddable
+public abstract class TemplateInfo {
+
+	/**
+	 * The type of the template. Specific template in the TemplateSet.
+	 */
+	@AttributeOverrides(
+			{
+					@AttributeOverride(name = "type", column = @Column(name = "template_type"))
+			}
+	)
+	protected final TemplateType templateType;
+	/**
+	 * The name of the template file
+	 */
 	private String name;
+
+	/**
+	 * The content of the template file
+	 */
+	@Column(length = 100000)
 	private String content;
 	private File file;
 
-	protected Template(File file, TemplateType type) {
-		this.type = type;
+	protected TemplateInfo(File file, TemplateType templateType) {
+		this.templateType = templateType;
+		if (file == null) {
+			throw new IllegalArgumentException("file must not be null");
+		}
 		this.name = file.getName();
 		this.file = file;
-		readContent();
+		if (file.exists()) {
+			readContent();
+		}
 	}
 
-	private Template() {
-		this.type = null;
+	protected TemplateInfo(TemplateType templateType) {
+		this.templateType = templateType;
 	}
 
-	protected Template(TemplateType type) {
-		this.type = type;
+	protected TemplateInfo() {
+		this.templateType = null;
 	}
 
 	public void readContent() {
@@ -44,7 +63,7 @@ public abstract class Template {
 
 	//region getter / setter
 	public TemplateType getTemplateType() {
-		return type;
+		return templateType;
 	}
 
 	//
@@ -62,14 +81,6 @@ public abstract class Template {
 
 	public void setFile(File file) {
 		this.file = file;
-	}
-
-	public UUID getId() {
-		return id;
-	}
-
-	public void setId(UUID id) {
-		this.id = id;
 	}
 
 	public String getName() {

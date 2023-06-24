@@ -1,10 +1,10 @@
 package de.olivergeisel.materialgenerator.generation.output_template;
 
-import javax.persistence.Entity;
+import javax.persistence.Embeddable;
 import java.io.File;
 
-@Entity
-public class ExampleTemplate extends Template {
+@Embeddable
+public class ExampleTemplate extends TemplateInfo {
 	private String term;
 	private String example;
 

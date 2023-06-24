@@ -1,7 +1,6 @@
 package de.olivergeisel.materialgenerator.generation.output_template;
 
 import javax.persistence.*;
-import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
 
@@ -13,60 +12,70 @@ public class TemplateSet {
 	private UUID id;
 	private String name;
 
-	@ManyToOne
-	@JoinColumn(name = "definition_template_id")
-	private DefinitionTemplate definitionTemplate;
+	private volatile BasicTemplates basicTemplates = new BasicTemplates();
+	@ElementCollection
+	private Set<String> extraTemplates; // Todo Not supported yet
 
-	@ManyToOne
-	private TextTemplate textTemplate;
-	@ManyToOne
-	private ExampleTemplate exampleTemplate;
-	@OneToMany
-	private Set<Template> extraTemplates;
-
-	public boolean addAllTemplates(TemplateSet templateSet) {
-		return extraTemplates.addAll(templateSet.getExtraTemplates());
+	public TemplateSet() {
 	}
 
-	public boolean addTemplate(Template template) {
-		return extraTemplates.add(template);
+	public TemplateSet(String name) {
+		this.name = name;
 	}
 
-	public boolean removeTemplate(Template template) {
-		return extraTemplates.remove(template);
+	public boolean addAllTemplates(Set<TemplateInfo> templates) {
+		return true;//extraTemplates.addAll(templates);
+	}
+
+	public boolean addTemplate(TemplateInfo template) {
+		return true;//extraTemplates.add(template);
+	}
+
+	public boolean removeTemplate(TemplateInfo template) {
+		return
+				true; //extraTemplates.remove(template);
 	}
 
 	public boolean supportsTemplate(TemplateType type) {
-		if (type == TemplateType.DEFINITION || type == TemplateType.TEXT || type == TemplateType.EXAMPLE)
-			return true;
-		return extraTemplates.stream().anyMatch(it -> it.getTemplateType().equals(type));
+		var basics = TemplateType.class.getDeclaredFields();
+		for (var field : basics) {
+			try {
+				if (field.get(null).equals(type))
+					return true;
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+		return true; //extraTemplates.stream().anyMatch(it -> it.getTemplateType().equals(type));
 	}
 
 	//region getter / setter
+	private Set<TemplateInfo> getExtraTemplates() {
+		return null;// Collections.unmodifiableSet(extraTemplates);
+	}
+
 	public TextTemplate getTextTemplate() {
-		return textTemplate;
+		return basicTemplates.getTextTemplate();
 	}
 
 	public void setTextTemplate(TextTemplate textTemplate) {
-		this.textTemplate = textTemplate;
+		basicTemplates.setTextTemplate(textTemplate);
 	}
 
 	public ExampleTemplate getExampleTemplate() {
-		return exampleTemplate;
+		return basicTemplates.getExampleTemplate();
 	}
 
 	public void setExampleTemplate(ExampleTemplate exampleTemplate) {
-		this.exampleTemplate = exampleTemplate;
+		basicTemplates.setExampleTemplate(exampleTemplate);
 	}
 
-	//
-//
 	public DefinitionTemplate getDefinitionTemplate() {
-		return definitionTemplate;
+		return basicTemplates.getDefinitionTemplate();
 	}
 
 	public void setDefinitionTemplate(DefinitionTemplate definitionTemplate) {
-		this.definitionTemplate = definitionTemplate;
+		this.basicTemplates.setDefinitionTemplate(definitionTemplate);
 	}
 
 	public UUID getId() {
@@ -81,8 +90,16 @@ public class TemplateSet {
 		this.name = name;
 	}
 
-	private Set<Template> getExtraTemplates() {
-		return Collections.unmodifiableSet(extraTemplates);
+	public void setListTemplate(ListTemplate listTemplate) {
+
+	}
+
+	public void setSynonymTemplate(SynonymTemplate synonymTemplate) {
+		basicTemplates.setSynonymTemplate(synonymTemplate);
+	}
+
+	public void setAcronymTemplate(AcronymTemplate acronymTemplate) {
+		basicTemplates.setAcronymTemplate(acronymTemplate);
 	}
 //endregion
 

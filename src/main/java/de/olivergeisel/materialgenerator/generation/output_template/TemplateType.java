@@ -9,6 +9,8 @@ public record TemplateType(String type) {
 	public static final TemplateType EXERCISE = new TemplateType("EXERCISE");
 	public static final TemplateType SOLUTION = new TemplateType("SOLUTION");
 	public static final TemplateType TEXT = new TemplateType("TEXT");
+	public static final TemplateType SYNONYM = new TemplateType("SYNONYM");
+	public static final TemplateType ACRONYM = new TemplateType("ACRONYM");
 	public static final TemplateType LIST = new TemplateType("LIST");
 	public static final TemplateType EXAMPLE = new TemplateType("EXAMPLE");
 
