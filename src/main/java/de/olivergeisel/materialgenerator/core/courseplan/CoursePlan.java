@@ -8,6 +8,8 @@ import de.olivergeisel.materialgenerator.core.courseplan.structure.CourseStructu
 import java.util.*;
 
 public class CoursePlan {
+
+	private final UUID id = UUID.randomUUID();
 	//-----------METATDATA---------------------
 	private final CourseMetadata metadata;
 
@@ -43,6 +45,12 @@ public Set<ContentGoal> getGoals() {
 	public List<ContentTarget> getTargets() {
 		return targets;
 	}
+
+//region getter / setter
+	public UUID getId() {
+		return id;
+	}
+//endregion
 //
 
 

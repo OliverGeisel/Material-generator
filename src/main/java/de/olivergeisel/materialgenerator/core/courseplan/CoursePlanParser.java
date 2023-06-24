@@ -19,8 +19,7 @@ import java.util.regex.Pattern;
 public class CoursePlanParser {
 
 	private static final String TOPIC = "topic";
-	private static final String[] META_ATTRIBUTES = {"name", "year", "grade", "type", "description"};
-	private final List<ContentTarget> targets = new ArrayList<>();
+	private static final String[] META_ATTRIBUTES = {"name", "year", "level", "type", "description"};
 
 	/**
 	 * Parses Metadata of plan.
@@ -37,14 +36,16 @@ public class CoursePlanParser {
 		String level = mapping.get("level").toString();
 		String type = mapping.get("type").toString();
 		String description = (String) mapping.get("description");
-		var computed = mapping.entrySet().stream().filter(x -> Arrays.stream(META_ATTRIBUTES).noneMatch(y -> y.equals(x.getKey())));
-		Map<String, String> rest = new HashMap<>();
-		computed.forEach(entry -> rest.put(entry.getKey(), entry.getValue().toString()));
-		return new CourseMetadata(name, year, level, type, description, rest);
+		var extraList = (List<Map<String, String>>) mapping.get("extra");
+		var extra = new HashMap<String, String>();
+		extraList.forEach(elem -> extra.put(elem.get("name"), elem.get("value")));
+		return new CourseMetadata(name, year, level, type, description, extra);
 
 	}
 
-	private Set<KnowledgeObject> crateAlias(List<String> alternativesJSON) {
+	private final List<ContentTarget> targets = new ArrayList<>();
+
+	private Set<KnowledgeObject> crateAliasObject(List<String> alternativesJSON) {
 		var back = new HashSet<KnowledgeObject>();
 		for (var elem : alternativesJSON) {
 			back.add(new PotenzialKnowledgeObject(elem));
@@ -58,8 +59,8 @@ public class CoursePlanParser {
 		String weight = chapterJson.get("weight").toString();
 		var alternatives = crateAlias((List<String>) chapterJson.get("alternatives"));
 		String topicName = chapterJson.get(TOPIC) != null ? chapterJson.get(TOPIC).toString() : "";
-		var topic = findTopic(topicName);
-		var back = new StructureChapter(topic, Relevance.TO_SET, name, Double.parseDouble(weight), alternatives);
+		var target = findTopic(topicName);
+		var back = new StructureChapter(target, Relevance.TO_SET, name, Double.parseDouble(weight), alternatives);
 		for (var group : groups) {
 			back.add(createGroup(group));
 		}
@@ -68,6 +69,20 @@ public class CoursePlanParser {
 			throw new IllegalStateException(String.format("Chapter %s is not valid", back.getName()));
 		}
 		return back;
+	}
+
+	private Set<String> crateAlias(List<String> alternativesJSON) {
+		return new HashSet<>(alternativesJSON);
+	}
+
+	/**
+	 * Gets relevant ContentTarget from the name;
+	 *
+	 * @param topic the name of the topic
+	 * @return the ContentTarget or an empty ContentTarget if no target was found
+	 */
+	private ContentTarget findTopic(String topic) {
+		return targets.stream().filter(goalElement -> goalElement.getTopic().equals(topic)).findFirst().orElse(ContentTarget.EMPTY);
 	}
 
 	private StructureElementPart createGroup(Map<String, ?> groupJSON) {
@@ -97,9 +112,11 @@ public class CoursePlanParser {
 		return new StructureTask(topic, relevance, name, alternatives);
 	}
 
-	private ContentTarget findTopic(String goal) {
-		return targets.stream().filter(goalElement -> goalElement.getId().equals(goal)).findFirst().orElse(ContentTarget.EMPTY);
+//region getter / setter
+	public List<ContentTarget> getTargets() {
+		return Collections.unmodifiableList(targets);
 	}
+//endregion
 
 	private CourseStructure parseCourseStructure(List<Map<String, ?>> structure) {
 		CourseStructure back = new CourseStructure();

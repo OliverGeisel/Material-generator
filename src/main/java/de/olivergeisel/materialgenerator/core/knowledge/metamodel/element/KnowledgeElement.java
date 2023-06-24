@@ -8,10 +8,20 @@ import java.util.Set;
 
 public abstract class KnowledgeElement {
 
+	/**
+	 * The id of the element in the knowledge base. Can differ from the content field if is Type term.
+	 */
 	private final String id;
 	private final KnowledgeType type;
 	private final Set<Relation> relations = new HashSet<>();
+
+	/**
+	 * The id of the structure point this element belongs to.
+	 */
 	protected String structureId;
+	/**
+	 * The content of the element. Meaning depends on the type of the element.
+	 */
 	private String content;
 
 	protected KnowledgeElement(String content, String id, String type, Collection<Relation> relations) {

@@ -1,40 +1,42 @@
 package de.olivergeisel.materialgenerator.core.courseplan.structure;
 
 import de.olivergeisel.materialgenerator.core.courseplan.content.ContentTarget;
-import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeObject;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+
 public class StructureChapter extends StructureElement {
 
-	private final List<StructureElement> parts;
+	private final List<StructureElementPart> parts;
 	private double weight;
 
-	public StructureChapter(ContentTarget topic, Relevance relevance, String name, double weight, Set<KnowledgeObject> alternatives) {
-		super(topic, relevance, name, alternatives);
+	/**
+	 * Constructor for StructureChapter with a given weight and a list of alternatives
+	 *
+	 * @param target       ContentTarget of the chapter
+	 * @param relevance    Relevance of the chapter
+	 * @param name         Name of the chapter
+	 * @param weight       Weight of the chapter
+	 * @param alternatives List of alternatives for the chapter
+	 */
+	public StructureChapter(ContentTarget target, Relevance relevance, String name, double weight,
+							Set<String> alternatives) {
+		super(target, relevance, name, alternatives);
 		this.weight = weight;
 		parts = new ArrayList<>();
 	}
 
-	public List<StructureElement> getParts() {
-		return parts;
+	protected StructureChapter() {
+		super();
+		parts = new ArrayList<>();
 	}
 
 	@Override
-	public String toString() {
-		return "StructureChapter{" +
-				"name=" + getName() +
-				", parts=" + parts.size() +
-				", weight=" + weight +
-				", relevance=" + relevance +
-				'}';
-	}
-
-	@Override
-	public void updateRelevance() {
+	public Relevance updateRelevance() {
 		relevance = parts.stream().map(StructureElement::getRelevance).max(Enum::compareTo).orElseThrow();
+		return relevance;
 	}
 
 	public boolean add(StructureElementPart element) throws IllegalArgumentException {
@@ -57,15 +59,6 @@ public class StructureChapter extends StructureElement {
 		return false;
 	}
 
-	//
-	public double getWeight() {
-		return weight;
-	}
-
-	public void setWeight(int weight) {
-		this.weight = weight;
-	}
-
 	public int size() {
 		int back = 0;
 		for (StructureElement element : parts) {
@@ -77,7 +70,30 @@ public class StructureChapter extends StructureElement {
 		}
 		return back;
 	}
-//
+
+	@Override
+	public String toString() {
+		return "StructureChapter{" +
+				"name=" + getName() +
+				", parts=" + parts.size() +
+				", weight=" + weight +
+				", relevance=" + relevance +
+				'}';
+	}
+
+	//region getter / setter
+	public List<StructureElementPart> getParts() {
+		return parts;
+	}
+
+	public double getWeight() {
+		return weight;
+	}
+
+	public void setWeight(int weight) {
+		this.weight = weight;
+	}
+//endregion
 
 
 }

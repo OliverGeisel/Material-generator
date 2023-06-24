@@ -1,7 +1,6 @@
 package de.olivergeisel.materialgenerator.core.courseplan.structure;
 
 import de.olivergeisel.materialgenerator.core.courseplan.content.ContentTarget;
-import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +10,12 @@ public class StructureGroup extends StructureElementPart {
 
 	private final List<StructureElementPart> parts;
 
-	public StructureGroup(ContentTarget topic, Relevance relevance, String name, Set<KnowledgeObject> alternatives) {
+	public StructureGroup(ContentTarget topic, Relevance relevance, String name, Set<String> alternatives) {
 		super(topic, relevance, name, alternatives);
+		parts = new ArrayList<>();
+	}
+
+	protected StructureGroup() {
 		parts = new ArrayList<>();
 	}
 
@@ -30,8 +33,9 @@ public class StructureGroup extends StructureElementPart {
 	}
 
 	@Override
-	public void updateRelevance() {
+	public Relevance updateRelevance() {
 		relevance = parts.stream().map(StructureElement::getRelevance).max(Enum::compareTo).orElseThrow();
+		return relevance;
 	}
 
 

@@ -13,24 +13,34 @@ import java.util.List;
  * Example:
  */
 public class ContentGoal {
+
 	private final ContentGoalExpression expression;
 	private final String masterKeyword;
 	private final List<ContentTarget> content;
 	//private final List<String> specificWords;
 	private final String completeSentence;
-	private String id = "";
+	private String name;
+
+	protected ContentGoal() {
+		this.expression = ContentGoalExpression.FIRST_LOOK;
+		this.masterKeyword = "";
+		this.completeSentence = "";
+		this.content = new ArrayList<>();
+		this.name = "";
+	}
+
 	public ContentGoal(ContentGoalExpression expression, String masterKeyword, List<ContentTarget> content, String completeSentence) {
 		this(expression, masterKeyword, content, completeSentence, "");
 	}
 
-	public ContentGoal(ContentGoalExpression expression, String masterKeyword, List<ContentTarget> content, String completeSentence, String id) {
+	public ContentGoal(ContentGoalExpression expression, String masterKeyword, List<ContentTarget> content, String completeSentence, String name) {
 		this.expression = expression;
 		this.masterKeyword = masterKeyword;
 		//this.specificWords = specificWords;
 		this.completeSentence = completeSentence;
-		this.id = id;
 		this.content = new ArrayList<>();
 		this.content.addAll(content);
+		this.name = name;
 	}
 
 	public boolean add(ContentTarget target) {
@@ -44,12 +54,12 @@ public class ContentGoal {
 		return content.remove(target);
 	}
 
+	//region getter / setter
 	//
 	public String getCompleteSentence() {
 		return completeSentence;
 	}
 
-//region getter / setter
 	public List<ContentTarget> getContent() {
 		return content;
 	}
@@ -61,12 +71,12 @@ public class ContentGoal {
 		return expression;
 	}
 
-	public String getId() {
-		return id;
-	}
-//endregion
-
 	public String getMasterKeyword() {
 		return masterKeyword;
 	}
+
+	public String getName() {
+		return name;
+	}
+//endregion
 }
