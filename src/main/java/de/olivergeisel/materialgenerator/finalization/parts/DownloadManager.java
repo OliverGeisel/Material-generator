@@ -1,9 +1,6 @@
-package de.olivergeisel.materialgenerator.finalization;
+package de.olivergeisel.materialgenerator.finalization.parts;
 
-import de.olivergeisel.materialgenerator.core.courseplan.structure.CourseStructure;
-import de.olivergeisel.materialgenerator.core.courseplan.structure.StructureChapter;
-import de.olivergeisel.materialgenerator.core.courseplan.structure.StructureGroup;
-import de.olivergeisel.materialgenerator.core.courseplan.structure.StructureTask;
+import de.olivergeisel.materialgenerator.finalization.GoalRepository;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -22,10 +19,13 @@ import java.util.zip.ZipOutputStream;
 public class DownloadManager {
 	private final ServletContext servletContext;
 	private TemplateEngine templateEngine;
+	private final GoalRepository goalRepository;
 
-	public DownloadManager(TemplateEngine templateEngine, ServletContext servletContext) {
+	public DownloadManager(TemplateEngine templateEngine, ServletContext servletContext,
+						   GoalRepository goalRepository) {
 		this.servletContext = servletContext;
 		this.templateEngine = templateEngine;
+		this.goalRepository = goalRepository;
 	}
 
 	private void cleanupTemporaryFiles(File tempDir, File zipFile) throws IOException {
@@ -55,7 +55,7 @@ public class DownloadManager {
 		return Files.createTempDirectory("materialgenerator").toFile();
 	}
 
-	public void createZip(String name, String template, CourseStructure structure, HttpServletRequest request, HttpServletResponse response) {
+	public void createZip(String name, String template, MaterialOrder structure, HttpServletRequest request, HttpServletResponse response) {
 		File tempDir = null;
 		File zipFile = null;
 		try {
@@ -96,8 +96,8 @@ public class DownloadManager {
 		Files.delete(directory.toPath());
 	}
 
-	private void generateTemplates(CourseStructure structure, String templateSet, File outputDir, HttpServletRequest request,
-								   HttpServletResponse response) {
+	private void generateTemplates(MaterialOrder structure, String templateSet, File outputDir, HttpServletRequest request,
+								   HttpServletResponse response) throws IOException {
 		FileTemplateResolver templateResolver = new FileTemplateResolver();
 		templateResolver.setPrefix("target/classes/templateSets/" + templateSet + "/");
 		templateResolver.setSuffix(".html");
@@ -105,34 +105,39 @@ public class DownloadManager {
 		if (!templateEngine.isInitialized())
 			templateEngine.setTemplateResolver(templateResolver);
 		WebContext context = new WebContext(request, response, servletContext);
-		//for( var chapter: structure.getOrder()){
-		//	generateChapter(chapter, context, new File(outputDir, chapter.getName()));
-		//}
+		for (var chapter : structure.getChapterOrder()) {
+			var subDir = Files.createDirectory(new File(outputDir, chapter.getName()).toPath());
+			exportChapter(chapter, context, subDir.toFile());
+		}
 		String template1 = templateEngine.process("DEFINITION", context);
 		saveTemplateToFile(template1, outputDir, "DEFINITION.html");
 
 	}
 
-	private void generateChapter(StructureChapter chapter, WebContext context, File outputDir) {
-		for (var subChapter : chapter.getParts()) {
-			if (subChapter instanceof StructureGroup group) {
+	private void exportChapter(ChapterOrder chapter, WebContext context, File outputDir) throws IOException {
+		for (var subChapter : chapter.getGroupOrder()) {
+			/*
+			if (subChapter instanceof GroupOrder group) {
 				var subDir = new File(outputDir, group.getName());
-				generateGroup(group, context, subDir);
-			} else if (subChapter instanceof StructureTask task) {
+				Files.createDirectory(subDir.toPath());
+				exportGroup(group, context, subDir);
+			} else if (subChapter instanceof TaskOrder task) {
 				var subDir = new File(outputDir, task.getName());
-				generateTask(task, context, subDir);
+				exportTask(task, context, subDir);
 			} else {
 				throw new IllegalArgumentException("Unknown substructure component! Must be either group or task inside a chapter.");
-			}
+			}*/
 		}
 	}
 
-	private void generateTask(StructureTask task, WebContext context, File outputDir) {
-
-	}
-
-	private void generateGroup(StructureGroup group, WebContext context, File outputDir) {
-
+	private void exportTask(TaskOrder task, WebContext context, File outputDir) {
+		//context.v();
+		var relevance = task.getRelevance();
+		var goal = task.getTopic().getGoalId();
+		var expression = goalRepository.findById(goal).orElseThrow().getExpression();
+		context.setVariable("task", task);
+		String processedHtml = templateEngine.process("TASK", context);
+		saveTemplateToFile(processedHtml, outputDir, "TASK.html");
 	}
 
 	private void saveTemplateToFile(String templateContent, File outputDir, String fileName) {
@@ -140,6 +145,21 @@ public class DownloadManager {
 			writer.write(templateContent);
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	private void exportGroup(GroupOrder group, WebContext context, File outputDir) throws IOException {
+		for (var subChapter : group.getTaskOrder()) {
+			/*if (subChapter instanceof GroupOrder subGroup) {
+				var subDir = new File(outputDir, subGroup.getName());
+				Files.createDirectory(subDir.toPath());
+				exportGroup(subGroup, context, subDir);
+			} else if (subChapter instanceof TaskOrder task) {
+				var subDir = new File(outputDir, task.getName());
+				exportTask(task, context, subDir);
+			} else {
+				throw new IllegalArgumentException("Unknown substructure component! Must be either group or task inside a group.");
+			}*/
 		}
 	}
 
