@@ -1,4 +1,4 @@
-package de.olivergeisel.materialgenerator.generation.output_template;
+package de.olivergeisel.materialgenerator.generation;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

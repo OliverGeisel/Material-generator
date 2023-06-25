@@ -1,6 +1,5 @@
-package de.olivergeisel.materialgenerator.generation.output_template;
+package de.olivergeisel.materialgenerator.finalization;
 
-import de.olivergeisel.materialgenerator.finalization.Topic;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.UUID;

@@ -1,5 +1,7 @@
 package de.olivergeisel.materialgenerator.generation.output_template;
 
+import de.olivergeisel.materialgenerator.generation.output_template.template_content.TemplateInfo;
+
 import javax.persistence.*;
 import java.util.Set;
 import java.util.UUID;

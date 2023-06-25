@@ -1,6 +1,7 @@
 package de.olivergeisel.materialgenerator.generation.output_template;
 
-import de.olivergeisel.materialgenerator.generation.template_content.DefinitionContent;
+import de.olivergeisel.materialgenerator.generation.output_template.template_content.DefinitionContent;
+import de.olivergeisel.materialgenerator.generation.output_template.template_content.TemplateInfo;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;

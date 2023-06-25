@@ -53,12 +53,12 @@ public class CoursePlanParser {
 		return back;
 	}
 
-	private StructureChapter createChapter(Map<String, ?> chapterJson) {
-		List<Map<String, ?>> groups = (List<Map<String, ?>>) chapterJson.get("groups");
-		String name = chapterJson.get("name").toString();
-		String weight = chapterJson.get("weight").toString();
-		var alternatives = crateAlias((List<String>) chapterJson.get("alternatives"));
-		String topicName = chapterJson.get(TOPIC) != null ? chapterJson.get(TOPIC).toString() : "";
+	private StructureChapter createChapter(Map<String, ?> chapterJSON) {
+		List<Map<String, ?>> groups = (List<Map<String, ?>>) chapterJSON.get("groups");
+		String name = chapterJSON.get("name").toString();
+		String weight = chapterJSON.get("weight").toString();
+		var alternatives = crateAlias((List<String>) chapterJSON.get("alternatives"));
+		String topicName = chapterJSON.get(TOPIC) != null ? chapterJSON.get(TOPIC).toString() : "";
 		var target = findTopic(topicName);
 		var back = new StructureChapter(target, Relevance.TO_SET, name, Double.parseDouble(weight), alternatives);
 		for (var group : groups) {

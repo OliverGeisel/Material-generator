@@ -1,6 +1,6 @@
 package de.olivergeisel.materialgenerator;
 
-import de.olivergeisel.materialgenerator.generation.output_template.StorageService;
+import de.olivergeisel.materialgenerator.generation.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;

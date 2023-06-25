@@ -2,10 +2,10 @@ package de.olivergeisel.materialgenerator.generation.generator;
 
 import de.olivergeisel.materialgenerator.core.courseplan.CoursePlan;
 import de.olivergeisel.materialgenerator.core.courseplan.CoursePlanParser;
-import de.olivergeisel.materialgenerator.finalization.parts.DownloadManager;
-import de.olivergeisel.materialgenerator.generation.output_template.GeneratorService;
-import de.olivergeisel.materialgenerator.generation.output_template.StorageService;
-import de.olivergeisel.materialgenerator.generation.output_template.TemplateService;
+import de.olivergeisel.materialgenerator.core.knowledge.IncompleteJSONException;
+import de.olivergeisel.materialgenerator.generation.GeneratorService;
+import de.olivergeisel.materialgenerator.generation.StorageService;
+import de.olivergeisel.materialgenerator.generation.TemplateService;
 import de.olivergeisel.materialgenerator.generation.output_template.TemplateSetRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,14 +28,12 @@ public class GeneratorController {
 	private static final String PATH = "generation/";
 	private final GeneratorService service;
 	private final StorageService storageService;
-	private final DownloadManager downloadManager;
 	private final TemplateSetRepository templateSetRepository;
 
-	public GeneratorController(GeneratorService service, StorageService storageService, DownloadManager downloadManager,
+	public GeneratorController(GeneratorService service, StorageService storageService,
 							   TemplateSetRepository templateSetRepository) {
 		this.service = service;
 		this.storageService = storageService;
-		this.downloadManager = downloadManager;
 		this.templateSetRepository = templateSetRepository;
 	}
 
@@ -97,17 +95,16 @@ public class GeneratorController {
 		String planName;
 		if (curriculum.isBlank() || curriculum.equals(UPLOAD)) {
 			CoursePlanParser parser = new CoursePlanParser();
-			CoursePlan coursePlan;
 			if (plan == null || plan.isEmpty()) {
 				throw new IllegalArgumentException("No plan uploaded");
 			}
-			if (!plan.getContentType().equals("application/json")) {
-				throw new RuntimeException("Wrong file type");
+			if (plan.getContentType() == null || !plan.getContentType().equals("application/json")) {
+				throw new WrongFileTypeException(String.format("Wrong file type. Must be application/json. But was %s", plan.getContentType()));
 			}
 			try {
-				coursePlan = parser.parseFromFile(plan.getInputStream());
+				parser.parseFromFile(plan.getInputStream());
 			} catch (IOException e) {
-				throw new RuntimeException(e);
+				throw new IncompleteJSONException(e);
 			}
 			storageService.store(plan);
 			planName = plan.getOriginalFilename();

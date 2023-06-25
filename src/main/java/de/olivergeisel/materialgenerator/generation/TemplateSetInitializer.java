@@ -1,5 +1,7 @@
-package de.olivergeisel.materialgenerator.generation.output_template;
+package de.olivergeisel.materialgenerator.generation;
 
+import de.olivergeisel.materialgenerator.generation.output_template.TemplateSet;
+import de.olivergeisel.materialgenerator.generation.output_template.TemplateSetRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 

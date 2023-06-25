@@ -3,7 +3,6 @@ package de.olivergeisel.materialgenerator.finalization;
 import de.olivergeisel.materialgenerator.core.courseplan.CoursePlan;
 import de.olivergeisel.materialgenerator.core.courseplan.content.ContentGoal;
 import de.olivergeisel.materialgenerator.finalization.parts.*;
-import de.olivergeisel.materialgenerator.generation.output_template.TopicRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -147,6 +146,6 @@ public class FinalizationService {
 		var zipName = plan.getMetadata().getName().orElse("course");
 		var structure = plan.getMaterialOrder();
 
-		downloadManager.createZip(zipName, "blank", structure, request, response);
+		downloadManager.createZip(zipName, plan.getTemplateName(), structure, request, response);
 	}
 }

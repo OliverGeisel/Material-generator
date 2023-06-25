@@ -1,6 +1,7 @@
 package de.olivergeisel.materialgenerator.finalization;
 
 
+import de.olivergeisel.materialgenerator.core.courseplan.structure.Relevance;
 import de.olivergeisel.materialgenerator.generation.generator.MaterialRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -43,6 +45,7 @@ public class FinalizationController {
 	public String editCourse(@PathVariable UUID id, Model model) {
 		return repository.findById(id).map(course -> {
 			model.addAttribute("course", course);
+			model.addAttribute("RELEVANCE", Arrays.stream(Relevance.values()).filter(it -> it != Relevance.TO_SET).toList());
 			return PATH + "edit-course";
 		}).orElse("redirect:/edit");
 	}

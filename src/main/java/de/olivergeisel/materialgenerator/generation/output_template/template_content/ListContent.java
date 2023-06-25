@@ -1,4 +1,4 @@
-package de.olivergeisel.materialgenerator.generation.template_content;
+package de.olivergeisel.materialgenerator.generation.output_template.template_content;
 
 import java.util.List;
 

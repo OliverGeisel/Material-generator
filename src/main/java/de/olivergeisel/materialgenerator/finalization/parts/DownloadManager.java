@@ -4,7 +4,7 @@ import de.olivergeisel.materialgenerator.finalization.GoalRepository;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templateresolver.FileTemplateResolver;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -18,13 +18,11 @@ import java.util.zip.ZipOutputStream;
 @Service
 public class DownloadManager {
 	private final ServletContext servletContext;
-	private TemplateEngine templateEngine;
 	private final GoalRepository goalRepository;
 
-	public DownloadManager(TemplateEngine templateEngine, ServletContext servletContext,
+	public DownloadManager(ServletContext servletContext,
 						   GoalRepository goalRepository) {
 		this.servletContext = servletContext;
-		this.templateEngine = templateEngine;
 		this.goalRepository = goalRepository;
 	}
 
@@ -39,6 +37,7 @@ public class DownloadManager {
 
 		WebContext context = new WebContext(request, response, servletContext);
 		context.setVariable("wert", "My Value");
+		var templateEngine = new TemplateEngine();
 		String processedHtml = templateEngine.process("myTemp", context);
 
 		response.setContentType("text/html");
@@ -96,14 +95,23 @@ public class DownloadManager {
 		Files.delete(directory.toPath());
 	}
 
-	private void generateTemplates(MaterialOrder structure, String templateSet, File outputDir, HttpServletRequest request,
-								   HttpServletResponse response) throws IOException {
-		FileTemplateResolver templateResolver = new FileTemplateResolver();
-		templateResolver.setPrefix("target/classes/templateSets/" + templateSet + "/");
+	private TemplateEngine createTemplateEngine(String templateSet) {
+		var templateResolver = new ClassLoaderTemplateResolver();
+		templateResolver.setPrefix("templateSets/" + templateSet + "/");
 		templateResolver.setSuffix(".html");
 		templateResolver.setTemplateMode("HTML");
-		if (!templateEngine.isInitialized())
-			templateEngine.setTemplateResolver(templateResolver);
+		templateResolver.setCharacterEncoding("UTF-8");
+		templateResolver.setCacheable(false);
+		templateResolver.setCheckExistence(true);
+
+		var templateEngine = new TemplateEngine();
+		templateEngine.setTemplateResolver(templateResolver);
+		return templateEngine;
+	}
+
+	private void generateTemplates(MaterialOrder structure, String templateSet, File outputDir, HttpServletRequest request,
+								   HttpServletResponse response) throws IOException {
+		var templateEngine = createTemplateEngine(templateSet);
 		WebContext context = new WebContext(request, response, servletContext);
 		for (var chapter : structure.getChapterOrder()) {
 			var subDir = Files.createDirectory(new File(outputDir, chapter.getName()).toPath());
@@ -136,6 +144,7 @@ public class DownloadManager {
 		var goal = task.getTopic().getGoalId();
 		var expression = goalRepository.findById(goal).orElseThrow().getExpression();
 		context.setVariable("task", task);
+		var templateEngine = new TemplateEngine();
 		String processedHtml = templateEngine.process("TASK", context);
 		saveTemplateToFile(processedHtml, outputDir, "TASK.html");
 	}
