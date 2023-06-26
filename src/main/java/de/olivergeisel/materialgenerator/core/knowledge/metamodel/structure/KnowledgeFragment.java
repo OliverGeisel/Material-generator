@@ -7,7 +7,7 @@ import java.util.NoSuchElementException;
 
 public class KnowledgeFragment extends KnowledgeObject {
 
-	private final List<KnowledgeObject> elements;
+	private final List<KnowledgeObject> children = new ArrayList<>();
 	private String name;
 
 	public KnowledgeFragment(String name) {
@@ -16,19 +16,18 @@ public class KnowledgeFragment extends KnowledgeObject {
 
 	public KnowledgeFragment(String name, KnowledgeObject part) {
 		super(name);
-		elements = new ArrayList<>();
 		this.name = name;
 		if (part == null) {
 			return;
 		}
-		elements.add(part);
+		children.add(part);
 	}
 
 	public boolean addObject(KnowledgeObject object) {
-		if (object == null || this == object || elements.contains(object)) {
+		if (object == null || this == object || children.contains(object)) {
 			return false;
 		}
-		return elements.add(object);
+		return children.add(object);
 	}
 
 	public boolean contains(KnowledgeObject object) {
@@ -38,7 +37,7 @@ public class KnowledgeFragment extends KnowledgeObject {
 		if (object == this) {
 			return true;
 		}
-		for (KnowledgeObject element : elements) {
+		for (KnowledgeObject element : children) {
 			if (element instanceof KnowledgeFragment fragment && fragment.contains(object)) {
 				return true;
 			} else {
@@ -57,7 +56,7 @@ public class KnowledgeFragment extends KnowledgeObject {
 		if (id.equals(getId())) {
 			return true;
 		}
-		for (KnowledgeObject element : elements) {
+		for (KnowledgeObject element : children) {
 			if (element instanceof KnowledgeFragment fragment && fragment.contains(id)) {
 				return true;
 			} else {
@@ -76,7 +75,7 @@ public class KnowledgeFragment extends KnowledgeObject {
 		if (id.equals(getId())) {
 			return this;
 		}
-		for (KnowledgeObject element : elements) {
+		for (KnowledgeObject element : children) {
 			if (element instanceof KnowledgeFragment fragment) {
 				KnowledgeObject object = fragment.getObjectById(id);
 				if (object != null) {
@@ -92,17 +91,19 @@ public class KnowledgeFragment extends KnowledgeObject {
 	}
 
 	public boolean removeObject(KnowledgeObject object) {
-		if (!elements.contains(object)) {
+		if (!children.contains(object)) {
 			return false;
 		}
-		return elements.remove(object);
+		return children.remove(object);
 	}
 
+//region setter/getter
 	//region getter / setter
 	//
-	public List<KnowledgeObject> getElements() {
-		return Collections.unmodifiableList(elements);
+	public List<KnowledgeObject> getChildren() {
+		return Collections.unmodifiableList(children);
 	}
+//endregion
 
 	public String getName() {
 		return name;

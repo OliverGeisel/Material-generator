@@ -137,10 +137,14 @@ public class KnowledgeModel {
 		if (element == null) {
 			throw new IllegalArgumentException("KnowledgeElement was null!");
 		}
+		if (contains(element)) {
+			return false;
+		}
+		var back = graph.addVertex(element);
 		if (!element.getRelations().isEmpty()) {
 			addAndLink(element);
 		}
-		return graph.addVertex(element);
+		return back;
 	}
 
 	/**
@@ -194,6 +198,17 @@ public class KnowledgeModel {
 		return true;
 	}
 
+	public boolean hasStructureObject(String id) {
+		return this.structure.contains(id);
+	}
+
+	/**
+	 * Check if the model contains the given KnowledgeElement.
+	 *
+	 * @param elementId
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
 	public boolean contains(String elementId) throws IllegalArgumentException {
 		if (elementId == null) {
 			throw new IllegalArgumentException("ElementId was null!");
@@ -279,8 +294,11 @@ public class KnowledgeModel {
 
 	public RelationEdge link(KnowledgeElement from, KnowledgeElement to, RelationType type) throws IllegalStateException {
 		var newEdge = new RelationEdge(type);
-		if (graph.addEdge(from, to, newEdge)) {
+		if (!contains(from) || !contains(to)) {
 			throw new IllegalStateException();
+		}
+		if (!graph.addEdge(from, to, newEdge)) {
+			logger.info("Edge was already linked from {} to {}.", from.getId(), to.getId());
 		}
 		return newEdge;
 	}
@@ -316,12 +334,25 @@ public class KnowledgeModel {
 			try {
 				structure.getObjectById(structureId).linkElement(elem);
 			} catch (NoSuchElementException e) {
-				logger.warn("Object {} is not part of the structure", elem.getId());
+				logger.warn("StructureObject {} is not part of the structure", structureId);
 			}
 		}
 	}
 
-	//region getter / setter
+	public List<KnowledgeNode> getKnowledgeNodesFor(String structureId) {
+		if (!hasStructureObject(structureId)) {
+			throw new NoSuchElementException("No structure object with id " + structureId + " found");
+		}
+		var structureObject = structure.getObjectById(structureId);
+		var elements = structureObject.getLinkedElements();
+		var back = new ArrayList<KnowledgeNode>();
+		for (var element : elements) {
+			back.add(getKnowledgeNode(element.getId()));
+		}
+		return back;
+	}
+
+	//region setter/getter
 	public KnowledgeFragment getRoot() {
 		return structure.getRoot();
 	}
@@ -349,20 +380,20 @@ public class KnowledgeModel {
 //endregion
 
 	@Override
-	public int hashCode() {
-		int result = graph.hashCode();
-		result = 31 * result + version.hashCode();
-		result = 31 * result + name.hashCode();
-		return result;
-	}
-
-	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof KnowledgeModel that)) return false;
 		if (!version.equals(that.version)) return false;
 		if (!graph.equals(that.graph)) return false;
 		return name.equals(that.name);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = graph.hashCode();
+		result = 31 * result + version.hashCode();
+		result = 31 * result + name.hashCode();
+		return result;
 	}
 
 	private record RelationIdPair(String fromId, String toId) {
@@ -380,7 +411,7 @@ class RelationEdge extends DefaultEdge {
 		this.type = type;
 	}
 
-	//region getter / setter
+//region setter/getter
 	public RelationType getRelation() {
 		return type;
 	}

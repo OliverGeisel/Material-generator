@@ -12,7 +12,7 @@ public abstract class KnowledgeObject {
 	private final String id;
 
 	protected KnowledgeObject(String id) {
-		this.id = id + "-id";
+		this.id = id;
 		linkedElements = new HashSet<>();
 	}
 

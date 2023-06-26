@@ -8,7 +8,7 @@ public class BasicRelation extends Relation {
 	}
 
 	static String idFromName(String type, String from, String to) {
-		return type.toUpperCase() + "_" + from + "_" + to;
+		return from + "_" + type.toUpperCase() + "_" + to;
 	}
 
 }

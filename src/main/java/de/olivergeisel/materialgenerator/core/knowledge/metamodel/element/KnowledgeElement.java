@@ -4,6 +4,7 @@ import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.Relat
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public abstract class KnowledgeElement {
@@ -38,7 +39,7 @@ public abstract class KnowledgeElement {
 	}
 
 	public boolean addRelations(Set<Relation> relations) {
-		return relations.addAll(relations);
+		return this.relations.addAll(relations);
 	}
 
 	//region getter / setter
@@ -65,18 +66,39 @@ public abstract class KnowledgeElement {
 	public KnowledgeType getType() {
 		return type;
 	}
-//endregion
-
-	@Override
-	public int hashCode() {
-		return id.hashCode();
-	}
 
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof KnowledgeElement that)) return false;
-		return id.equals(that.id);
+
+		if (!Objects.equals(id, that.id)) return false;
+		if (type != that.type) return false;
+		if (!relations.equals(that.relations)) return false;
+		if (!Objects.equals(structureId, that.structureId)) return false;
+		return Objects.equals(content, that.content);
 	}
+
+	@Override
+	public int hashCode() {
+		int result = id != null ? id.hashCode() : 0;
+		result = 31 * result + type.hashCode();
+		result = 31 * result + relations.hashCode();
+		result = 31 * result + (structureId != null ? structureId.hashCode() : 0);
+		result = 31 * result + (content != null ? content.hashCode() : 0);
+		return result;
+	}
+
+	@Override
+	public String toString() {
+		return "KnowledgeElement{" +
+				"id='" + id + '\'' +
+				", type=" + type +
+				", relations=" + relations +
+				", structureId='" + structureId + '\'' +
+				", content='" + content + '\'' +
+				'}';
+	}
+//endregion
 
 }
