@@ -4,14 +4,18 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport">
     <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <title th:text="'Definition für '+${term} "></title>
+    <title th:text="'Definition für '+${material.term} "></title>
 </head>
 <body>
-<h1 class="text-center" style="color: var(--bs-red); " th:text="${term}"></h1>
+<h1 class="text-center" style="color: var(--bs-red); " th:text="${material.term}"></h1>
 <hr>
-<p style="color: var(--bs-blue);font-style: italic;">Ein <span th:text="${term}"></span> ist:<br><span
-        th:text="${definition}"></span></p>
+<div class="container">
+
+    <p style="color: var(--bs-blue);font-style: italic;">Ein <span th:text="${material.term}">
+    </span> ist:<br>
+        <span th:text="${material.values.definition}"></span>
+    </p>
+</div>
 <script src="/js/bootstrap.min.js"></script>
 </body>
-
 </html>

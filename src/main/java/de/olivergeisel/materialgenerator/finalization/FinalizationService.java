@@ -3,6 +3,7 @@ package de.olivergeisel.materialgenerator.finalization;
 import de.olivergeisel.materialgenerator.core.courseplan.CoursePlan;
 import de.olivergeisel.materialgenerator.core.courseplan.content.ContentGoal;
 import de.olivergeisel.materialgenerator.finalization.parts.*;
+import de.olivergeisel.materialgenerator.generation.generator.Material;
 import de.olivergeisel.materialgenerator.generation.generator.MaterialAndMapping;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -96,7 +97,7 @@ public class FinalizationService {
 		taskOrderRepository.saveAll(taskOrder);
 	}
 
-	public void moveUp(UUID id, UUID parentChapterId, UUID parentGroupId, UUID idUp) {
+	public void moveUp(UUID id, UUID parentChapterId, UUID parentGroupId, UUID parentTaskId, UUID idUp) {
 		var course = rawCourseRepository.findById(id).orElseThrow();
 		var order = course.getMaterialOrder();
 		switch (order.find(idUp)) {
@@ -109,12 +110,16 @@ public class FinalizationService {
 				var group = order.findGroup(parentGroupId);
 				group.moveUp(task);
 			}
+			case Material material -> {
+				var task = order.findTask(parentTaskId);
+				task.moveUp(material);
+			}
 			default -> throw new IllegalStateException("Unexpected value: " + order.find(idUp));
 		}
 		rawCourseRepository.save(course);
 	}
 
-	public void moveDown(UUID id, UUID parentChapterId, UUID parentGroupId, UUID idDown) {
+	public void moveDown(UUID id, UUID parentChapterId, UUID parentGroupId, UUID parentTaskId, UUID idDown) {
 		var course = rawCourseRepository.findById(id).orElseThrow();
 		var order = course.getMaterialOrder();
 		switch (order.find(idDown)) {
@@ -126,6 +131,10 @@ public class FinalizationService {
 			case TaskOrder task -> {
 				var group = order.findGroup(parentGroupId);
 				group.moveDown(task);
+			}
+			case Material material -> {
+				var task = order.findTask(parentTaskId);
+				task.moveDown(material);
 			}
 			default -> throw new IllegalStateException("Unexpected value: " + order.find(idDown));
 		}

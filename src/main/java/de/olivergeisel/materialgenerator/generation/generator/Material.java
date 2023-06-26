@@ -34,7 +34,6 @@ public class Material extends MaterialOrderPart {
 	@Column(name = "value_column")
 	private Map<String, String> values;
 
-
 	protected Material() {
 
 	}

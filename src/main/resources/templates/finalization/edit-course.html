@@ -121,12 +121,31 @@
                                 </div>
                             </div>
                             <div class="container">
-                                <div class="row" th:each="material:${task.materialOrder}">
+                                <div class="row" th:each="material,stat:${task.materialOrder}">
                                     <p class="col order-first" th:text="${material.name}">
                                     </p>
-                                    <span class="col-1 order-last">
-                                        <i class="bi bi-binoculars-fill"></i>
-                                    </span>
+                                    <form th:action="@{/view}">
+                                        <input name="templateSet" th:value="${course.templateName}" type="hidden">
+                                        <input name="materialId" th:value="${material.id}" type="hidden">
+                                        <span class="col order-5"><button class="btn btn-dark" type="submit">
+                                            <i class="bi bi-binoculars-fill"></i>
+                                        </button>
+                                        </span>
+                                    </form>
+                                    <div class="col-1 order-last">
+                                        <form method="post" th:unless="${stat.first}">
+                                            <input name="group" th:value="${task.id}" type="hidden">
+                                            <button class="btn badge bg-primary" name="up" th:value="${material.id}"><i
+                                                    class="bi bi-arrow-up-circle"></i>
+                                            </button>
+                                        </form>
+                                        <form method="post" th:unless="${stat.last}">
+                                            <input name="group" th:value="${task.id}" type="hidden">
+                                            <button class="btn badge bg-primary" name="down" th:value="${material.id}">
+                                                <i class="bi bi-arrow-down-circle"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>

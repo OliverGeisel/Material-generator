@@ -123,6 +123,7 @@ public class TranslateGenerator implements Generator {
 				var definitionElement = Arrays.stream(mainKnowledge.getRelatedElements()).filter(elem -> elem.getId().equals(defId)).findFirst().orElseThrow();
 				Material defMaterial = new Material(MaterialType.WIKI, mainTerm);
 				defMaterial.setName("Definition " + mainTerm.getContent());
+				//	defMaterial.setTemplate(new DefinitionTemplate());
 				defMaterial.setValues(Map.of("term", mainTerm.getContent(), "definition", definitionElement.getContent()));
 				MaterialMappingEntry mapping = new MaterialMappingEntry(defMaterial);
 				mapping.add(mainTerm, definitionElement);
