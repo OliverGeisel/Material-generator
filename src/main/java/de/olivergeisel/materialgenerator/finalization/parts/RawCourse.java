@@ -16,11 +16,11 @@ public class RawCourse extends Course {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", nullable = false)
-	private UUID id;
+	private UUID id = UUID.randomUUID();
 	private String templateName;
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private CourseMetadataFinalization metadata;
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private MaterialOrder materialOrder;
 
 	@OneToMany(cascade = CascadeType.ALL)

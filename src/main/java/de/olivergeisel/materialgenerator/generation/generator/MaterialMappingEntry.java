@@ -12,8 +12,8 @@ public class MaterialMappingEntry {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", nullable = false)
-	private UUID id;
-	@OneToOne
+	private UUID id = UUID.randomUUID();
+	@OneToOne(cascade = CascadeType.ALL)
 	private Material material;
 
 	public MaterialMappingEntry(Material material, KnowledgeElement... elements) {

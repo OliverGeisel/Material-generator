@@ -1,9 +1,8 @@
 package de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement;
+
+import java.util.*;
 
 public class KnowledgeFragment extends KnowledgeObject {
 
@@ -12,6 +11,25 @@ public class KnowledgeFragment extends KnowledgeObject {
 
 	public KnowledgeFragment(String name) {
 		this(name, null);
+	}
+
+	public boolean containsSimilar(String structureId) {
+		if (structureId == null) {
+			return false;
+		}
+		if (this.getId().contains(structureId)) {
+			return true;
+		}
+		for (KnowledgeObject element : children) {
+			if (element instanceof KnowledgeFragment fragment && fragment.containsSimilar(structureId)) {
+				return true;
+			} else {
+				if (element.getId().contains(structureId)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public KnowledgeFragment(String name, KnowledgeObject part) {
@@ -47,6 +65,28 @@ public class KnowledgeFragment extends KnowledgeObject {
 			}
 		}
 		return false;
+	}
+
+	public KnowledgeObject getSimilarObjectById(String id) throws NoSuchElementException {
+		if (id == null) {
+			throw new NoSuchElementException("id must not be null");
+		}
+		if (id.equals(getId())) {
+			return this;
+		}
+		for (KnowledgeObject element : children) {
+			if (element instanceof KnowledgeFragment fragment) {
+				KnowledgeObject object = fragment.getSimilarObjectById(id);
+				if (object != null) {
+					return object;
+				}
+			} else {
+				if (element.getId().contains(id)) {
+					return element;
+				}
+			}
+		}
+		throw new NoSuchElementException("No element with id " + id + " found");
 	}
 
 	public boolean contains(String id) throws NoSuchElementException {
@@ -90,14 +130,24 @@ public class KnowledgeFragment extends KnowledgeObject {
 		throw new NoSuchElementException("No element with id " + id + " found");
 	}
 
+	//region setter/getter
+
+
 	public boolean removeObject(KnowledgeObject object) {
 		if (!children.contains(object)) {
 			return false;
 		}
 		return children.remove(object);
 	}
-
-//region setter/getter
+	@Override
+	public Set<KnowledgeElement> getLinkedElements() {
+		var ownElements = super.getLinkedElements();
+		var back = new HashSet<>(ownElements);
+		for (KnowledgeObject child : children) {
+			back.addAll(child.getLinkedElements());
+		}
+		return back;
+	}
 	//region getter / setter
 	//
 	public List<KnowledgeObject> getChildren() {

@@ -15,12 +15,12 @@ import java.util.*;
  */
 @Entity
 public class MaterialOrder {
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
 	private final List<ChapterOrder> chapterOrder = new LinkedList<>();
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", nullable = false)
-	private UUID id;
+	private UUID id = UUID.randomUUID();
 
 	public MaterialOrder(CoursePlan plan, Set<Goal> goals) {
 		for (var chapter : plan.getStructure().getOrder()) {
@@ -78,7 +78,6 @@ public class MaterialOrder {
 	}
 
 	//region setter/getter
-	//region getter / setter
 	public List<ChapterOrder> getChapterOrder() {
 		return Collections.unmodifiableList(chapterOrder);
 	}
@@ -86,7 +85,6 @@ public class MaterialOrder {
 	public UUID getId() {
 		return id;
 	}
-//endregion
 //endregion
 
 	@Override
@@ -102,4 +100,10 @@ public class MaterialOrder {
 		return id.hashCode();
 	}
 
+	@Override
+	public String toString() {
+		return "MaterialOrder{" +
+				"chapterOrder=" + chapterOrder +
+				'}';
+	}
 }

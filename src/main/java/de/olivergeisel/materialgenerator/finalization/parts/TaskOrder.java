@@ -7,6 +7,7 @@ import de.olivergeisel.materialgenerator.finalization.Goal;
 import de.olivergeisel.materialgenerator.generation.generator.Material;
 import de.olivergeisel.materialgenerator.generation.generator.MaterialAndMapping;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import java.util.LinkedList;
@@ -18,7 +19,7 @@ import java.util.UUID;
 public class TaskOrder extends MaterialOrderCollection {
 
 
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
 	private final List<Material> materialOrder = new LinkedList<>();
 
 	protected TaskOrder() {
@@ -31,6 +32,7 @@ public class TaskOrder extends MaterialOrderCollection {
 		var topic = goals.stream().flatMap(goal -> goal.getTopics().stream().filter(t -> t.isSame(taskTopic))).findFirst().orElse(null);
 		setTopic(topic);
 		setRelevance(relatedTask.getRelevance());
+		relatedTask.getAlternatives().forEach(this::addAlias);
 	}
 
 	public MaterialOrderPart find(UUID id) {
@@ -72,7 +74,9 @@ public class TaskOrder extends MaterialOrderCollection {
 	public boolean assignMaterial(Set<MaterialAndMapping> materials) {
 		boolean back = false;
 		for (var material : materials) {
-			if (getAlias().contains(material.material().getStructureId())) {
+			if (getAlias().stream().anyMatch(alias -> alias.contains(material.material().getStructureId())) ||
+					getAlias().stream().anyMatch(alias -> alias.contains(material.material().getStructureId().split("-")[0].trim()))
+			) {
 				materialOrder.add(material.material());
 				back = true;
 			}

@@ -14,8 +14,26 @@ public class GeneratorOutput {
 		addMaterial(materialAndMapping.material());
 	}
 
+	public void addAll(Collection<MaterialAndMapping> materialAndMappings) {
+		for (var materialAndMapping : materialAndMappings) {
+			add(materialAndMapping);
+		}
+	}
+
 	public void addMapping(MaterialMappingEntry mapping) {
 		this.allMappings.add(mapping);
+	}
+
+	public void addMapping(MaterialMappingEntry... mappings) {
+		for (var newMapping : mappings) {
+			addMapping(newMapping);
+		}
+	}
+
+	public void addMapping(Collection<MaterialMappingEntry> mappings) {
+		for (var newMapping : mappings) {
+			addMapping(newMapping);
+		}
 	}
 
 	public void addMaterial(Material... materials) {

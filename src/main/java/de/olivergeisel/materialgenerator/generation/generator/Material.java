@@ -20,16 +20,31 @@ public class Material extends MaterialOrderPart {
 	 * The unique term id of the material, which is used in the template
 	 */
 	private String termId;
+	/**
+	 * Part in the structure of the knowledge base
+	 */
+	private String structureId;
 	@Enumerated(EnumType.ORDINAL)
 	private MaterialType type;
 	@ManyToOne(cascade = CascadeType.ALL)
 	private TemplateInfo template;
+	@ElementCollection
+	@CollectionTable(name = "material_entity_map", joinColumns = @JoinColumn(name = "entity_id"))
+	@MapKeyColumn(name = "key_column")
+	@Column(name = "value_column")
+	private Map<String, String> values;
 
-	public Material(MaterialType type, String term, String termId) {
+
+	protected Material() {
+
+	}
+
+	public Material(MaterialType type, String term, String termId, String structureId) {
 		this.type = type;
 		template = null;
 		this.termId = termId;
 		this.term = term;
+		this.structureId = structureId;
 	}
 
 	public Material(MaterialType type, KnowledgeElement element) {
@@ -43,18 +58,23 @@ public class Material extends MaterialOrderPart {
 		}
 		this.termId = element.getId();
 		this.term = element.getContent();
+		this.structureId = element.getStructureId();
 	}
 
-	@ElementCollection
-	@CollectionTable(name = "entity_map", joinColumns = @JoinColumn(name = "entity_id"))
-	@MapKeyColumn(name = "key_column")
-	@Column(name = "value_column")
-	private Map<String, String> values;
-
-	protected Material() {
-
+	@Override
+	public Object find(UUID id) {
+		if (this.getId().equals(id)) return this;
+		return null;
 	}
 
+	//region setter/getter
+	public String getStructureId() {
+		return structureId;
+	}
+
+	public void setStructureId(String structureId) {
+		this.structureId = structureId;
+	}
 
 	public String getTerm() {
 		return term;
@@ -62,12 +82,6 @@ public class Material extends MaterialOrderPart {
 
 	public void setTerm(String term) {
 		this.term = term;
-	}
-
-	@Override
-	public Object find(UUID id) {
-		if (this.getId().equals(id)) return this;
-		return null;
 	}
 
 	public String getTermId() {
@@ -81,8 +95,6 @@ public class Material extends MaterialOrderPart {
 	public Map<String, String> getValues() {
 		return values;
 	}
-
-	//region getter / setter
 
 	public void setValues(Map<String, String> values) {
 		this.values = values;
@@ -104,4 +116,15 @@ public class Material extends MaterialOrderPart {
 		this.template = template;
 	}
 //endregion
+
+	@Override
+	public String toString() {
+		return "Material{" +
+				"term='" + term + '\'' +
+				", structureId='" + structureId + '\'' +
+				", type=" + type +
+				", template=" + template +
+				", values=" + values +
+				'}';
+	}
 }

@@ -341,7 +341,17 @@ public class KnowledgeModel {
 
 	public List<KnowledgeNode> getKnowledgeNodesFor(String structureId) {
 		if (!hasStructureObject(structureId)) {
+			logger.warn("No structure object with id {} found.\nSearch for Object that contains structureName", structureId);
+		} else if (!hasStructureSimelar(structureId)) {
 			throw new NoSuchElementException("No structure object with id " + structureId + " found");
+		} else {
+			var similarObject = structure.getRoot().getSimilarObjectById(structureId);
+			var elements = similarObject.getLinkedElements();
+			var back = new ArrayList<KnowledgeNode>();
+			for (var element : elements) {
+				back.add(getKnowledgeNode(element.getId()));
+			}
+			return back;
 		}
 		var structureObject = structure.getObjectById(structureId);
 		var elements = structureObject.getLinkedElements();
@@ -350,6 +360,10 @@ public class KnowledgeModel {
 			back.add(getKnowledgeNode(element.getId()));
 		}
 		return back;
+	}
+
+	private boolean hasStructureSimelar(String structureId) {
+		return structure.containsSimilar(structureId);
 	}
 
 	//region setter/getter

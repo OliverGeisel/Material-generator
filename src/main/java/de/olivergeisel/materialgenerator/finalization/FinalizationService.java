@@ -49,8 +49,8 @@ public class FinalizationService {
 		var goals = createGoals(cGoals);
 		var rawCourse = new RawCourse(coursePlan, template, goals);
 		rawCourse.assignMaterial(materials);
-		saveMaterialOrder(rawCourse.getMaterialOrder());
 		saveMetadata(rawCourse.getMetadata());
+		saveMaterialOrder(rawCourse.getMaterialOrder());
 		return rawCourseRepository.save(rawCourse);
 	}
 
@@ -100,9 +100,7 @@ public class FinalizationService {
 		var course = rawCourseRepository.findById(id).orElseThrow();
 		var order = course.getMaterialOrder();
 		switch (order.find(idUp)) {
-			case ChapterOrder chapter -> {
-				order.moveUp(chapter);
-			}
+			case ChapterOrder chapter -> order.moveUp(chapter);
 			case GroupOrder group -> {
 				var chapter = order.findChapter(parentChapterId);
 				chapter.moveUp(group);
@@ -120,9 +118,7 @@ public class FinalizationService {
 		var course = rawCourseRepository.findById(id).orElseThrow();
 		var order = course.getMaterialOrder();
 		switch (order.find(idDown)) {
-			case ChapterOrder chapter -> {
-				order.moveDown(chapter);
-			}
+			case ChapterOrder chapter -> order.moveDown(chapter);
 			case GroupOrder group -> {
 				var chapter = order.findChapter(parentChapterId);
 				chapter.moveDown(group);

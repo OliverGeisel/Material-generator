@@ -7,6 +7,7 @@ import de.olivergeisel.materialgenerator.finalization.Goal;
 import de.olivergeisel.materialgenerator.generation.generator.Material;
 import de.olivergeisel.materialgenerator.generation.generator.MaterialAndMapping;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import java.util.*;
@@ -14,7 +15,7 @@ import java.util.*;
 @Entity
 public class ChapterOrder extends MaterialOrderCollection {
 
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
 	private final List<GroupOrder> groupOrder;
 
 	public ChapterOrder(StructureChapter chapter, Set<Goal> goals) {
@@ -27,6 +28,7 @@ public class ChapterOrder extends MaterialOrderCollection {
 		var chapterTopic = chapter.getTopic();
 		var topic = goals.stream().flatMap(goal -> goal.getTopics().stream().filter(t -> t.isSame(chapterTopic))).findFirst().orElse(null);
 		setTopic(topic);
+		chapter.getAlternatives().forEach(this::addAlias);
 	}
 
 

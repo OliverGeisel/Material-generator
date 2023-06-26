@@ -46,7 +46,7 @@ public class GeneratorService {
 		}
 		var templateSet = templateSetRepository.findByName(template).orElseThrow();
 		var materials = createMaterials(coursePlan, templateSet);
-		return finalizationService.createRawCourse(coursePlan, template);
+		return finalizationService.createRawCourse(coursePlan, template, materials);
 	}
 
 	private Set<MaterialAndMapping> createMaterials(CoursePlan coursePlan, TemplateSet templateSet) {

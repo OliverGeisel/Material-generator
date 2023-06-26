@@ -2,15 +2,15 @@ package de.olivergeisel.materialgenerator.finalization.parts;
 
 import de.olivergeisel.materialgenerator.core.courseplan.CoursePlan;
 
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.*;
 
 @Entity
 public class CourseMetadataFinalization {
 	@ElementCollection
+	@CollectionTable(name = "metadata_finalization_entity_map", joinColumns = @JoinColumn(name = "entity_id"))
+	@MapKeyColumn(name = "key_column")
+	@Column(name = "value_column")
 	private final Map<String, String> otherInfos;
 	@Id
 	@Column(name = "id", nullable = false)

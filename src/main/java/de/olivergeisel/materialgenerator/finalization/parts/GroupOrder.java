@@ -9,6 +9,7 @@ import de.olivergeisel.materialgenerator.finalization.Goal;
 import de.olivergeisel.materialgenerator.generation.generator.Material;
 import de.olivergeisel.materialgenerator.generation.generator.MaterialAndMapping;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import java.util.*;
@@ -17,7 +18,7 @@ import java.util.*;
 
 public class GroupOrder extends MaterialOrderCollection {
 
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
 	private final List<TaskOrder> taskOrder = new LinkedList<>();
 
 	/**
@@ -42,6 +43,7 @@ public class GroupOrder extends MaterialOrderCollection {
 		var groupTopic = group.getTopic();
 		var topic = goals.stream().flatMap(goal -> goal.getTopics().stream().filter(t -> t.isSame(groupTopic))).findFirst().orElse(null);
 		setTopic(topic);
+		part.getAlternatives().forEach(this::addAlias);
 	}
 
 	protected GroupOrder() {

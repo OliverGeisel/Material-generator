@@ -57,7 +57,7 @@ public class CoursePlanParser {
 		List<Map<String, ?>> groups = (List<Map<String, ?>>) chapterJSON.get("groups");
 		String name = chapterJSON.get("name").toString();
 		String weight = chapterJSON.get("weight").toString();
-		var alternatives = crateAlias((List<String>) chapterJSON.get("alternatives"));
+		var alternatives = crateAlias(name, (List<String>) chapterJSON.get("alternatives"));
 		String topicName = chapterJSON.get(TOPIC) != null ? chapterJSON.get(TOPIC).toString() : "";
 		var target = findTopic(topicName);
 		var back = new StructureChapter(target, Relevance.TO_SET, name, Double.parseDouble(weight), alternatives);
@@ -71,8 +71,15 @@ public class CoursePlanParser {
 		return back;
 	}
 
-	private Set<String> crateAlias(List<String> alternativesJSON) {
-		return new HashSet<>(alternativesJSON);
+	private Set<String> crateAlias(String normalName, List<String> alternativesJSON) {
+		var back = new HashSet<String>();
+		if (alternativesJSON != null) {
+			back.add(normalName);
+		}
+		if (alternativesJSON != null) {
+			back.addAll(alternativesJSON);
+		}
+		return back;
 	}
 
 	/**
@@ -89,7 +96,7 @@ public class CoursePlanParser {
 		String name = groupJSON.get("name").toString();
 		String topicName = groupJSON.get(TOPIC) != null ? groupJSON.get(TOPIC).toString() : "";
 		var topic = findTopic(topicName);
-		var alternatives = crateAlias(((List<String>) groupJSON.get("alternatives")));
+		var alternatives = crateAlias(name, ((List<String>) groupJSON.get("alternatives")));
 		var back = new StructureGroup(topic, Relevance.TO_SET, name, alternatives);
 		List<Map<String, ?>> tasks = (List<Map<String, ?>>) groupJSON.get("tasks");
 		for (var task : tasks) {
@@ -108,7 +115,7 @@ public class CoursePlanParser {
 		String name = taskJSON.get("name").toString();
 		String topicName = taskJSON.get(TOPIC) != null ? taskJSON.get(TOPIC).toString() : "";
 		ContentTarget topic = findTopic(topicName);
-		var alternatives = crateAlias((List<String>) taskJSON.get("alternatives"));
+		var alternatives = crateAlias(name, (List<String>) taskJSON.get("alternatives"));
 		return new StructureTask(topic, relevance, name, alternatives);
 	}
 

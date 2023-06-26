@@ -46,7 +46,7 @@
     {
       "type": "TERM",
       "id": "Algorithmus-TERM",
-      "structure": "Algorithmus",
+      "structure": "Algorithmus-Bergriff",
       "content": "Algorithmus",
       "relations": [
         {
@@ -58,7 +58,7 @@
     {
       "type": "DEFINITION",
       "id": "Algorithmus-DEFINITION",
-      "structure": "Algorithmus",
+      "structure": "Algorithmus-Bergriff",
       "content": "Ein Algorithmus ist eine eindeutige Handlungsvorschrift zur Lösung eines Problems oder einer Klasse von Problemen.",
       "relations": [
         {
@@ -90,7 +90,7 @@
             "children": [
               {
                 "key": "_root/1/1/1",
-                "name": "Bereich1-1-1",
+                "name": "Algorithmus-Bergriff",
                 "children": []
               },
               {

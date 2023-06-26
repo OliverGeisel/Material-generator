@@ -9,7 +9,7 @@ public abstract class MaterialOrderPart {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", nullable = false)
-	private UUID id;
+	private UUID id = UUID.randomUUID();
 	private String name;
 
 	/**
@@ -47,5 +47,12 @@ public abstract class MaterialOrderPart {
 		return id.equals(that.id);
 	}
 
+	@Override
+	public String toString() {
+		return "MaterialOrderPart{" +
+				"name='" + name +
+				", id=" + id + '\'' +
+				'}';
+	}
 }
 

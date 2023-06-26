@@ -9,9 +9,15 @@ public class RootStructureElement extends KnowledgeFragment {
 		super("Knowledge-Root", null);
 	}
 
-//
+	//region setter/getter
+	public String getKey() {
+		return key;
+	}
+
+
 	public void setKey(String key) {
 		this.key = key;
 	}
-//
+//endregion
+
 }

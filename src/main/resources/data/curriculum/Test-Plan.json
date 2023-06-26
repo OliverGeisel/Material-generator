@@ -76,14 +76,16 @@
           "alternatives": [
             "Algorithmus"
           ],
-          "topic": "Algorithmus-TERM",
+          "topic": "Algorithmus-Begriff",
           "tasks": [
             {
               "key": "task-2-1-1",
               "name": "Definition Algorithmus",
               "topic": "Algorithmus-Begriff",
               "relevance": "MANDATORY",
-              "alternatives": []
+              "alternatives": [
+                "Algorithmus"
+              ]
             },
             {
               "key": "task-2-1-2",

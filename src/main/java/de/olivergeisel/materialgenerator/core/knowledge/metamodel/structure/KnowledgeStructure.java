@@ -48,12 +48,19 @@ public class KnowledgeStructure {
 		return root.getObjectById(id);
 	}
 
-	//region getter / setter
-	//
+	public boolean containsSimilar(String structureId) {
+		return root.containsSimilar(structureId);
+	}
+
+	public KnowledgeObject getSimilarObjectById(String structureId) {
+		return root.getSimilarObjectById(structureId);
+	}
+
+
+	//region setter/getter
 	public RootStructureElement getRoot() {
 		return root;
 	}
 //endregion
-//
 
 }
