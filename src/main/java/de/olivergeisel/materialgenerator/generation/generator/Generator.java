@@ -4,6 +4,9 @@ import de.olivergeisel.materialgenerator.core.courseplan.CoursePlan;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.KnowledgeModel;
 import de.olivergeisel.materialgenerator.generation.output_template.TemplateSet;
 
+/**
+ * A Generator is a class that generates materials for a given curriculum.
+ */
 public interface Generator {
 
 	/**
@@ -11,9 +14,9 @@ public interface Generator {
 	 *
 	 * @param templates  Templates that should be used for the generation.
 	 * @param model      The current KnowledgeModel.
-	 * @param curriculum Curriculum for which the generator should generate materials.
+	 * @param plan       Plan with curriculum for which the generator should generate materials.
 	 */
-	void input(TemplateSet templates, KnowledgeModel model, CoursePlan curriculum);
+	void input(TemplateSet templates, KnowledgeModel model, CoursePlan plan);
 
 	/**
 	 * Initial method to set the input for the generator. This needs only the GeneratorInput object.
@@ -39,6 +42,7 @@ public interface Generator {
 //
 
 //region getter / setter
+
 	/**
 	 * Method to check if the generator is ready to start the generation process. This method should be called after the input method and before the update method.
 	 *

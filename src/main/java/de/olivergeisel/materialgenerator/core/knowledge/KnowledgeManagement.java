@@ -84,9 +84,11 @@ public class KnowledgeManagement {
 
 	//region getter / setter
 
-	private KnowledgeModel getKnowledge() {
+//region setter/getter
+	public KnowledgeModel getKnowledge() {
 		return knowledge;
 	}
+//endregion
 
 	public Set<KnowledgeElement> findRelatedData(String elementId) {
 		return getKnowledge().findAll(elementId);

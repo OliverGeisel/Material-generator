@@ -42,7 +42,15 @@ public class GeneratorOutput {
 		return this.allMaterial.remove(material);
 	}
 
-	//region getter / setter
+	//region setter/getter
+	public Set<MaterialAndMapping> getMaterialAndMapping() {
+		Set<MaterialAndMapping> result = new HashSet<>();
+		for (var material : allMaterial) {
+			result.add(new MaterialAndMapping(material, allMappings.stream().filter(m -> m.getMaterial() == material).findFirst().orElseThrow()));
+		}
+		return result;
+	}
+
 	public Set<MaterialMappingEntry> getAllMappings() {
 		return Collections.unmodifiableSet(allMappings);
 	}

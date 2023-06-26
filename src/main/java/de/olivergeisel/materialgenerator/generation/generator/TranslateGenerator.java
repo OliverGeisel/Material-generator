@@ -223,6 +223,13 @@ public class TranslateGenerator implements Generator {
 		return materials;
 	}
 
+	/**
+	 * Initial method to set the input for the generator. All parameters cant be null.
+	 *
+	 * @param templates Templates that should be used for the generation.
+	 * @param model     The current KnowledgeModel.
+	 * @param plan      Plan with curriculum for which the generator should generate materials.
+	 */
 	@Override
 	public void input(TemplateSet templates, KnowledgeModel model, CoursePlan plan) {
 		this.templates = templates;
@@ -230,11 +237,21 @@ public class TranslateGenerator implements Generator {
 		this.plan = plan;
 	}
 
+	/**
+	 * Initial method to set the input for the generator. This needs only the GeneratorInput object.
+	 *
+	 * @param input All input to be needed for the generator. Must be valid and not be null.
+	 */
 	@Override
 	public void input(GeneratorInput input) {
 		input(input.getTemplates(), input.getModel(), input.getPlan());
 	}
 
+	/**
+	 * Method to start the generation process. This method should be called after the input method.
+	 *
+	 * @return True if the generation was successful, false if not.
+	 */
 	@Override
 	public boolean update() {
 		if (!isReady() || isUnchanged()) {
@@ -245,13 +262,14 @@ public class TranslateGenerator implements Generator {
 		return true;
 	}
 
+	/**
+	 * Method to get the output of the generation process. This method should be called after the update method.
+	 *
+	 * @return all Materials for the given input.
+	 */
 	@Override
 	public GeneratorOutput output() {
 		return this.output;
-	}
-
-	public boolean isReady() {
-		return templates != null && model != null && plan != null;
 	}
 
 	/**
@@ -281,7 +299,11 @@ public class TranslateGenerator implements Generator {
 		}
 	}
 
-	//region getter / setter
+	//region setter/getter
+	public boolean isReady() {
+		return templates != null && model != null && plan != null;
+	}
+
 	private boolean isUnchanged() {
 		return unchanged;
 	}
