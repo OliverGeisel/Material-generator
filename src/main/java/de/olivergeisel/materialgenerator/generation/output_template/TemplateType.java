@@ -29,4 +29,24 @@ public record TemplateType(String type) {
 			default -> new TemplateType(typeString);
 		};
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof TemplateType that)) return false;
+
+		return type.equals(that.type);
+	}
+
+	@Override
+	public int hashCode() {
+		return type.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		return "TemplateType{" +
+				"type='" + type + '\'' +
+				'}';
+	}
 }

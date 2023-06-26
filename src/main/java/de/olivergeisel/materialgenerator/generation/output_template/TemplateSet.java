@@ -3,6 +3,7 @@ package de.olivergeisel.materialgenerator.generation.output_template;
 import de.olivergeisel.materialgenerator.generation.output_template.template_content.TemplateInfo;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -14,9 +15,10 @@ public class TemplateSet {
 	private UUID id;
 	private String name;
 
-	private volatile BasicTemplates basicTemplates = new BasicTemplates();
-	@ElementCollection
-	private Set<String> extraTemplates; // Todo Not supported yet
+	@Transient
+	private final BasicTemplates basicTemplates = new BasicTemplates();
+	@OneToMany
+	private final Set<ExtraTemplate> extraTemplates = new HashSet<>();
 
 	public TemplateSet() {
 	}
@@ -25,17 +27,16 @@ public class TemplateSet {
 		this.name = name;
 	}
 
-	public boolean addAllTemplates(Set<TemplateInfo> templates) {
+	public boolean addAllTemplates(Set<? extends TemplateInfo> templates) {
 		return true;//extraTemplates.addAll(templates);
 	}
 
-	public boolean addTemplate(TemplateInfo template) {
-		return true;//extraTemplates.add(template);
+	public boolean addTemplate(ExtraTemplate template) {
+		return extraTemplates.add(template);
 	}
 
 	public boolean removeTemplate(TemplateInfo template) {
-		return
-				true; //extraTemplates.remove(template);
+		return true; //extraTemplates.remove(template);
 	}
 
 	public boolean supportsTemplate(TemplateType type) {
@@ -51,10 +52,12 @@ public class TemplateSet {
 		return true; //extraTemplates.stream().anyMatch(it -> it.getTemplateType().equals(type));
 	}
 
+//region setter/getter
 	//region getter / setter
-	private Set<TemplateInfo> getExtraTemplates() {
-		return null;// Collections.unmodifiableSet(extraTemplates);
+	public Set<ExtraTemplate> getExtraTemplates() {
+		return extraTemplates;// Collections.unmodifiableSet(extraTemplates);
 	}
+//endregion
 
 	public TextTemplate getTextTemplate() {
 		return basicTemplates.getTextTemplate();

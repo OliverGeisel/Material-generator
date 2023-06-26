@@ -2,39 +2,39 @@ package de.olivergeisel.materialgenerator.generation.output_template;
 
 import de.olivergeisel.materialgenerator.generation.output_template.template_content.TemplateInfo;
 
-import javax.persistence.Embeddable;
-import java.io.File;
+import javax.persistence.Entity;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
-@Embeddable
+@Entity
 public class TextTemplate extends TemplateInfo {
-	private String term;
+
+	public static final Set<String> FIELDS;
+
+	static {
+		var allFields = new HashSet<>(TemplateInfo.FIELDS);
+		allFields.add("text");
+		FIELDS = Collections.unmodifiableSet(allFields);
+	}
+
 	private String text;
 
 	public TextTemplate() {
 		super(TemplateType.TEXT);
 	}
 
-	public TextTemplate(File file) {
-		super(file, TemplateType.TEXT);
+	public TextTemplate(UUID mainTermId) {
+		super(TemplateType.TEXT, mainTermId);
 	}
 
-	public TextTemplate(String term, String text) {
-		super(TemplateType.TEXT);
-		this.term = term;
+	public TextTemplate(UUID mainTermId, String text) {
+		super(TemplateType.TEXT, mainTermId);
 		this.text = text;
 	}
 
-	//region getter / setter
-	//
-//
-	public String getTerm() {
-		return term;
-	}
-
-	public void setTerm(String term) {
-		this.term = term;
-	}
-
+	//region setter/getter
 	public String getText() {
 		return text;
 	}

@@ -1,31 +1,53 @@
 package de.olivergeisel.materialgenerator.generation.output_template;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Embedded;
+import javax.persistence.*;
+import java.util.Set;
+import java.util.UUID;
 
-@Embeddable
+@Entity
 public class BasicTemplates {
-	@Embedded
-	@AttributeOverride(name = "values.definition", column = @Column(name = "definition_definition"))
-	@AttributeOverride(name = "values.termId", column = @Column(name = "definition_term"))
-	private DefinitionTemplate definitionTemplate;
-	@Embedded
-	@AttributeOverride(name = "term", column = @Column(name = "text_term"))
-	@AttributeOverride(name = "text", column = @Column(name = "text_text"))
-	private TextTemplate textTemplate;
-	@Embedded
-	@AttributeOverride(name = "term", column = @Column(name = "example_term"))
-	@AttributeOverride(name = "example", column = @Column(name = "example_example"))
-	private ExampleTemplate exampleTemplate;
-	@Embedded
-	private AcronymTemplate acronymTemplate;
-	@Embedded
 
+	public static final Set<String> TEMPLATES = Set.of("DEFINITION", "TEXT", "EXAMPLE", "ACRONYM", "LIST", "SYNONYM");
+	@Transient
+	private static BasicTemplates instance;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id", nullable = false)
+	private UUID id;
+
+	@ManyToOne
+	@JoinColumn(name = "definition_template_id")
+	private DefinitionTemplate definitionTemplate;
+
+	@ManyToOne
+	@JoinColumn(name = "text_template_id")
+	private TextTemplate textTemplate;
+
+	@ManyToOne
+	@JoinColumn(name = "example_template_id")
+	private ExampleTemplate exampleTemplate;
+
+	@ManyToOne
+	@JoinColumn(name = "acronym_template_id")
+	private AcronymTemplate acronymTemplate;
+
+
+	@ManyToOne
+	@JoinColumn(name = "list_template_id")
 	private ListTemplate listTemplate;
-	@Embedded
+	@ManyToOne
+	@JoinColumn(name = "synonym_template_id")
 	private SynonymTemplate synonymTemplate;
+
+//region setter/getter
+	public BasicTemplates getInstance() {
+		return instance;
+	}
+
+	public UUID getId() {
+		return id;
+	}
+//endregion
 
 	public BasicTemplates() {
 		this.definitionTemplate = new DefinitionTemplate();

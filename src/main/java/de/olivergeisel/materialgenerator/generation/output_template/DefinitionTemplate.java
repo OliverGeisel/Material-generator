@@ -5,47 +5,50 @@ import de.olivergeisel.materialgenerator.generation.output_template.template_con
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
-import java.io.File;
-import java.util.UUID;
+import javax.persistence.Entity;
+import java.util.*;
 
-@Embeddable
+@Entity
 public class DefinitionTemplate extends TemplateInfo {
+
+	public static final Set<String> FIELDS;
+
+	static {
+		var allFields = new HashSet<>(TemplateInfo.FIELDS);
+		allFields.add("definition");
+		allFields.add("relatedTerms");
+		FIELDS = Collections.unmodifiableSet(allFields);
+	}
 
 	@Embedded
 	@AttributeOverride(name = "definition", column = @Column(name = "definition_definition"))
-	@AttributeOverride(name = "termId", column = @Column(name = "definition_term"))
+	@AttributeOverride(name = "relatedTerms", column = @Column(name = "definition_related_term"))
 	private DefinitionContent values;
 
-	public DefinitionTemplate(File file) {
-		super(file, TemplateType.DEFINITION);
+	public DefinitionTemplate(UUID mainTerm) {
+		super(TemplateType.DEFINITION, mainTerm);
 	}
 
 	public DefinitionTemplate() {
 		super(TemplateType.DEFINITION);
 	}
 
+	//region setter/getter
 	//region getter / setter
 	public String getDefinition() {
-		return values.definition();
-	}
-	public UUID getTerm() {
-		return values.termId();
-	}
-
-	public void setTerm(UUID termId) {
-		values = new DefinitionContent(termId, values.definition());
+		return values.getDefinition();
 	}
 
 	public void setDefinition(String definition) {
-		this.values = new DefinitionContent(this.values.termId(), definition);
-
+		this.values.setDefinition(definition);
 	}
 
-	public void setValues(DefinitionContent values) {
-		this.values = values;
+	public void setRelatedTerms(List<String> terms) {
+		values.clearRelatedTerms();
+		terms.forEach(t -> values.addTermId(UUID.fromString(t)));
 	}
+//endregion
 //endregion
 
 }

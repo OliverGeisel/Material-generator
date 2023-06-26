@@ -2,12 +2,13 @@ package de.olivergeisel.materialgenerator.generation.output_template;
 
 import de.olivergeisel.materialgenerator.generation.output_template.template_content.TemplateInfo;
 
-import javax.persistence.Embeddable;
-import java.io.File;
+import javax.persistence.Entity;
+import java.util.UUID;
 
-@Embeddable
+@Entity
 public class AcronymTemplate extends TemplateInfo {
 
+	// Todo rethink if its a list of strings
 	private String acronym;
 
 
@@ -15,8 +16,8 @@ public class AcronymTemplate extends TemplateInfo {
 		super(TemplateType.TEXT);
 	}
 
-	public AcronymTemplate(File file) {
-		super(file, TemplateType.TEXT);
+	public AcronymTemplate(UUID mainTermId) {
+		super(TemplateType.ACRONYM, mainTermId);
 	}
 
 	public String getAcronym() {

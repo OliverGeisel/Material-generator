@@ -22,13 +22,7 @@ public class Material extends MaterialOrderPart {
 	private String termId;
 	@Enumerated(EnumType.ORDINAL)
 	private MaterialType type;
-	@Embedded
-	@AttributeOverrides({
-			@AttributeOverride(name = "templateType", column = @Column(name = "template_type")),
-			@AttributeOverride(name = "file", column = @Column(name = "template_file")),
-			@AttributeOverride(name = "name", column = @Column(name = "template_name")),
-			@AttributeOverride(name = "content", column = @Column(name = "template_content"))
-	})
+	@ManyToOne(cascade = CascadeType.ALL)
 	private TemplateInfo template;
 
 	public Material(MaterialType type, String term, String termId) {
@@ -50,7 +44,11 @@ public class Material extends MaterialOrderPart {
 		this.termId = element.getId();
 		this.term = element.getContent();
 	}
+
 	@ElementCollection
+	@CollectionTable(name = "entity_map", joinColumns = @JoinColumn(name = "entity_id"))
+	@MapKeyColumn(name = "key_column")
+	@Column(name = "value_column")
 	private Map<String, String> values;
 
 	protected Material() {

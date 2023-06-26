@@ -37,7 +37,7 @@ public abstract class TemplateInfo {
 		this.templateType = null;
 	}
 
-	//region getter / setter
+	//region setter/getter
 	public UUID getId() {
 		return id;
 	}
@@ -56,4 +56,25 @@ public abstract class TemplateInfo {
 //endregion
 
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof TemplateInfo that)) return false;
+
+		return id.equals(that.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return id.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		return "TemplateInfo{" +
+				"templateType=" + templateType +
+				", id=" + id +
+				", mainTermId=" + mainTermId +
+				'}';
+	}
 }

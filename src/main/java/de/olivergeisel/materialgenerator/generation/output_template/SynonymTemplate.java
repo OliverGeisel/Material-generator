@@ -2,28 +2,39 @@ package de.olivergeisel.materialgenerator.generation.output_template;
 
 import de.olivergeisel.materialgenerator.generation.output_template.template_content.TemplateInfo;
 
-import javax.persistence.Embeddable;
-import java.io.File;
+import javax.persistence.Entity;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
-@Embeddable
+@Entity
 public class SynonymTemplate extends TemplateInfo {
+
+	public static final Set<String> FIELDS;
+
+	static {
+		var allFields = new HashSet<>(TemplateInfo.FIELDS);
+		allFields.add("synonym");
+		FIELDS = Collections.unmodifiableSet(allFields);
+	}
+
+	//todo rethink if lis of synonyms is better
 
 	private String synonym;
 
 	public SynonymTemplate() {
-		super(TemplateType.TEXT);
+		super(TemplateType.SYNONYM);
 	}
 
-	public SynonymTemplate(String synonym) {
-		super(TemplateType.TEXT);
+
+	public SynonymTemplate(UUID maiTermId, String synonym) {
+		super(TemplateType.SYNONYM, maiTermId);
 		this.synonym = synonym;
 	}
 
-	public SynonymTemplate(File file) {
-		super(file, TemplateType.SYNONYM);
-	}
 
-//region getter / setter
+	//region setter/getter
 	public String getSynonym() {
 		return synonym;
 	}
@@ -32,4 +43,5 @@ public class SynonymTemplate extends TemplateInfo {
 		this.synonym = synonym;
 	}
 //endregion
+
 }
