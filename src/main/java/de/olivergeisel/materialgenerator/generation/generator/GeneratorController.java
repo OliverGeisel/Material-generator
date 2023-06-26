@@ -29,12 +29,15 @@ public class GeneratorController {
 	private final GeneratorService service;
 	private final StorageService storageService;
 	private final TemplateSetRepository templateSetRepository;
+	private final MaterialRepository materialRepository;
 
 	public GeneratorController(GeneratorService service, StorageService storageService,
-							   TemplateSetRepository templateSetRepository) {
+							   TemplateSetRepository templateSetRepository,
+							   MaterialRepository materialRepository) {
 		this.service = service;
 		this.storageService = storageService;
 		this.templateSetRepository = templateSetRepository;
+		this.materialRepository = materialRepository;
 	}
 
 	@GetMapping({"", "/", ".html"})
@@ -140,6 +143,12 @@ public class GeneratorController {
 			template = PLAIN;
 		}
 		return TemplateService.TEMPLATE_SET_FROM_TEMPLATES_FOLDER + template + "/DEFINITION";
+	}
+
+	@GetMapping("materials")
+	public String showMaterials(Model model) {
+		model.addAttribute("materials", materialRepository.findAll());
+		return PATH + "materials";
 	}
 
 }
