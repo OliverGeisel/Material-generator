@@ -7,6 +7,7 @@ import de.olivergeisel.materialgenerator.core.courseplan.structure.StructureGrou
 import de.olivergeisel.materialgenerator.core.courseplan.structure.StructureTask;
 import de.olivergeisel.materialgenerator.finalization.Goal;
 import de.olivergeisel.materialgenerator.generation.generator.Material;
+import de.olivergeisel.materialgenerator.generation.generator.MaterialAndMapping;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -92,11 +93,16 @@ public class GroupOrder extends MaterialOrderCollection {
 		return taskOrder.stream().mapToInt(TaskOrder::materialCount).sum();
 	}
 
+	@Override
+	public boolean assignMaterial(Set<MaterialAndMapping> materials) {
+		return taskOrder.stream().anyMatch(t ->
+				t.assignMaterial(materials));
+	}
+
 	//region getter / setter
 	public List<TaskOrder> getTaskOrder() {
 		return Collections.unmodifiableList(taskOrder);
 	}
 //endregion
-
 
 }

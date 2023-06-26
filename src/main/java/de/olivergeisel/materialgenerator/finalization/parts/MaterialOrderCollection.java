@@ -3,6 +3,7 @@ package de.olivergeisel.materialgenerator.finalization.parts;
 import de.olivergeisel.materialgenerator.core.course.MaterialOrderPart;
 import de.olivergeisel.materialgenerator.core.courseplan.structure.Relevance;
 import de.olivergeisel.materialgenerator.finalization.Topic;
+import de.olivergeisel.materialgenerator.generation.generator.MaterialAndMapping;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -23,6 +24,8 @@ public abstract class MaterialOrderCollection extends MaterialOrderPart {
 	public abstract Relevance updateRelevance();
 
 	public abstract int materialCount();
+
+	public abstract boolean assignMaterial(Set<MaterialAndMapping> materials);
 
 	public boolean addAlias(String alternative) {
 		return alias.add(alternative);

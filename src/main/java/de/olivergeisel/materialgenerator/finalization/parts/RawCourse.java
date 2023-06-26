@@ -4,6 +4,7 @@ package de.olivergeisel.materialgenerator.finalization.parts;
 import de.olivergeisel.materialgenerator.core.course.Course;
 import de.olivergeisel.materialgenerator.core.courseplan.CoursePlan;
 import de.olivergeisel.materialgenerator.finalization.Goal;
+import de.olivergeisel.materialgenerator.generation.generator.MaterialAndMapping;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -49,6 +50,10 @@ public class RawCourse extends Course {
 		return id;
 	}
 
+
+	public boolean assignMaterial(Set<MaterialAndMapping> materials) {
+		return materialOrder.assignMaterial(materials);
+	}
 
 	public MaterialOrder getMaterialOrder() {
 		return materialOrder;

@@ -5,6 +5,7 @@ import de.olivergeisel.materialgenerator.core.courseplan.structure.Relevance;
 import de.olivergeisel.materialgenerator.core.courseplan.structure.StructureTask;
 import de.olivergeisel.materialgenerator.finalization.Goal;
 import de.olivergeisel.materialgenerator.generation.generator.Material;
+import de.olivergeisel.materialgenerator.generation.generator.MaterialAndMapping;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -67,11 +68,25 @@ public class TaskOrder extends MaterialOrderCollection {
 		return materialOrder.size();
 	}
 
+	@Override
+	public boolean assignMaterial(Set<MaterialAndMapping> materials) {
+		boolean back = false;
+		for (var material : materials) {
+			if (getAlias().contains(material.material().getStructureId())) {
+				materialOrder.add(material.material());
+				back = true;
+			}
+		}
+		return back;
+	}
+
 	//region getter / setter
 
+	//region setter/getter
 	public List<Material> getMaterialOrder() {
 		return materialOrder;
 	}
+//endregion
 
 //endregion
 }

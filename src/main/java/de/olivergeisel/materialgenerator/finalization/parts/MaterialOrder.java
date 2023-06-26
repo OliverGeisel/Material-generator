@@ -4,6 +4,7 @@ import de.olivergeisel.materialgenerator.core.course.MaterialOrderPart;
 import de.olivergeisel.materialgenerator.core.courseplan.CoursePlan;
 import de.olivergeisel.materialgenerator.finalization.Goal;
 import de.olivergeisel.materialgenerator.generation.generator.Material;
+import de.olivergeisel.materialgenerator.generation.generator.MaterialAndMapping;
 
 import javax.persistence.*;
 import java.util.*;
@@ -55,6 +56,10 @@ public class MaterialOrder {
 		return chapterOrder.stream().map(c -> c.findMaterial(materialId)).filter(Objects::nonNull).findFirst().orElse(null);
 	}
 
+	public boolean assignMaterial(Set<MaterialAndMapping> materials) {
+		return chapterOrder.stream().anyMatch(c -> c.assignMaterial(materials));
+	}
+
 
 	public void moveUp(ChapterOrder chapter) {
 		int index = chapterOrder.indexOf(chapter);
@@ -72,6 +77,7 @@ public class MaterialOrder {
 		}
 	}
 
+	//region setter/getter
 	//region getter / setter
 	public List<ChapterOrder> getChapterOrder() {
 		return Collections.unmodifiableList(chapterOrder);
@@ -81,11 +87,7 @@ public class MaterialOrder {
 		return id;
 	}
 //endregion
-
-	@Override
-	public int hashCode() {
-		return id.hashCode();
-	}
+//endregion
 
 	@Override
 	public boolean equals(Object o) {
@@ -95,5 +97,9 @@ public class MaterialOrder {
 		return id.equals(that.id);
 	}
 
+	@Override
+	public int hashCode() {
+		return id.hashCode();
+	}
 
 }

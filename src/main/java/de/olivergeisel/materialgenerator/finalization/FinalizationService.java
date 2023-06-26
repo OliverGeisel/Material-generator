@@ -3,6 +3,7 @@ package de.olivergeisel.materialgenerator.finalization;
 import de.olivergeisel.materialgenerator.core.courseplan.CoursePlan;
 import de.olivergeisel.materialgenerator.core.courseplan.content.ContentGoal;
 import de.olivergeisel.materialgenerator.finalization.parts.*;
+import de.olivergeisel.materialgenerator.generation.generator.MaterialAndMapping;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -43,10 +44,11 @@ public class FinalizationService {
 		this.topicRepository = topicRepository;
 	}
 
-	public RawCourse createRawCourse(CoursePlan coursePlan, String template) {
+	public RawCourse createRawCourse(CoursePlan coursePlan, String template, Set<MaterialAndMapping> materials) {
 		var cGoals = coursePlan.getGoals();
 		var goals = createGoals(cGoals);
 		var rawCourse = new RawCourse(coursePlan, template, goals);
+		rawCourse.assignMaterial(materials);
 		saveMaterialOrder(rawCourse.getMaterialOrder());
 		saveMetadata(rawCourse.getMetadata());
 		return rawCourseRepository.save(rawCourse);

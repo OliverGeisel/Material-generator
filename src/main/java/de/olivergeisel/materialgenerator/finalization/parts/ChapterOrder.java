@@ -5,6 +5,7 @@ import de.olivergeisel.materialgenerator.core.courseplan.structure.Relevance;
 import de.olivergeisel.materialgenerator.core.courseplan.structure.StructureChapter;
 import de.olivergeisel.materialgenerator.finalization.Goal;
 import de.olivergeisel.materialgenerator.generation.generator.Material;
+import de.olivergeisel.materialgenerator.generation.generator.MaterialAndMapping;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -82,9 +83,16 @@ public class ChapterOrder extends MaterialOrderCollection {
 		return groupOrder.stream().mapToInt(GroupOrder::materialCount).sum();
 	}
 
-//region getter / setter
+	@Override
+	public boolean assignMaterial(Set<MaterialAndMapping> materials) {
+		return groupOrder.stream().anyMatch(g -> g.assignMaterial(materials));
+	}
+
+//region setter/getter
+	//region getter / setter
 	public List<GroupOrder> getGroupOrder() {
 		return Collections.unmodifiableList(groupOrder);
 	}
+//endregion
 //endregion
 }
