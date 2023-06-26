@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
+import static de.olivergeisel.materialgenerator.generation.TemplateService.PLAIN;
+
 @Service
 public class GeneratorService {
 

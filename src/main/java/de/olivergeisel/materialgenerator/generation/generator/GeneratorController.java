@@ -17,13 +17,13 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import static de.olivergeisel.materialgenerator.generation.TemplateService.*;
+
 @Controller
 @RequestMapping("/generator")
 public class GeneratorController {
 
-	public static final String PLAIN = "blank";
-	public static final String ILLUSTRATED = "color";
-	public static final List<String> OPTIONS = List.of(PLAIN, ILLUSTRATED);
+
 	public static final String UPLOAD = "UPLOAD";
 	private static final String PATH = "generation/";
 	private final GeneratorService service;

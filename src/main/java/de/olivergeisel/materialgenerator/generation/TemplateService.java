@@ -7,13 +7,14 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class TemplateService {
+
+	public static final String PLAIN = "blank";
+	public static final String ILLUSTRATED = "color";
+	public static final List<String> OPTIONS = List.of(PLAIN, ILLUSTRATED);
 	public static final String TEMPLATE_SET_FROM_TEMPLATES_FOLDER = "../templateSets/";
 	private static final String TEMPLATE_SET_PATH = "src/main/resources/templateSets/";
 	private static final String HTML = ".html";
