@@ -61,7 +61,7 @@ public class KnowledgeParser {
 		var type = jsonElement.get(TYPE).toString();
 		var content = jsonElement.get(CONTENT).toString();
 		var id = jsonElement.get(ID).toString();
-		String structure = jsonElement.get(STRUCTURE).toString();
+		var structure = jsonElement.get(STRUCTURE).toString();
 		var relationsJSON = (List<Map<String, String>>) jsonElement.get(RELATIONS);
 		return createElement(type, id, structure, content, relationsJSON);
 	}
@@ -73,21 +73,27 @@ public class KnowledgeParser {
 		try {
 			parsedObject = parser.parse();
 		} catch (ParseException e) {
+			logger.error("Error while parsing JSON-File: {}", e.getMessage());
 			throw new RuntimeException(e);
 		}
 		if (parsedObject instanceof Map<?, ?> knowledgeModel) {
 			Map<String, ?> structure = (Map<String, ?>) knowledgeModel.get("structure");
 			List<Map<String, ?>> knowledge = (List<Map<String, ?>>) knowledgeModel.get("knowledge");
 			List<Map<String, ?>> source = (List<Map<String, ?>>) knowledgeModel.get("sources");
-
-			var parsedStructure = parseStructure(structure);
+			KnowledgeStructure parsedStructure;
+			try {
+				parsedStructure = parseStructure(structure);
+			} catch (IncompleteJSONException e) {
+				parsedStructure = new KnowledgeStructure();
+				logger.warn("empty structure in JSON-File: {}", e.getMessage());
+			}
 			var parsedSource = parseSource(source);
 			var parsedKnowledge = parseKnowledge(knowledge);
 			back = new KnowledgeModel(parsedStructure.getRoot());
 			back.addSource(parsedSource);
 			back.addKnowledge(parsedKnowledge);
 		} else {
-			logger.warn("No valid knowledge-Fiel! Create empty KnowledgeModel");
+			logger.warn("No valid knowledge-File ! Create empty KnowledgeModel");
 			back = new KnowledgeModel();
 		}
 		return back;
@@ -121,14 +127,14 @@ public class KnowledgeParser {
 		if (partJSON.isEmpty()) {
 			throw new IncompleteJSONException("KnowledgeObject is empty!");
 		}
-		var id = partJSON.get(ID).toString();
+		var name = partJSON.get(NAME).toString(); // name is id!
 		var parts = (List<Map<String, ?>>) partJSON.get(CHILDREN);
 		// todo use key-field -> define in KnowledgeObject
 		// check if it's a Leaf or Fragment
 		if (parts.isEmpty()) {
-			back = new KnowledgeLeaf(id);
+			back = new KnowledgeLeaf(name);
 		} else {
-			var newFragment = new KnowledgeFragment(id);
+			var newFragment = new KnowledgeFragment(name);
 			for (var childParts : parts) {
 				try {
 					newFragment.addObject(parseKnowledgeObject(childParts));
@@ -152,7 +158,7 @@ public class KnowledgeParser {
 			String type = source.get(TYPE).toString();
 			String id = source.get(ID).toString();
 			String name = source.get(NAME).toString();
-			String content = source.get(CONTENT).toString(); // Todo init content
+			String content = source.get(CONTENT).toString();
 			var newSource = switch (SourceType.valueOf(type.toUpperCase())) {
 				case INTERNAL_MEDIA -> new InternalMedia(id, name);
 				case UNKNOWN_SOURCE -> UnknownSource.getInstance();
@@ -169,11 +175,11 @@ public class KnowledgeParser {
 		var back = new KnowledgeStructure();
 		var root = back.getRoot();
 		root.setKey("_root");
-		root.setName(structureJSON.get(NAME).toString());
 		// check if empty
 		if (structureJSON.isEmpty()) {
 			throw new IncompleteJSONException("Structure is empty!");
 		}
+		root.setName(structureJSON.get(NAME).toString());
 		var children = (List<Map<String, ?>>) structureJSON.get(CHILDREN);
 		for (var child : children) {
 			try {
