@@ -26,9 +26,7 @@ public class CourseMetadataFinalization {
 	}
 
 	public CourseMetadataFinalization(CoursePlan plan) {
-		this(plan.getMetadata().getName(), plan.getMetadata().getYear(),
-				plan.getMetadata().getLevel(), plan.getMetadata().getType(), plan.getMetadata().getDescription(),
-				plan.getMetadata().getOtherInfos());
+		this(plan.getMetadata().getName(), plan.getMetadata().getYear(), plan.getMetadata().getLevel(), plan.getMetadata().getType(), plan.getMetadata().getDescription(), plan.getMetadata().getOtherInfos());
 		id = plan.getId();
 	}
 
@@ -61,6 +59,7 @@ public class CourseMetadataFinalization {
 		return otherInfos.remove(key) != null;
 	}
 
+	//region setter/getter
 	//region getter / setter
 	public UUID getId() {
 		return id;
@@ -125,17 +124,7 @@ public class CourseMetadataFinalization {
 		this.year = year;
 	}
 //endregion
-
-	@Override
-	public int hashCode() {
-		int result = otherInfos.hashCode();
-		result = 31 * result + (name != null ? name.hashCode() : 0);
-		result = 31 * result + (year != null ? year.hashCode() : 0);
-		result = 31 * result + (level != null ? level.hashCode() : 0);
-		result = 31 * result + (type != null ? type.hashCode() : 0);
-		result = 31 * result + (description != null ? description.hashCode() : 0);
-		return result;
-	}
+//endregion
 
 	@Override
 	public boolean equals(Object o) {
@@ -148,6 +137,17 @@ public class CourseMetadataFinalization {
 		if (!Objects.equals(level, that.level)) return false;
 		if (!Objects.equals(type, that.type)) return false;
 		return Objects.equals(description, that.description);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = otherInfos.hashCode();
+		result = 31 * result + (name != null ? name.hashCode() : 0);
+		result = 31 * result + (year != null ? year.hashCode() : 0);
+		result = 31 * result + (level != null ? level.hashCode() : 0);
+		result = 31 * result + (type != null ? type.hashCode() : 0);
+		result = 31 * result + (description != null ? description.hashCode() : 0);
+		return result;
 	}
 
 

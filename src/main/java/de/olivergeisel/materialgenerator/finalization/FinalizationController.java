@@ -29,8 +29,7 @@ public class FinalizationController {
 	private final FinalizationService service;
 	private final MaterialRepository materialRepository;
 
-	public FinalizationController(RawCourseRepository repository, FinalizationService service,
-								  MaterialRepository materialRepository) {
+	public FinalizationController(RawCourseRepository repository, FinalizationService service, MaterialRepository materialRepository) {
 		this.repository = repository;
 		this.service = service;
 		this.materialRepository = materialRepository;
@@ -65,11 +64,7 @@ public class FinalizationController {
 	}
 
 	@PostMapping({"edit/{id}",})
-	public String editCourse(@PathVariable UUID id, @RequestParam(value = "chapter", required = false) UUID parentChapterId,
-							 @RequestParam(value = "group", required = false) UUID parentGroupId,
-							 @RequestParam(value = "task", required = false) UUID parentTaskId,
-							 @RequestParam(value = "up", required = false) UUID idUp,
-							 @RequestParam(value = "down", required = false) UUID idDown, Model model) {
+	public String editCourse(@PathVariable UUID id, @RequestParam(value = "chapter", required = false) UUID parentChapterId, @RequestParam(value = "group", required = false) UUID parentGroupId, @RequestParam(value = "task", required = false) UUID parentTaskId, @RequestParam(value = "up", required = false) UUID idUp, @RequestParam(value = "down", required = false) UUID idDown, Model model) {
 		if (idUp != null) {
 			service.moveUp(id, parentChapterId, parentGroupId, parentTaskId, idUp);
 		} else if (idDown != null) {
@@ -83,8 +78,7 @@ public class FinalizationController {
 
 
 	@GetMapping("view")
-	public String viewOverview(@RequestParam("materialId") UUID materialId,
-							   @RequestParam("templateSet") String templateSet, Model model) {
+	public String viewOverview(@RequestParam("materialId") UUID materialId, @RequestParam("templateSet") String templateSet, Model model) {
 		AtomicReference<String> materialType = new AtomicReference<>();
 		materialRepository.findById(materialId).ifPresent(material -> {
 			TemplateInfo info;

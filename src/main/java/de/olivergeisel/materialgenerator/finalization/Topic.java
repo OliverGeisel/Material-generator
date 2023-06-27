@@ -52,6 +52,7 @@ public class Topic {
 		return name.equals(contentTarget.getTopic());
 	}
 
+	//region setter/getter
 	//region getter / setter
 	public String getName() {
 		return name;
@@ -65,13 +66,7 @@ public class Topic {
 		return goalId;
 	}
 //endregion
-
-	@Override
-	public int hashCode() {
-		int result = id.hashCode();
-		result = 31 * result + goalId.hashCode();
-		return result;
-	}
+//endregion
 
 	@Override
 	public boolean equals(Object o) {
@@ -80,5 +75,12 @@ public class Topic {
 
 		if (!id.equals(topic.id)) return false;
 		return goalId.equals(topic.goalId);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = id.hashCode();
+		result = 31 * result + goalId.hashCode();
+		return result;
 	}
 }

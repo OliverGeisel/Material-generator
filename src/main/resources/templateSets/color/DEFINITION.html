@@ -9,13 +9,19 @@
 <body>
 <h1 class="text-center" style="color: var(--bs-red); " th:text="${material.term}"></h1>
 <hr>
-<div class="container">
+<main>
+    <div class="container">
+        <p style="color: var(--bs-blue);font-style: italic;">Ein <span th:text="${material.term}">
+            </span> ist:<br>
+            <span th:text="${material.values.definition}"></span>
+        </p>
+    </div>
+</main>
+<footer>
+    <div class="container">
 
-    <p style="color: var(--bs-blue);font-style: italic;">Ein <span th:text="${material.term}">
-    </span> ist:<br>
-        <span th:text="${material.values.definition}"></span>
-    </p>
-</div>
+    </div>
+</footer>
 <script src="/js/bootstrap.min.js"></script>
 </body>
 </html>

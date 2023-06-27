@@ -15,7 +15,6 @@ import javax.persistence.OneToMany;
 import java.util.*;
 
 @Entity
-
 public class GroupOrder extends MaterialOrderCollection {
 
 	@OneToMany(cascade = CascadeType.ALL)
@@ -97,11 +96,10 @@ public class GroupOrder extends MaterialOrderCollection {
 
 	@Override
 	public boolean assignMaterial(Set<MaterialAndMapping> materials) {
-		return taskOrder.stream().anyMatch(t ->
-				t.assignMaterial(materials));
+		return taskOrder.stream().anyMatch(t -> t.assignMaterial(materials));
 	}
 
-	//region getter / setter
+	//region setter/getter
 	public List<TaskOrder> getTaskOrder() {
 		return Collections.unmodifiableList(taskOrder);
 	}

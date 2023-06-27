@@ -29,11 +29,7 @@ public class FinalizationService {
 	private final GoalRepository goalRepository;
 	private final TopicRepository topicRepository;
 
-	public FinalizationService(DownloadManager downloadManager, MaterialOrderRepository materialOrderRepository,
-							   ChapterOrderRepository chapterOrderRepository,
-							   GroupOrderRepository groupOrderRepository, TaskOrderRepository taskOrderRepository,
-							   RawCourseRepository rawCourseRepository, CourseMetadataFinalizationRepository metadataRepository, GoalRepository goalRepository,
-							   TopicRepository topicRepository) {
+	public FinalizationService(DownloadManager downloadManager, MaterialOrderRepository materialOrderRepository, ChapterOrderRepository chapterOrderRepository, GroupOrderRepository groupOrderRepository, TaskOrderRepository taskOrderRepository, RawCourseRepository rawCourseRepository, CourseMetadataFinalizationRepository metadataRepository, GoalRepository goalRepository, TopicRepository topicRepository) {
 		this.downloadManager = downloadManager;
 		this.materialOrderRepository = materialOrderRepository;
 		this.chapterOrderRepository = chapterOrderRepository;
@@ -57,16 +53,14 @@ public class FinalizationService {
 
 	private Set<Goal> createGoals(Set<ContentGoal> goals) {
 		var back = new HashSet<Goal>();
-		goals.forEach(contentGoal -> goalRepository.findByName(contentGoal.getName()).ifPresentOrElse(
-				back::add,
-				() -> {
-					var goal = new Goal(contentGoal);
-					goal = goalRepository.save(goal);
-					Goal finalGoal = goal;
-					goal.getTopics().forEach(topic -> topic.updateGoal(finalGoal));
-					topicRepository.saveAll(goal.getTopics());
-					back.add(goal);
-				}));
+		goals.forEach(contentGoal -> goalRepository.findByName(contentGoal.getName()).ifPresentOrElse(back::add, () -> {
+			var goal = new Goal(contentGoal);
+			goal = goalRepository.save(goal);
+			Goal finalGoal = goal;
+			goal.getTopics().forEach(topic -> topic.updateGoal(finalGoal));
+			topicRepository.saveAll(goal.getTopics());
+			back.add(goal);
+		}));
 		return back;
 	}
 
@@ -151,8 +145,6 @@ public class FinalizationService {
 
 	public void generateAndDownloadTemplates(@PathVariable("courseId") RawCourse plan, HttpServletRequest request, HttpServletResponse response) {
 		var zipName = plan.getMetadata().getName().orElse("course");
-		var structure = plan.getMaterialOrder();
-
-		downloadManager.createZip(zipName, plan.getTemplateName(), structure, request, response);
+		downloadManager.createZip(zipName, plan.getTemplateName(), plan, request, response);
 	}
 }

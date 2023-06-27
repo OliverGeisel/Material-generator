@@ -45,8 +45,6 @@ public record TemplateType(String type) {
 
 	@Override
 	public String toString() {
-		return "TemplateType{" +
-				"type='" + type + '\'' +
-				'}';
+		return "TemplateType{" + "type='" + type + '\'' + '}';
 	}
 }

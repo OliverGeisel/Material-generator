@@ -5,6 +5,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +13,7 @@ import java.util.Set;
 @Component
 public class TemplateSetInitializer implements CommandLineRunner {
 
+	private final Set<String> ignoredFiles = Set.of("exclude", "include", "INCLUDE", "ignore", "help", "COURSE", "MATERIAL", "CHAPTER", "GROUP");
 	private final String TEMPLATE_PATH = "templateSets";
 	private final TemplateSetRepository repository;
 	private final TemplateInfoRepository templateInfoRepository;
@@ -22,14 +24,16 @@ public class TemplateSetInitializer implements CommandLineRunner {
 	}
 
 	private Set<ExtraTemplate> getExtraTemplates(File templatePath) {
-		var back = new HashSet<>();
-		var extraTemplates = Arrays.stream(templatePath.listFiles())
-				.filter(it -> !BasicTemplates.TEMPLATES.contains(it.getName().replace(".html", "").toUpperCase())).toList();
+		var back = new HashSet<ExtraTemplate>();
+		var extraTemplates = Arrays.stream(templatePath.listFiles()).filter(it -> {
+			var name = it.getName().replace(".html", "").toUpperCase();
+			return !ignoredFiles.contains(name) && !BasicTemplates.TEMPLATES.contains(name);
+		}).toList();
 		extraTemplates.forEach(it -> {
 			var name = it.getName().replace(".html", "").toUpperCase();
 			back.add(new ExtraTemplate(new TemplateType(name), it.getName()));
 		});
-		return null;// Collections.unmodifiableSet(extraTemplates);
+		return back;// Collections.unmodifiableSet(extraTemplates);
 	}
 
 	private void saveBasicTemplates() {
@@ -39,11 +43,11 @@ public class TemplateSetInitializer implements CommandLineRunner {
 	}
 
 	@Override
-	public void run(String... args) throws Exception {
+	public void run(String... args) throws IllegalArgumentException, URISyntaxException {
 		File templatePath;
 		var baseURI = TemplateSetInitializer.class.getClassLoader().getResource(TEMPLATE_PATH);
 		if (baseURI == null) {
-			throw new Exception("Template path not found");
+			throw new IllegalArgumentException("Template path not found");
 		}
 		templatePath = new File(baseURI.toURI());
 		for (File file : templatePath.listFiles()) {

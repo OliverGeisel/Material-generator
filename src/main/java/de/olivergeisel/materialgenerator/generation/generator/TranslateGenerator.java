@@ -12,6 +12,9 @@ import org.slf4j.Logger;
 
 import java.util.*;
 
+/**
+ * A Generator for @see Material objects for MDtea. This Generator can only create the simplest form of Material in MDTea.
+ */
 public class TranslateGenerator implements Generator {
 
 	private final Logger logger = org.slf4j.LoggerFactory.getLogger(TranslateGenerator.class);
@@ -166,8 +169,7 @@ public class TranslateGenerator implements Generator {
 		relations.forEach(it -> {
 			var targetId = it.getToId();
 			try {
-				var element = Arrays.stream(knowledgeNode.getRelatedElements()).filter(
-						elem -> elem.getId().equals(targetId)).findFirst().orElseThrow();
+				var element = Arrays.stream(knowledgeNode.getRelatedElements()).filter(elem -> elem.getId().equals(targetId)).findFirst().orElseThrow();
 
 				Material material = new Material(MaterialType.WIKI, mainTerm.getContent(), mainTerm.getId(), mainTerm.getStructureId());
 				MaterialMappingEntry mapping = new MaterialMappingEntry(material);
