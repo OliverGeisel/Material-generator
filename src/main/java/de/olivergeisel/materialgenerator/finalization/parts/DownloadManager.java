@@ -1,6 +1,7 @@
 package de.olivergeisel.materialgenerator.finalization.parts;
 
 import de.olivergeisel.materialgenerator.finalization.GoalRepository;
+import de.olivergeisel.materialgenerator.generation.output_template.DefinitionTemplate;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -12,8 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -109,6 +111,34 @@ public class DownloadManager {
 		return templateEngine;
 	}
 
+	private void saveIncludes(File outputDir, String templateSet) {
+		var classloader = this.getClass().getClassLoader();
+		URL folder = classloader.getResource("");
+		var outPath = outputDir.toPath();
+		File sourceCopy = new File(folder.getFile(), "templateSets/" + templateSet + "/include");
+		if (!sourceCopy.exists()) {
+			return;
+		}
+		var copyPath = sourceCopy.toPath();
+		var out = outPath.resolve(copyPath.relativize(copyPath));
+		try (var files = Files.walk(copyPath)) {
+			files.forEach(source -> {
+				try {
+					Path destination = out.resolve(copyPath.relativize(source));
+					if (Files.isDirectory(source)) {
+						Files.createDirectories(destination);
+					} else {
+						Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+					}
+				} catch (IOException e) {
+					System.out.println("Fehler beim Kopieren des Ordners: " + e.getMessage());
+				}
+			});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private void exportCourse(RawCourse plan, String templateSet, File outputDir, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		var templateEngine = createTemplateEngine(templateSet);
 		WebContext context = new WebContext(request, response, servletContext);
@@ -117,9 +147,10 @@ public class DownloadManager {
 		var chapters = plan.getMaterialOrder().getChapterOrder();
 		for (int i = 0; i < chapters.size(); i++) {
 			var chapter = plan.getMaterialOrder().getChapterOrder().get(i);
+			String chapterName = chapter.getName() == null || chapter.getName().isBlank() ? "Kapitel " + (chapters.indexOf(chapter) + 1) : chapter.getName();
 			var nextChapter = i + 1 < chapters.size() ? chapters.get(i + 1) : null;
 			var chapterNavigation = navigation.nextChapter(nextChapter);
-			var subDir = Files.createDirectory(new File(outputDir, chapter.getName()).toPath());
+			var subDir = Files.createDirectory(new File(outputDir, chapterName).toPath());
 			var newLevel = new CourseNavigation.MaterialLevel(chapter.getName(), "", "", "");
 			exportChapter(chapter, newLevel, chapterNavigation, context, subDir.toFile(), templateEngine);
 		}
@@ -129,34 +160,6 @@ public class DownloadManager {
 		saveIncludes(outputDir, templateSet);
 	}
 
-	private void saveIncludes(File outputDir, String templateSet) {
-		URL folder = this.getClass().getClassLoader().getResource("templateSets/" + templateSet + "/include");
-		var outPath = outputDir.toPath();
-		File fileO = new File(folder.getFile());
-		if (!fileO.exists()) {
-			return;
-		}
-		var file = fileO.toPath();
-		try {
-			Files.walkFileTree(file, new SimpleFileVisitor<Path>() {
-				@Override
-				public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-					Path targetDir = outPath.resolve(file.relativize(dir));
-					Files.createDirectories(targetDir);
-					return FileVisitResult.CONTINUE;
-				}
-
-				@Override
-				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-					Files.copy(file, outPath.resolve(file.relativize(file)), StandardCopyOption.REPLACE_EXISTING);
-					return FileVisitResult.CONTINUE;
-				}
-			});
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 	private void exportChapter(ChapterOrder chapter, CourseNavigation.MaterialLevel level, CourseNavigation navigation, WebContext context, File outputDir, TemplateEngine templateEngine) throws IOException {
 		context.setVariable("chapter", chapter);
 		var chapterOverview = templateEngine.process("CHAPTER", context);
@@ -164,7 +167,8 @@ public class DownloadManager {
 		for (var subChapter : chapter.getGroupOrder()) {
 			var newLevel = new CourseNavigation.MaterialLevel(level.getChapter(), subChapter.getName());
 			if (subChapter instanceof GroupOrder group) {
-				var subDir = new File(outputDir, group.getName());
+				String groupName = group.getName() == null || group.getName().isBlank() ? "Gruppe " + (chapter.getGroupOrder().indexOf(group) + 1) : group.getName();
+				var subDir = new File(outputDir, groupName);
 				Files.createDirectory(subDir.toPath());
 				exportGroup(group, newLevel, navigation, context, subDir, templateEngine);
 			}/* else if (subChapter instanceof TaskOrder task) {
@@ -188,7 +192,9 @@ public class DownloadManager {
 				exportGroup(subGroup, context, subDir);
 			} else */
 			if (subChapter instanceof TaskOrder task) {
-				var subDir = new File(outputDir, task.getName());
+				String taskName = task.getName() == null || task.getName().isBlank() ? "Task " + (group.getTaskOrder().indexOf(task) + 1) : task.getName();
+				var subDir = new File(outputDir, taskName);
+				Files.createDirectory(subDir.toPath());
 				exportTask(task, newlevel, navigation, context, subDir, templateEngine);
 			} else {
 				throw new IllegalArgumentException("Unknown substructure component! Must be either group or task inside a group.");
@@ -200,11 +206,15 @@ public class DownloadManager {
 		int number = 0;
 		final int taskSize = task.getMaterialOrder().size();
 		for (var material : task.getMaterialOrder()) {
+			context.clearVariables();
 			CourseNavigation.MaterialLevel newLevel = new CourseNavigation.MaterialLevel(level.getChapter(), level.getGroup(), task.getName(), Integer.toString(number));
 			context.setVariable("material", material);
 			context.setVariable("navigation", navigation);
-			var templateInfo = material.getTemplate();
-			String processedHtml = templateEngine.process(templateInfo.getTemplateType().type(), context);
+			var templateInfo = new DefinitionTemplate();//material.getTemplate();
+			material.setTemplate(templateInfo);
+			context.setVariable("rootPath", newLevel.getPathToRoot());
+			context.setVariable("title", material.getName());
+			String processedHtml = templateEngine.process("MATERIAL", context);
 			saveTemplateToFile(processedHtml, outputDir, String.format("Material_%s.html", number++));
 		}
 	}

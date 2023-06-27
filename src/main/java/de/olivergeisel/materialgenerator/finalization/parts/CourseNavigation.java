@@ -1,5 +1,7 @@
 package de.olivergeisel.materialgenerator.finalization.parts;
 
+import java.nio.file.Paths;
+
 public class CourseNavigation {
 	private boolean hasPrevious;
 	private boolean hasNext;
@@ -119,25 +121,26 @@ public class CourseNavigation {
 		private Level level;
 
 		public MaterialLevel() {
-			this(null, null, null, null);
+			this("", "", "", "");
 		}
 
 		public MaterialLevel(String chapter) {
-			this(chapter, null, null, null);
+			this(chapter, "", "", "");
 		}
 
 		public MaterialLevel(String chapter, String group) {
-			this(chapter, group, null, null);
+			this(chapter, group, "", "");
 		}
 
 		public MaterialLevel(String chapter, String group, String task) {
-			this(chapter, group, task, null);
+			this(chapter, group, task, "");
 		}
 
 		public MaterialLevel(String chapter, String group, String task, String material) {
 			this.chapter = chapter;
 			this.group = group;
 			this.task = task;
+			this.material = material;
 			if (chapter != null && !chapter.isEmpty()) {
 				level = Level.CHAPTER;
 			}
@@ -148,11 +151,17 @@ public class CourseNavigation {
 				level = Level.TASK;
 			}
 			if (material != null && !material.isEmpty()) {
-				level = Level.TASK;
+				level = Level.MATERIAL;
 			}
 		}
 
 		//region setter/getter
+		public String getPathToRoot() {
+			var path = Paths.get(chapter, group, task);
+			var root = Paths.get("");
+			return path.relativize(root).toString().replace("\\", "/");
+		}
+
 		public Level getLevel() {
 			return level;
 		}
@@ -171,7 +180,7 @@ public class CourseNavigation {
 //endregion
 
 		private enum Level {
-			CHAPTER, GROUP, TASK
+			CHAPTER, GROUP, TASK, MATERIAL
 		}
 	}
 }
