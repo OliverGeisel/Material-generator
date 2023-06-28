@@ -13,6 +13,8 @@ public class CourseNavigation {
 	private String previousTask;
 	private String nextGroup;
 	private String previousGroup;
+	private String nextMaterial;
+	private String previousMaterial;
 	private MaterialLevel level;
 
 	public CourseNavigation(MaterialLevel level) {
@@ -25,7 +27,6 @@ public class CourseNavigation {
 		count = number;
 		this.level = level;
 	}
-
 	public CourseNavigation(CourseNavigation courseNavigation) {
 		this.count = courseNavigation.count;
 		this.hasNext = courseNavigation.hasNext;
@@ -68,6 +69,14 @@ public class CourseNavigation {
 	}
 
 	//region setter/getter
+	public String getPreviousMaterial() {
+		return previousMaterial;
+	}
+
+	public void setPreviousMaterial(String previousMaterial) {
+		this.previousMaterial = previousMaterial;
+	}
+
 	public boolean isHasPrevious() {
 		return hasPrevious;
 	}
@@ -110,6 +119,14 @@ public class CourseNavigation {
 
 	public MaterialLevel getLevel() {
 		return level;
+	}
+
+	public String getNextMaterial() {
+		return nextMaterial;
+	}
+
+	public void setNextMaterial(String nextMaterial) {
+		this.nextMaterial = nextMaterial;
 	}
 //endregion
 

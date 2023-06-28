@@ -1,20 +1,20 @@
-package de.olivergeisel.materialgenerator.generation.output_template;
+package de.olivergeisel.materialgenerator.generation.templates.template_infos;
 
-import de.olivergeisel.materialgenerator.generation.output_template.template_content.TemplateInfo;
+import de.olivergeisel.materialgenerator.generation.templates.TemplateType;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import java.util.*;
 
 @Entity
-public class ListTemplate extends TemplateInfo {
+public class ListTemplate extends BasicTemplate {
 
 	public static final Set<String> FIELDS;
 
 	static {
 		var allFields = new HashSet<>(TemplateInfo.FIELDS);
 		allFields.add("headline");
-		allFields.add("entrys");
+		allFields.add("entries");
 		FIELDS = Collections.unmodifiableSet(allFields);
 	}
 
@@ -24,6 +24,14 @@ public class ListTemplate extends TemplateInfo {
 
 	public ListTemplate() {
 		super(TemplateType.LIST);
+	}
+
+	protected ListTemplate(TemplateType type) {
+		super(type);
+	}
+
+	protected ListTemplate(TemplateType type, UUID mainTermId) {
+		super(type, mainTermId);
 	}
 
 	public ListTemplate(UUID mainTermId, String headline, String... elements) {

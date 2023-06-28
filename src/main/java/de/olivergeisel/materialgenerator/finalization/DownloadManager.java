@@ -1,7 +1,7 @@
-package de.olivergeisel.materialgenerator.finalization.parts;
+package de.olivergeisel.materialgenerator.finalization;
 
-import de.olivergeisel.materialgenerator.finalization.GoalRepository;
-import de.olivergeisel.materialgenerator.generation.output_template.DefinitionTemplate;
+import de.olivergeisel.materialgenerator.finalization.parts.*;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -21,12 +21,12 @@ import java.util.zip.ZipOutputStream;
 
 @Service
 public class DownloadManager {
-	private final ServletContext servletContext;
-	private final GoalRepository goalRepository;
 
-	public DownloadManager(ServletContext servletContext, GoalRepository goalRepository) {
+	private final Logger logger = org.slf4j.LoggerFactory.getLogger(DownloadManager.class);
+	private final ServletContext servletContext;
+
+	public DownloadManager(ServletContext servletContext) {
 		this.servletContext = servletContext;
-		this.goalRepository = goalRepository;
 	}
 
 	private void cleanupTemporaryFiles(File tempDir, File zipFile) throws IOException {
@@ -48,7 +48,7 @@ public class DownloadManager {
 		try {
 			response.getWriter().write(processedHtml);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.warn(e.toString());
 		}
 	}
 
@@ -131,7 +131,7 @@ public class DownloadManager {
 						Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
 					}
 				} catch (IOException e) {
-					System.out.println("Fehler beim Kopieren des Ordners: " + e.getMessage());
+					logger.warn(e.toString());
 				}
 			});
 		} catch (IOException e) {
@@ -209,9 +209,8 @@ public class DownloadManager {
 			context.clearVariables();
 			CourseNavigation.MaterialLevel newLevel = new CourseNavigation.MaterialLevel(level.getChapter(), level.getGroup(), task.getName(), Integer.toString(number));
 			context.setVariable("material", material);
-			context.setVariable("navigation", navigation);
-			var templateInfo = new DefinitionTemplate();//material.getTemplate();
-			material.setTemplate(templateInfo);
+			var newNavigation = new CourseNavigation(newLevel, number, taskSize);
+			context.setVariable("navigation", newNavigation);
 			context.setVariable("rootPath", newLevel.getPathToRoot());
 			context.setVariable("title", material.getName());
 			String processedHtml = templateEngine.process("MATERIAL", context);

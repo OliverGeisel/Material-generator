@@ -3,8 +3,8 @@ package de.olivergeisel.materialgenerator.finalization;
 
 import de.olivergeisel.materialgenerator.core.courseplan.structure.Relevance;
 import de.olivergeisel.materialgenerator.generation.generator.MaterialRepository;
-import de.olivergeisel.materialgenerator.generation.output_template.DefinitionTemplate;
-import de.olivergeisel.materialgenerator.generation.output_template.template_content.TemplateInfo;
+import de.olivergeisel.materialgenerator.generation.templates.template_infos.DefinitionTemplate;
+import de.olivergeisel.materialgenerator.generation.templates.template_infos.TemplateInfo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -87,7 +87,7 @@ public class FinalizationController {
 			} else {
 				info = material.getTemplate();
 			}
-			materialType.set(info.getTemplateType().type());
+			materialType.set(info.getTemplateType().getType());
 			model.addAttribute("material", material);
 		});
 		return TEMPLATE_SET_FROM_TEMPLATES_FOLDER + templateSet + "/" + materialType;

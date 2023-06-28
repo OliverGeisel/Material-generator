@@ -7,7 +7,10 @@ import de.olivergeisel.materialgenerator.core.knowledge.metamodel.KnowledgeModel
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeType;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.RelationType;
 import de.olivergeisel.materialgenerator.generation.KnowledgeNode;
-import de.olivergeisel.materialgenerator.generation.output_template.TemplateSet;
+import de.olivergeisel.materialgenerator.generation.templates.TemplateSet;
+import de.olivergeisel.materialgenerator.generation.templates.template_infos.BasicTemplate;
+import de.olivergeisel.materialgenerator.generation.templates.template_infos.DefinitionTemplate;
+import de.olivergeisel.materialgenerator.generation.templates.template_infos.TemplateInfo;
 import org.slf4j.Logger;
 
 import java.util.*;
@@ -17,29 +20,28 @@ import java.util.*;
  */
 public class TranslateGenerator implements Generator {
 
+	private final Set<TemplateInfo> basicTemplateInfo = new HashSet<>();
 	private final Logger logger = org.slf4j.LoggerFactory.getLogger(TranslateGenerator.class);
-
-	private TemplateSet templates;
+	private TemplateSet templateSet;
 	private KnowledgeModel model;
 	private CoursePlan plan;
-
 	private boolean unchanged = false;
 	private GeneratorOutput output;
-
-	public TranslateGenerator(TemplateSet templates, KnowledgeModel model, CoursePlan plan) {
-		this.templates = templates;
-		this.model = model;
-		this.plan = plan;
-	}
 
 	public TranslateGenerator() {
 
 	}
 
 	public TranslateGenerator(GeneratorInput input) {
-		this.templates = input.getTemplates();
+		this.templateSet = input.getTemplates();
 		this.model = input.getModel();
 		this.plan = input.getPlan();
+	}
+
+	public TranslateGenerator(TemplateSet templateSet, KnowledgeModel model, CoursePlan plan) {
+		this.templateSet = templateSet;
+		this.model = model;
+		this.plan = plan;
 	}
 
 	private void changed() {
@@ -126,7 +128,7 @@ public class TranslateGenerator implements Generator {
 				var definitionElement = Arrays.stream(mainKnowledge.getRelatedElements()).filter(elem -> elem.getId().equals(defId)).findFirst().orElseThrow();
 				Material defMaterial = new Material(MaterialType.WIKI, mainTerm);
 				defMaterial.setName("Definition " + mainTerm.getContent());
-				//	defMaterial.setTemplate(new DefinitionTemplate());
+				defMaterial.setTemplate(new DefinitionTemplate());
 				defMaterial.setValues(Map.of("term", mainTerm.getContent(), "definition", definitionElement.getContent()));
 				MaterialMappingEntry mapping = new MaterialMappingEntry(defMaterial);
 				mapping.add(mainTerm, definitionElement);
@@ -176,6 +178,7 @@ public class TranslateGenerator implements Generator {
 				mapping.add(mainTerm, element);
 				back.add(new MaterialAndMapping(material, mapping));
 			} catch (Exception ignored) {
+				logger.debug("No proof found for {}", mainTerm.getContent());
 			}
 		});
 		return back;
@@ -222,7 +225,7 @@ public class TranslateGenerator implements Generator {
 	 */
 	@Override
 	public void input(TemplateSet templates, KnowledgeModel model, CoursePlan plan) {
-		this.templates = templates;
+		this.templateSet = templates;
 		this.model = model;
 		this.plan = plan;
 	}
@@ -289,7 +292,7 @@ public class TranslateGenerator implements Generator {
 			var target = goal.getMasterKeyword();
 			try {
 				var knowledge = loadKnowledgeForStructure(target);
-				create(expression, knowledge, templates);
+				create(expression, knowledge, templateSet);
 			} catch (NoSuchElementException e) {
 				logger.info("No knowledge found for element {}", target);
 			}
@@ -305,7 +308,7 @@ public class TranslateGenerator implements Generator {
 
 	//region setter/getter
 	public boolean isReady() {
-		return templates != null && model != null && plan != null;
+		return templateSet != null && model != null && plan != null;
 	}
 
 	private boolean isUnchanged() {
@@ -314,6 +317,11 @@ public class TranslateGenerator implements Generator {
 
 	private void setUnchanged(boolean unchanged) {
 		this.unchanged = unchanged;
+	}
+
+	public void setBasicTemplateInfo(Set<BasicTemplate> basicTemplateInfo) {
+		this.basicTemplateInfo.clear();
+		this.basicTemplateInfo.addAll(basicTemplateInfo);
 	}
 //endregion
 }

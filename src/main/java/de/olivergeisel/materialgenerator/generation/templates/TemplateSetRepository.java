@@ -1,4 +1,4 @@
-package de.olivergeisel.materialgenerator.generation.output_template;
+package de.olivergeisel.materialgenerator.generation.templates;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.util.Streamable;

@@ -1,6 +1,6 @@
-package de.olivergeisel.materialgenerator.generation.output_template;
+package de.olivergeisel.materialgenerator.generation.templates.template_infos;
 
-import de.olivergeisel.materialgenerator.generation.output_template.template_content.TemplateInfo;
+import de.olivergeisel.materialgenerator.generation.templates.TemplateType;
 
 import javax.persistence.*;
 import java.util.*;

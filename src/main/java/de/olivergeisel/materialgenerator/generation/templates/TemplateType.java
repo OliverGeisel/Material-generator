@@ -1,10 +1,9 @@
-package de.olivergeisel.materialgenerator.generation.output_template;
+package de.olivergeisel.materialgenerator.generation.templates;
 
 import javax.persistence.Embeddable;
 
 @Embeddable
-public record TemplateType(String type) {
-
+public class TemplateType {
 	public static final TemplateType DEFINITION = new TemplateType("DEFINITION");
 	public static final TemplateType EXERCISE = new TemplateType("EXERCISE");
 	public static final TemplateType SOLUTION = new TemplateType("SOLUTION");
@@ -13,6 +12,11 @@ public record TemplateType(String type) {
 	public static final TemplateType ACRONYM = new TemplateType("ACRONYM");
 	public static final TemplateType LIST = new TemplateType("LIST");
 	public static final TemplateType EXAMPLE = new TemplateType("EXAMPLE");
+	private String type;
+
+	public TemplateType(String type) {
+		this.type = type;
+	}
 
 	public TemplateType() {
 		this("TEXT");
@@ -29,6 +33,16 @@ public record TemplateType(String type) {
 			default -> new TemplateType(typeString);
 		};
 	}
+
+	//region setter/getter
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+//endregion
 
 	@Override
 	public boolean equals(Object o) {
