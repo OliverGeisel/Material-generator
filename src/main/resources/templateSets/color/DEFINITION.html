@@ -11,7 +11,9 @@
 <body>
 <main>
     <div class="container" th:fragment="content">
-        <h1 class="text-center" style="color: var(--bs-red); " th:text="${material.term}"></h1>
+        <header>
+            <h1 class="text-center" style="color: var(--bs-red); " th:text="${material.term}"></h1>
+        </header>
         <hr>
         <p style="color: var(--bs-blue);font-style: italic;">Ein <span th:text="${material.term}">
             </span> ist:<br>
