@@ -1,10 +1,16 @@
 package de.olivergeisel.materialgenerator.generation;
 
-import de.olivergeisel.materialgenerator.generation.output_template.*;
+import de.olivergeisel.materialgenerator.generation.templates.BasicTemplates;
+import de.olivergeisel.materialgenerator.generation.templates.TemplateSet;
+import de.olivergeisel.materialgenerator.generation.templates.TemplateSetRepository;
+import de.olivergeisel.materialgenerator.generation.templates.TemplateType;
+import de.olivergeisel.materialgenerator.generation.templates.template_infos.ExtraTemplate;
+import de.olivergeisel.materialgenerator.generation.templates.template_infos.TemplateInfoRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,7 +18,8 @@ import java.util.Set;
 @Component
 public class TemplateSetInitializer implements CommandLineRunner {
 
-	private final String TEMPLATE_PATH = "templateSets";
+	private static final Set<String> ignoredFiles = Set.of("exclude", "include", "INCLUDE", "ignore", "help", "COURSE", "MATERIAL", "CHAPTER", "GROUP");
+	private static final String TEMPLATE_PATH = "templateSets";
 	private final TemplateSetRepository repository;
 	private final TemplateInfoRepository templateInfoRepository;
 
@@ -22,28 +29,30 @@ public class TemplateSetInitializer implements CommandLineRunner {
 	}
 
 	private Set<ExtraTemplate> getExtraTemplates(File templatePath) {
-		var back = new HashSet<>();
-		var extraTemplates = Arrays.stream(templatePath.listFiles())
-				.filter(it -> !BasicTemplates.TEMPLATES.contains(it.getName().replace(".html", "").toUpperCase())).toList();
+		var back = new HashSet<ExtraTemplate>();
+		var extraTemplates = Arrays.stream(templatePath.listFiles()).filter(it -> {
+			var name = it.getName().replace(".html", "").toUpperCase();
+			return !ignoredFiles.contains(name) && !BasicTemplates.TEMPLATES.contains(name);
+		}).toList();
 		extraTemplates.forEach(it -> {
 			var name = it.getName().replace(".html", "").toUpperCase();
 			back.add(new ExtraTemplate(new TemplateType(name), it.getName()));
 		});
-		return null;// Collections.unmodifiableSet(extraTemplates);
+		return back;
 	}
 
 	private void saveBasicTemplates() {
-		// todo later when to save basic templates
-		var basicTemplates = new BasicTemplates();
-		//templateInfoRepository.saveAll(basicTemplates.getTemplates());
+		var basicTemplates = BasicTemplates.getInstance();
+		templateInfoRepository.saveAll(basicTemplates.getTemplates());
 	}
 
 	@Override
-	public void run(String... args) throws Exception {
+	public void run(String... args) throws IllegalArgumentException, URISyntaxException {
 		File templatePath;
+		saveBasicTemplates();
 		var baseURI = TemplateSetInitializer.class.getClassLoader().getResource(TEMPLATE_PATH);
 		if (baseURI == null) {
-			throw new Exception("Template path not found");
+			throw new IllegalArgumentException("Template path not found");
 		}
 		templatePath = new File(baseURI.toURI());
 		for (File file : templatePath.listFiles()) {

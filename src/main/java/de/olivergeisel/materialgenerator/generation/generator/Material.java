@@ -3,7 +3,7 @@ package de.olivergeisel.materialgenerator.generation.generator;
 import de.olivergeisel.materialgenerator.core.course.MaterialOrderPart;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeType;
-import de.olivergeisel.materialgenerator.generation.output_template.template_content.TemplateInfo;
+import de.olivergeisel.materialgenerator.generation.templates.template_infos.TemplateInfo;
 
 import javax.persistence.*;
 import java.util.Map;
@@ -118,12 +118,6 @@ public class Material extends MaterialOrderPart {
 
 	@Override
 	public String toString() {
-		return "Material{" +
-				"term='" + term + '\'' +
-				", structureId='" + structureId + '\'' +
-				", type=" + type +
-				", template=" + template +
-				", values=" + values +
-				'}';
+		return "Material{" + "term='" + term + '\'' + ", structureId='" + structureId + '\'' + ", type=" + type + ", template=" + template + ", values=" + values + '}';
 	}
 }

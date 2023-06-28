@@ -1,7 +1,11 @@
 package de.olivergeisel.materialgenerator.generation;
 
-import de.olivergeisel.materialgenerator.generation.output_template.*;
-import de.olivergeisel.materialgenerator.generation.output_template.template_content.TemplateInfo;
+import de.olivergeisel.materialgenerator.generation.templates.BasicTemplates;
+import de.olivergeisel.materialgenerator.generation.templates.TemplateSet;
+import de.olivergeisel.materialgenerator.generation.templates.TemplateSetRepository;
+import de.olivergeisel.materialgenerator.generation.templates.TemplateType;
+import de.olivergeisel.materialgenerator.generation.templates.template_infos.ExtraTemplate;
+import de.olivergeisel.materialgenerator.generation.templates.template_infos.TemplateInfo;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -60,9 +64,7 @@ public class TemplateService {
 		TemplateSet templateSet = new TemplateSet();
 		templateSet.setName(dir.getName());
 		//setBasicTemplates(templateSet, dir);
-		var extraTemplates = Arrays.stream(
-				Objects.requireNonNull(dir.listFiles())).filter(
-				file -> !BasicTemplates.TEMPLATES.contains(file.getName().replace(HTML, "").toUpperCase())).toList();
+		var extraTemplates = Arrays.stream(Objects.requireNonNull(dir.listFiles())).filter(file -> !BasicTemplates.TEMPLATES.contains(file.getName().replace(HTML, "").toUpperCase())).toList();
 		for (File file : extraTemplates) {
 			if (file.isDirectory()) {
 				templateSet.addAllTemplates(loadExtraTemplates(file));

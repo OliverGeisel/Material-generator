@@ -45,14 +45,13 @@ public class RawCourse extends Course {
 		setPlanId(plan.getId());
 	}
 
-	//region getter / setter
-	public UUID getId() {
-		return id;
-	}
-
-
 	public boolean assignMaterial(Set<MaterialAndMapping> materials) {
 		return materialOrder.assignMaterial(materials);
+	}
+
+	//region setter/getter
+	public UUID getId() {
+		return id;
 	}
 
 	public MaterialOrder getMaterialOrder() {

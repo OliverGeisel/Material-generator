@@ -90,8 +90,7 @@ public class ChapterOrder extends MaterialOrderCollection {
 		return groupOrder.stream().anyMatch(g -> g.assignMaterial(materials));
 	}
 
-//region setter/getter
-	//region getter / setter
+	//region setter/getter
 	public List<GroupOrder> getGroupOrder() {
 		return Collections.unmodifiableList(groupOrder);
 	}

@@ -74,9 +74,7 @@ public class TaskOrder extends MaterialOrderCollection {
 	public boolean assignMaterial(Set<MaterialAndMapping> materials) {
 		boolean back = false;
 		for (var material : materials) {
-			if (getAlias().stream().anyMatch(alias -> alias.contains(material.material().getStructureId())) ||
-					getAlias().stream().anyMatch(alias -> alias.contains(material.material().getStructureId().split("-")[0].trim()))
-			) {
+			if (getAlias().stream().anyMatch(alias -> alias.contains(material.material().getStructureId())) || getAlias().stream().anyMatch(alias -> alias.contains(material.material().getStructureId().split("-")[0].trim()))) {
 				materialOrder.add(material.material());
 				back = true;
 			}

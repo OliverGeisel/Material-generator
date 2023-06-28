@@ -1,6 +1,6 @@
-package de.olivergeisel.materialgenerator.generation.output_template;
+package de.olivergeisel.materialgenerator.generation.templates.template_infos;
 
-import de.olivergeisel.materialgenerator.generation.output_template.template_content.TemplateInfo;
+import de.olivergeisel.materialgenerator.generation.templates.TemplateType;
 
 import javax.persistence.Entity;
 import java.util.Collections;
@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-public class TextTemplate extends TemplateInfo {
+public class TextTemplate extends BasicTemplate {
 
 	public static final Set<String> FIELDS;
 

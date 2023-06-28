@@ -5,9 +5,11 @@
     <title th:text="'Definition für '+${term} "></title>
 </head>
 <body>
-<h1>Definition für <span th:text="${term}"></span>
-</h1>
-<hr>
-<p th:text="${definition}"></p>
+<section th:fragment="content">
+    <h1>Definition für <span th:text="${term}"></span>
+    </h1>
+    <hr>
+    <p th:text="${definition}"></p>
+</section>
 </body>
 </html>

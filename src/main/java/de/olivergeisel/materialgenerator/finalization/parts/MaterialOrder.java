@@ -102,8 +102,6 @@ public class MaterialOrder {
 
 	@Override
 	public String toString() {
-		return "MaterialOrder{" +
-				"chapterOrder=" + chapterOrder +
-				'}';
+		return "MaterialOrder{" + "chapterOrder=" + chapterOrder + '}';
 	}
 }

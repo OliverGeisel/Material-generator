@@ -1,6 +1,6 @@
-package de.olivergeisel.materialgenerator.generation.output_template.template_content;
+package de.olivergeisel.materialgenerator.generation.templates.template_infos;
 
-import de.olivergeisel.materialgenerator.generation.output_template.TemplateType;
+import de.olivergeisel.materialgenerator.generation.templates.TemplateType;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -18,7 +18,7 @@ public abstract class TemplateInfo {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", nullable = false)
-	private UUID id;
+	private UUID id = UUID.randomUUID();
 	/**
 	 * The name of the template file
 	 */
@@ -71,10 +71,6 @@ public abstract class TemplateInfo {
 
 	@Override
 	public String toString() {
-		return "TemplateInfo{" +
-				"templateType=" + templateType +
-				", id=" + id +
-				", mainTermId=" + mainTermId +
-				'}';
+		return "TemplateInfo{" + "templateType=" + templateType + ", id=" + id + ", mainTermId=" + mainTermId + '}';
 	}
 }

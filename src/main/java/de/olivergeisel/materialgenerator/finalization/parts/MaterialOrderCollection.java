@@ -36,7 +36,7 @@ public abstract class MaterialOrderCollection extends MaterialOrderPart {
 	}
 
 
-	//region getter / setter
+	//region setter/getter
 	public Relevance getRelevance() {
 		return relevance;
 	}

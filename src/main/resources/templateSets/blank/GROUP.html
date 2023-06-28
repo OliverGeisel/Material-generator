@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Gruppe - '+${group.name}">Title</title>
+</head>
+<body>
+<main class="container">
+    <section>
+        <table>
+            <thead>
+            <tr>
+                <th>
+                    <h1>Gruppe - Struktur</h1>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="task : ${group.taskOrder}">
+                <td>
+                    <a th:href="@{${task.name}+'/Material_0.html'}">
+                        <h3 th:text="${task.name}"></h3>
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>

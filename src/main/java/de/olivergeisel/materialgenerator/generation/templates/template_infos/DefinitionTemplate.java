@@ -1,7 +1,6 @@
-package de.olivergeisel.materialgenerator.generation.output_template;
+package de.olivergeisel.materialgenerator.generation.templates.template_infos;
 
-import de.olivergeisel.materialgenerator.generation.output_template.template_content.DefinitionContent;
-import de.olivergeisel.materialgenerator.generation.output_template.template_content.TemplateInfo;
+import de.olivergeisel.materialgenerator.generation.templates.TemplateType;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
@@ -10,7 +9,7 @@ import javax.persistence.Entity;
 import java.util.*;
 
 @Entity
-public class DefinitionTemplate extends TemplateInfo {
+public class DefinitionTemplate extends BasicTemplate {
 
 	public static final Set<String> FIELDS;
 

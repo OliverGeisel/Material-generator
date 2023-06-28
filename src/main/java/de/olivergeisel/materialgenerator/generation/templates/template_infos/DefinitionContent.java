@@ -1,4 +1,4 @@
-package de.olivergeisel.materialgenerator.generation.output_template.template_content;
+package de.olivergeisel.materialgenerator.generation.templates.template_infos;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
@@ -66,9 +66,6 @@ public class DefinitionContent {
 
 	@Override
 	public String toString() {
-		return "DefinitionContent{" +
-				"relatedTerms=" + relatedTerms +
-				", definition='" + definition + '\'' +
-				'}';
+		return "DefinitionContent{" + "relatedTerms=" + relatedTerms + ", definition='" + definition + '\'' + '}';
 	}
 }

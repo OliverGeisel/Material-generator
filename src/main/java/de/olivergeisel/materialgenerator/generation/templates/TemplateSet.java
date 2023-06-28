@@ -1,6 +1,6 @@
-package de.olivergeisel.materialgenerator.generation.output_template;
+package de.olivergeisel.materialgenerator.generation.templates;
 
-import de.olivergeisel.materialgenerator.generation.output_template.template_content.TemplateInfo;
+import de.olivergeisel.materialgenerator.generation.templates.template_infos.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -9,16 +9,15 @@ import java.util.UUID;
 
 @Entity
 public class TemplateSet {
+	@Transient
+	private final BasicTemplates basicTemplates = new BasicTemplates();
+	@OneToMany
+	private final Set<ExtraTemplate> extraTemplates = new HashSet<>();
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", nullable = false)
 	private UUID id;
 	private String name;
-
-	@Transient
-	private final BasicTemplates basicTemplates = new BasicTemplates();
-	@OneToMany
-	private final Set<ExtraTemplate> extraTemplates = new HashSet<>();
 
 	public TemplateSet() {
 	}
@@ -43,8 +42,7 @@ public class TemplateSet {
 		var basics = TemplateType.class.getDeclaredFields();
 		for (var field : basics) {
 			try {
-				if (field.get(null).equals(type))
-					return true;
+				if (field.get(null).equals(type)) return true;
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
@@ -52,12 +50,11 @@ public class TemplateSet {
 		return true; //extraTemplates.stream().anyMatch(it -> it.getTemplateType().equals(type));
 	}
 
-//region setter/getter
+	//region setter/getter
 	//region getter / setter
 	public Set<ExtraTemplate> getExtraTemplates() {
 		return extraTemplates;// Collections.unmodifiableSet(extraTemplates);
 	}
-//endregion
 
 	public TextTemplate getTextTemplate() {
 		return basicTemplates.getTextTemplate();
@@ -106,6 +103,7 @@ public class TemplateSet {
 	public void setAcronymTemplate(AcronymTemplate acronymTemplate) {
 		basicTemplates.setAcronymTemplate(acronymTemplate);
 	}
+//endregion
 //endregion
 
 }

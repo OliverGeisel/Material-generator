@@ -1,6 +1,9 @@
-package de.olivergeisel.materialgenerator.generation.output_template;
+package de.olivergeisel.materialgenerator.generation.templates;
+
+import de.olivergeisel.materialgenerator.generation.templates.template_infos.*;
 
 import javax.persistence.*;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -10,6 +13,7 @@ public class BasicTemplates {
 	public static final Set<String> TEMPLATES = Set.of("DEFINITION", "TEXT", "EXAMPLE", "ACRONYM", "LIST", "SYNONYM");
 	@Transient
 	private static BasicTemplates instance;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", nullable = false)
@@ -39,23 +43,29 @@ public class BasicTemplates {
 	@JoinColumn(name = "synonym_template_id")
 	private SynonymTemplate synonymTemplate;
 
-//region setter/getter
-	public BasicTemplates getInstance() {
-		return instance;
-	}
-
-	public UUID getId() {
-		return id;
-	}
-//endregion
-
-	public BasicTemplates() {
+	protected BasicTemplates() {
 		this.definitionTemplate = new DefinitionTemplate();
 		this.textTemplate = new TextTemplate();
 		this.exampleTemplate = new ExampleTemplate();
 		this.acronymTemplate = new AcronymTemplate();
 		this.listTemplate = new ListTemplate();
 		this.synonymTemplate = new SynonymTemplate();
+	}
+
+	//region setter/getter
+	public static BasicTemplates getInstance() {
+		if (instance == null) {
+			instance = new BasicTemplates();
+		}
+		return instance;
+	}
+
+	public UUID getId() {
+		return id;
+	}
+
+	public Set<TemplateInfo> getTemplates() {
+		return Set.of(definitionTemplate, textTemplate, exampleTemplate, acronymTemplate, listTemplate, synonymTemplate);
 	}
 
 	//region getter / setter
@@ -105,6 +115,20 @@ public class BasicTemplates {
 
 	public void setSynonymTemplate(SynonymTemplate synonymTemplate) {
 		this.synonymTemplate = synonymTemplate;
+	}
+//endregion
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof BasicTemplates that)) return false;
+
+		return Objects.equals(id, that.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return id != null ? id.hashCode() : 0;
 	}
 //endregion
 }

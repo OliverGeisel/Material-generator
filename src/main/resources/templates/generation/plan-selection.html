@@ -29,6 +29,9 @@
             if (files.length === 1) {
                 selectedFile = files[0]; // Die ausgewählte Datei speichern
                 document.getElementById("fileName").innerHTML = selectedFile.name; // Den Dateinamen anzeigen
+                const form = document.getElementById("uploadForm");
+                const formData = new FormData(form);
+                formData.set("plan", selectedFile);
             } else {
                 alert("Bitte nur eine Datei auswählen.");
             }
@@ -47,6 +50,9 @@
             if (files.length === 1) {
                 selectedFile = files[0]; // Die ausgewählte Datei speichern
                 document.getElementById("fileName").innerHTML = selectedFile.name; // Den Dateinamen anzeigen
+                const form = document.getElementById("uploadForm");
+                const formData = new FormData(form);
+                formData.set("plan", selectedFile);
             } else {
                 alert("Bitte nur eine Datei auswählen.");
             }
@@ -64,7 +70,6 @@
 <body class="container">
 <nav th:replace="main::navigation"></nav>
 <main>
-
     <section>
         <h2> Gewähltes Template: <span th:text="${templateSetName}"></span></h2>
         <form enctype="multipart/form-data" method="post" th:action="@{/generator/overview}">
@@ -80,12 +85,12 @@
                     </div>
                     <p class="m-3">oder</p>
                     <label for="fileInput">Datei auswählen:</label>
-                    <input class="form-control-file" id="fileInput" name="plan" onchange="handleFileInput(event)" style="display: none;"
+                    <input class="form-control-file" id="fileInput" name="plan" onchange="handleFileInput(event)"
+                           style="display: none;"
                            type="file">
                     <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()"
                             type="button">Datei per Drag & Drop auswählen
                     </button>
-
                 </div>
                 <div class="col-md-6">
                     <label for="curriculum">Lehrplan</label>

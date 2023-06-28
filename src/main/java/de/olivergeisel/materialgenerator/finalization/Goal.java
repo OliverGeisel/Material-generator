@@ -42,13 +42,10 @@ public class Goal {
 	}
 
 	boolean isSame(ContentGoal contentGoal) {
-		return expression == contentGoal.getExpression() &&
-				masterKeyword.equals(contentGoal.getMasterKeyword()) &&
-				completeSentence.equals(contentGoal.getCompleteSentence()) &&
-				topics.size() == contentGoal.getContent().size();
+		return expression == contentGoal.getExpression() && masterKeyword.equals(contentGoal.getMasterKeyword()) && completeSentence.equals(contentGoal.getCompleteSentence()) && topics.size() == contentGoal.getContent().size();
 	}
 
-	//region getter / setter
+	//region setter/getter
 	public List<Topic> getTopics() {
 		return topics;
 	}

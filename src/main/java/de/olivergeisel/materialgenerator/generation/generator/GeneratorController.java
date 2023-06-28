@@ -6,7 +6,7 @@ import de.olivergeisel.materialgenerator.core.knowledge.IncompleteJSONException;
 import de.olivergeisel.materialgenerator.generation.GeneratorService;
 import de.olivergeisel.materialgenerator.generation.StorageService;
 import de.olivergeisel.materialgenerator.generation.TemplateService;
-import de.olivergeisel.materialgenerator.generation.output_template.TemplateSetRepository;
+import de.olivergeisel.materialgenerator.generation.templates.TemplateSetRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -31,9 +31,7 @@ public class GeneratorController {
 	private final TemplateSetRepository templateSetRepository;
 	private final MaterialRepository materialRepository;
 
-	public GeneratorController(GeneratorService service, StorageService storageService,
-							   TemplateSetRepository templateSetRepository,
-							   MaterialRepository materialRepository) {
+	public GeneratorController(GeneratorService service, StorageService storageService, TemplateSetRepository templateSetRepository, MaterialRepository materialRepository) {
 		this.service = service;
 		this.storageService = storageService;
 		this.templateSetRepository = templateSetRepository;
@@ -134,9 +132,7 @@ public class GeneratorController {
 	}
 
 	@GetMapping("def-show")
-	public String showDefinition(@RequestParam String term, @RequestParam String
-			definition, @RequestParam(required = false) String template
-			, Model model) {
+	public String showDefinition(@RequestParam String term, @RequestParam String definition, @RequestParam(required = false) String template, Model model) {
 		model.addAttribute("term", term);
 		model.addAttribute("definition", definition);
 		if (template == null || template.isBlank()) {

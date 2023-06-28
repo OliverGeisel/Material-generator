@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Kapitel - '+${chapter.name}">Title</title>
+</head>
+<body>
+<main class="container">
+    <section>
+        <table>
+            <thead>
+            <tr>
+                <th>
+                    <h1>Kapitel - Struktur</h1>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="group : ${chapter.groupOrder}">
+                <td>
+                    <a th:href="@{${group.name}+'/overview.html'}">
+                        <h3 th:text="${group.name}"></h3>
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>

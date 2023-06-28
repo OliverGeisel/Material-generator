@@ -3,8 +3,8 @@ package de.olivergeisel.materialgenerator.finalization;
 
 import de.olivergeisel.materialgenerator.core.courseplan.structure.Relevance;
 import de.olivergeisel.materialgenerator.generation.generator.MaterialRepository;
-import de.olivergeisel.materialgenerator.generation.output_template.DefinitionTemplate;
-import de.olivergeisel.materialgenerator.generation.output_template.template_content.TemplateInfo;
+import de.olivergeisel.materialgenerator.generation.templates.template_infos.DefinitionTemplate;
+import de.olivergeisel.materialgenerator.generation.templates.template_infos.TemplateInfo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,8 +29,7 @@ public class FinalizationController {
 	private final FinalizationService service;
 	private final MaterialRepository materialRepository;
 
-	public FinalizationController(RawCourseRepository repository, FinalizationService service,
-								  MaterialRepository materialRepository) {
+	public FinalizationController(RawCourseRepository repository, FinalizationService service, MaterialRepository materialRepository) {
 		this.repository = repository;
 		this.service = service;
 		this.materialRepository = materialRepository;
@@ -65,11 +64,7 @@ public class FinalizationController {
 	}
 
 	@PostMapping({"edit/{id}",})
-	public String editCourse(@PathVariable UUID id, @RequestParam(value = "chapter", required = false) UUID parentChapterId,
-							 @RequestParam(value = "group", required = false) UUID parentGroupId,
-							 @RequestParam(value = "task", required = false) UUID parentTaskId,
-							 @RequestParam(value = "up", required = false) UUID idUp,
-							 @RequestParam(value = "down", required = false) UUID idDown, Model model) {
+	public String editCourse(@PathVariable UUID id, @RequestParam(value = "chapter", required = false) UUID parentChapterId, @RequestParam(value = "group", required = false) UUID parentGroupId, @RequestParam(value = "task", required = false) UUID parentTaskId, @RequestParam(value = "up", required = false) UUID idUp, @RequestParam(value = "down", required = false) UUID idDown, Model model) {
 		if (idUp != null) {
 			service.moveUp(id, parentChapterId, parentGroupId, parentTaskId, idUp);
 		} else if (idDown != null) {
@@ -83,8 +78,7 @@ public class FinalizationController {
 
 
 	@GetMapping("view")
-	public String viewOverview(@RequestParam("materialId") UUID materialId,
-							   @RequestParam("templateSet") String templateSet, Model model) {
+	public String viewOverview(@RequestParam("materialId") UUID materialId, @RequestParam("templateSet") String templateSet, Model model) {
 		AtomicReference<String> materialType = new AtomicReference<>();
 		materialRepository.findById(materialId).ifPresent(material -> {
 			TemplateInfo info;
@@ -93,7 +87,7 @@ public class FinalizationController {
 			} else {
 				info = material.getTemplate();
 			}
-			materialType.set(info.getTemplateType().type());
+			materialType.set(info.getTemplateType().getType());
 			model.addAttribute("material", material);
 		});
 		return TEMPLATE_SET_FROM_TEMPLATES_FOLDER + templateSet + "/" + materialType;

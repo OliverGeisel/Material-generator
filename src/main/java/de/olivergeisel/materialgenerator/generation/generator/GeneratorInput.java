@@ -2,13 +2,14 @@ package de.olivergeisel.materialgenerator.generation.generator;
 
 import de.olivergeisel.materialgenerator.core.courseplan.CoursePlan;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.KnowledgeModel;
-import de.olivergeisel.materialgenerator.generation.output_template.TemplateSet;
+import de.olivergeisel.materialgenerator.generation.templates.TemplateSet;
 
 public class GeneratorInput {
 	private TemplateSet templates;
 	private KnowledgeModel model;
 	private CoursePlan plan;
 
+	//region setter/getter
 	//region Getter and Setter
 	public CoursePlan getPlan() {
 		return plan;
@@ -33,6 +34,7 @@ public class GeneratorInput {
 	public void setTemplates(TemplateSet templates) {
 		this.templates = templates;
 	}
+//endregion
 //endregion
 
 	@Override

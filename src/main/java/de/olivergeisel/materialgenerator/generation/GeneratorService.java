@@ -9,8 +9,10 @@ import de.olivergeisel.materialgenerator.generation.generator.MappingRepository;
 import de.olivergeisel.materialgenerator.generation.generator.MaterialAndMapping;
 import de.olivergeisel.materialgenerator.generation.generator.MaterialRepository;
 import de.olivergeisel.materialgenerator.generation.generator.TranslateGenerator;
-import de.olivergeisel.materialgenerator.generation.output_template.TemplateSet;
-import de.olivergeisel.materialgenerator.generation.output_template.TemplateSetRepository;
+import de.olivergeisel.materialgenerator.generation.templates.TemplateSet;
+import de.olivergeisel.materialgenerator.generation.templates.TemplateSetRepository;
+import de.olivergeisel.materialgenerator.generation.templates.template_infos.BasicTemplateRepository;
+import de.olivergeisel.materialgenerator.generation.templates.template_infos.TemplateInfoRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -25,15 +27,17 @@ public class GeneratorService {
 	private final TemplateSetRepository templateSetRepository;
 	private final MaterialRepository materialRepository;
 	private final MappingRepository mappingRepository;
+	private final TemplateInfoRepository templateInfoRepository;
+	private final BasicTemplateRepository basicTemplateRepository;
 
-	public GeneratorService(KnowledgeManagement knowledgeManagement, FinalizationService finalizationService,
-							TemplateSetRepository templateSetRepository, MaterialRepository materialRepository,
-							MappingRepository mappingRepository) {
+	public GeneratorService(KnowledgeManagement knowledgeManagement, FinalizationService finalizationService, TemplateSetRepository templateSetRepository, MaterialRepository materialRepository, MappingRepository mappingRepository, TemplateInfoRepository templateInfoRepository, BasicTemplateRepository basicTemplateRepository) {
 		this.knowledgeManagement = knowledgeManagement;
 		this.finalizationService = finalizationService;
 		this.templateSetRepository = templateSetRepository;
 		this.materialRepository = materialRepository;
 		this.mappingRepository = mappingRepository;
+		this.templateInfoRepository = templateInfoRepository;
+		this.basicTemplateRepository = basicTemplateRepository;
 	}
 
 	public Set<KnowledgeElement> getMaterials(String term) {
@@ -51,6 +55,7 @@ public class GeneratorService {
 
 	private Set<MaterialAndMapping> createMaterials(CoursePlan coursePlan, TemplateSet templateSet) {
 		TranslateGenerator generator = new TranslateGenerator();
+		generator.setBasicTemplateInfo(basicTemplateRepository.findAll().toSet());
 		generator.input(templateSet, knowledgeManagement.getKnowledge(), coursePlan);
 		if (generator.isReady()) {
 			generator.update();
