@@ -241,8 +241,7 @@ public class KnowledgeModel {
 	}
 
 	public KnowledgeElement get(String id) throws NoSuchElementException {
-		return graph.vertexSet().stream().filter(it -> it.getId().equals(id)).findFirst()
-				.orElseThrow(() -> new NoSuchElementException("No element with id " + id + " found"));
+		return graph.vertexSet().stream().filter(it -> it.getId().equals(id)).findFirst().orElseThrow(() -> new NoSuchElementException("No element with id " + id + " found"));
 	}
 
 	public KnowledgeNode getKnowledgeNode(String targetId) throws NoSuchElementException {
@@ -260,9 +259,7 @@ public class KnowledgeModel {
 	private Relation[] getAllRelations(KnowledgeElement element) {
 		var ownRelations = element.getRelations();
 		var elementId = element.getId();
-		var otherRelations = graph.incomingEdgesOf(element).stream().map(graph::getEdgeSource)
-				.map(KnowledgeElement::getRelations).flatMap(
-						it -> it.stream().filter(relation -> relation.getToId().equals(elementId))).toList();
+		var otherRelations = graph.incomingEdgesOf(element).stream().map(graph::getEdgeSource).map(KnowledgeElement::getRelations).flatMap(it -> it.stream().filter(relation -> relation.getToId().equals(elementId))).toList();
 		var returnList = new ArrayList<Relation>();
 		returnList.addAll(ownRelations);
 		returnList.addAll(otherRelations);
@@ -289,7 +286,15 @@ public class KnowledgeModel {
 
 	public boolean link(KnowledgeElement from, KnowledgeElement to, Relation relation) {
 		var edge = new RelationEdge(relation.getType());
-		return graph.addEdge(from, to, edge);
+		graph.addEdge(from, to, edge);
+		graph.addEdge(to, from, new RelationEdge(relation.getType().getInverted(), edge));
+		return true;
+	}
+
+	public boolean link(KnowledgeElement from, KnowledgeElement to, RelationEdge edge) {
+		graph.addEdge(from, to, edge);
+		graph.addEdge(to, from, new RelationEdge(edge.getRelation(), edge));
+		return true;
 	}
 
 	public RelationEdge link(KnowledgeElement from, KnowledgeElement to, RelationType type) throws IllegalStateException {
@@ -300,11 +305,11 @@ public class KnowledgeModel {
 		if (!graph.addEdge(from, to, newEdge)) {
 			logger.info("Edge was already linked from {} to {}.", from.getId(), to.getId());
 		}
+		var reverseEdge = new RelationEdge(type.getInverted(), newEdge);
+		if (!graph.addEdge(to, from, reverseEdge)) {
+			logger.info("Edge was already linked from {} to {}.", to.getId(), from.getId());
+		}
 		return newEdge;
-	}
-
-	public boolean link(KnowledgeElement from, KnowledgeElement to, RelationEdge edge) {
-		return graph.addEdge(from, to, edge);
 	}
 
 	public boolean remove(KnowledgeElement element) {
@@ -342,7 +347,7 @@ public class KnowledgeModel {
 	public List<KnowledgeNode> getKnowledgeNodesFor(String structureId) {
 		if (!hasStructureObject(structureId)) {
 			logger.warn("No structure object with id {} found.\nSearch for Object that contains structureName", structureId);
-		} else if (!hasStructureSimelar(structureId)) {
+		} else if (!hasStructureSimilar(structureId)) {
 			throw new NoSuchElementException("No structure object with id " + structureId + " found");
 		} else {
 			var similarObject = structure.getRoot().getSimilarObjectById(structureId);
@@ -362,7 +367,7 @@ public class KnowledgeModel {
 		return back;
 	}
 
-	private boolean hasStructureSimelar(String structureId) {
+	private boolean hasStructureSimilar(String structureId) {
 		return structure.containsSimilar(structureId);
 	}
 
@@ -420,12 +425,58 @@ public class KnowledgeModel {
  */
 class RelationEdge extends DefaultEdge {
 	private final RelationType type;
+	private RelationEdge inverted;
 
+	/**
+	 * Creates a new RelationEdge with the given type and inverted edge.
+	 *
+	 * @param type     the type of the relation
+	 * @param inverted the inverted edge
+	 */
+	public RelationEdge(RelationType type, RelationEdge inverted) {
+		if (inverted == null) {
+			throw new IllegalArgumentException("inverted must not be null");
+		}
+		if (inverted.getInverted().type != type) {
+			throw new IllegalArgumentException("inverted must not have an inverted edge");
+		}
+		inverted.setInverted(this);
+		this.inverted = inverted;
+		this.type = type;
+	}
+
+	/**
+	 * Creates a new RelationEdge with the given inverted edge.
+	 *
+	 * @param inverted the inverted edge
+	 */
+	public RelationEdge(RelationEdge inverted) throws IllegalArgumentException {
+		if (inverted == null) {
+			throw new IllegalArgumentException("inverted must not be null");
+		}
+		inverted.setInverted(this);
+		this.inverted = inverted;
+		this.type = inverted.getInverted().type;
+	}
+
+	/**
+	 * Creates a new RelationEdge with the given type.
+	 *
+	 * @param type the type of the relation
+	 */
 	public RelationEdge(RelationType type) {
 		this.type = type;
 	}
 
-//region setter/getter
+	//region setter/getter
+	public RelationEdge getInverted() {
+		return inverted;
+	}
+
+	public void setInverted(RelationEdge inverted) {
+		this.inverted = inverted;
+	}
+
 	public RelationType getRelation() {
 		return type;
 	}
