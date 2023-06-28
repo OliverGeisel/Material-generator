@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+    <configuration default="false" name="MaterialGeneratorApplication" type="SpringBootApplicationConfigurationType"
+                   factoryName="Spring Boot">
+        <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources"/>
+        <module name="Material-generator"/>
+        <option name="SPRING_BOOT_MAIN_CLASS" value="de.olivergeisel.materialgenerator.MaterialGeneratorApplication"/>
+        <method v="2">
+            <option name="Make" enabled="true"/>
+        </method>
+    </configuration>
+</component>
