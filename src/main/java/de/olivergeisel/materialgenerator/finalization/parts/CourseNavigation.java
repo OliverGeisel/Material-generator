@@ -1,8 +1,15 @@
 package de.olivergeisel.materialgenerator.finalization.parts;
 
+import de.olivergeisel.materialgenerator.generation.generator.Material;
+
 import java.nio.file.Paths;
 
 public class CourseNavigation {
+	private final int size;
+	private final int prevSize;
+	private final int nextSize;
+	private final int previousCount;
+	private final int nextCount;
 	private boolean hasPrevious;
 	private boolean hasNext;
 	private int count;
@@ -18,15 +25,29 @@ public class CourseNavigation {
 	private MaterialLevel level;
 
 	public CourseNavigation(MaterialLevel level) {
-		this(level, 0, 0);
+		this(level, new MaterialHierarchy(), new MaterialHierarchy(), 0, 0);
 	}
 
-	public CourseNavigation(MaterialLevel level, int number, int taskSize) {
+	public CourseNavigation(MaterialLevel level, MaterialHierarchy previous, MaterialHierarchy next, int number, int size) {
 		hasPrevious = number > 0;
-		hasNext = number < taskSize - 1;
+		hasNext = number < size - 1;
+		this.size = size;
+		this.prevSize = previous.size();
+		this.nextSize = next.size();
+		this.previousCount = previous.count();
+		this.nextCount = next.count();
 		count = number;
 		this.level = level;
+		previousChapter = previous.chapter();
+		previousGroup = previous.group();
+		previousTask = previous.task();
+		previousMaterial = previous.material();
+		nextChapter = next.chapter();
+		nextGroup = next.group();
+		nextTask = next.task();
+		nextMaterial = next.material();
 	}
+
 	public CourseNavigation(CourseNavigation courseNavigation) {
 		this.count = courseNavigation.count;
 		this.hasNext = courseNavigation.hasNext;
@@ -39,12 +60,50 @@ public class CourseNavigation {
 		this.previousChapter = courseNavigation.previousChapter;
 		this.previousGroup = courseNavigation.previousGroup;
 		this.previousTask = courseNavigation.previousTask;
+		this.nextMaterial = courseNavigation.nextMaterial;
+		this.previousMaterial = courseNavigation.previousMaterial;
+		this.size = courseNavigation.size;
+		this.prevSize = courseNavigation.prevSize;
+		this.nextSize = courseNavigation.nextSize;
+		this.previousCount = courseNavigation.previousCount;
+		this.nextCount = courseNavigation.nextCount;
+
+	}
+
+	/**
+	 * Return the next Element in the Navigation.
+	 * If the Navigation is at the end, it will return the next Navigation on Task level.
+	 *
+	 * @return the next Element in the Navigation.
+	 * @throws IllegalStateException if the Navigation is at the end and there is no next Navigation.
+	 */
+	public CourseNavigation next() throws IllegalStateException {
+		if (hasNextMaterial()) {
+			var newLevel = new MaterialLevel(level.chapter, level.group, level.task, nextMaterial);
+			var current = getCurrentMaterialHierarchy();
+			return new CourseNavigation(newLevel, current, getNextMaterialHierarchy(), count + 1, size);
+		} else if (hasNextTask()) {
+			var newLevel = new MaterialLevel(level.chapter, level.group, nextTask);
+			var current = getCurrentMaterialHierarchy();
+			return new CourseNavigation(newLevel, current, getNextMaterialHierarchy(), count + 1, size);
+		} else if (hasNextGroup()) {
+			var newLevel = new MaterialLevel(level.chapter, nextGroup);
+			var current = getCurrentMaterialHierarchy();
+			return new CourseNavigation(newLevel, current, getNextMaterialHierarchy(), count + 1, size);
+		} else if (hasNextChapter()) {
+			var newLevel = new MaterialLevel(nextChapter);
+			var current = getCurrentMaterialHierarchy();
+			return new CourseNavigation(newLevel, current, getNextMaterialHierarchy(), count + 1, size);
+		} else {
+			throw new IllegalStateException("There is no next Navigation");
+		}
 	}
 
 	public CourseNavigation nextChapter(ChapterOrder nextChapter) {
 		var back = new CourseNavigation(this);
 		if (nextChapter != null) {
 			back.nextChapter = nextChapter.getName();
+			back.previousChapter = this.getLevel().chapter;
 		}
 		back.count++;
 		return back;
@@ -54,6 +113,7 @@ public class CourseNavigation {
 		var back = new CourseNavigation(this);
 		if (nextGroup != null) {
 			back.nextGroup = nextGroup.getName();
+			back.previousGroup = this.getLevel().group;
 		}
 		back.count++;
 		return back;
@@ -63,12 +123,87 @@ public class CourseNavigation {
 		var back = new CourseNavigation(this);
 		if (nextTask != null) {
 			back.nextTask = nextTask.getName();
+			back.previousTask = this.getLevel().task;
 		}
 		back.count++;
 		return back;
 	}
 
+	public CourseNavigation nextMaterial(Material nextMaterial) {
+		var back = new CourseNavigation(this);
+		if (nextMaterial != null) {
+			back.nextMaterial = nextMaterial.getName();
+			back.previousMaterial = this.getLevel().material;
+		}
+		back.count++;
+		return back;
+	}
+
+	public boolean hasPreviousChapter() {
+		return previousChapter != null;
+	}
+
+	public boolean hasPreviousGroup() {
+		return previousGroup != null;
+	}
+
+	public boolean hasPreviousTask() {
+		return previousTask != null;
+	}
+
+	public boolean hasPreviousMaterial() {
+		return previousMaterial != null;
+	}
+
+	public boolean hasNextChapter() {
+		return nextChapter != null;
+	}
+
+	public boolean hasNextGroup() {
+		return nextGroup != null;
+	}
+
+	public boolean hasNextTask() {
+		return nextTask != null;
+	}
+
+	public boolean hasNextMaterial() {
+		return nextMaterial != null;
+	}
+
 	//region setter/getter
+	public int getSize() {
+		return size;
+	}
+
+	public int getPrevSize() {
+		return prevSize;
+	}
+
+	public int getNextSize() {
+		return nextSize;
+	}
+
+	public int getPreviousCount() {
+		return previousCount;
+	}
+
+	public int getNextCount() {
+		return nextCount;
+	}
+
+	public MaterialHierarchy getCurrentMaterialHierarchy() {
+		return new MaterialHierarchy(level.chapter, level.group, level.task, level.material, size, count);
+	}
+
+	public MaterialHierarchy getPreviousMaterialHierarchy() {
+		return new MaterialHierarchy(previousChapter, previousGroup, previousTask, previousMaterial, prevSize, previousCount);
+	}
+
+	public MaterialHierarchy getNextMaterialHierarchy() {
+		return new MaterialHierarchy(nextChapter, nextGroup, nextTask, nextMaterial, nextSize, nextCount);
+	}
+
 	public String getPreviousMaterial() {
 		return previousMaterial;
 	}
@@ -197,7 +332,7 @@ public class CourseNavigation {
 //endregion
 
 		private enum Level {
-			CHAPTER, GROUP, TASK, MATERIAL
+			CHAPTER, GROUP, TASK, MATERIAL, UNKNOWN
 		}
 	}
 }

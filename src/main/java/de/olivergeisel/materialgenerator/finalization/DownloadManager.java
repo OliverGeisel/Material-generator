@@ -1,6 +1,7 @@
 package de.olivergeisel.materialgenerator.finalization;
 
 import de.olivergeisel.materialgenerator.finalization.parts.*;
+import de.olivergeisel.materialgenerator.generation.generator.Material;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
@@ -164,19 +165,34 @@ public class DownloadManager {
 		context.setVariable("chapter", chapter);
 		var chapterOverview = templateEngine.process("CHAPTER", context);
 		saveTemplateToFile(chapterOverview, outputDir, "overview.html");
-		for (var subChapter : chapter.getGroupOrder()) {
-			var newLevel = new CourseNavigation.MaterialLevel(level.getChapter(), subChapter.getName());
-			if (subChapter instanceof GroupOrder group) {
-				String groupName = group.getName() == null || group.getName().isBlank() ? "Gruppe " + (chapter.getGroupOrder().indexOf(group) + 1) : group.getName();
+		var groups = chapter.getGroupOrder();
+		GroupOrder previousGroup = null;
+		GroupOrder nextGroup = null;
+		CourseNavigation previousNavigation = navigation;
+		for (int i = 0; i < groups.size(); i++) {
+			var group = groups.get(i);
+			var newLevel = new CourseNavigation.MaterialLevel(level.getChapter(), group.getName());
+			nextGroup = (i == groups.size() - 2) ? groups.get(i + 1) : null;
+			MaterialHierarchy next;
+			if (nextGroup == null) {
+				next = new MaterialHierarchy(navigation.getNextChapter(), null, null, null, navigation.getCount() + 1, navigation.getSize());
+			} else {
+				next = new MaterialHierarchy(level.getChapter(), level.getGroup(), null, null, i + 1, groups.size());
+			}
+			CourseNavigation newCourseNavigation = new CourseNavigation(newLevel, navigation.getCurrentMaterialHierarchy(), next, i, groups.size());
+
+			if (group instanceof GroupOrder group1) {
+				String groupName = group1.getName() == null || group.getName().isBlank() ? "Gruppe " + (chapter.getGroupOrder().indexOf(group) + 1) : group.getName();
 				var subDir = new File(outputDir, groupName);
 				Files.createDirectory(subDir.toPath());
-				exportGroup(group, newLevel, navigation, context, subDir, templateEngine);
+				exportGroup(group1, newLevel, navigation, context, subDir, templateEngine);
 			}/* else if (subChapter instanceof TaskOrder task) {
 				var subDir = new File(outputDir, task.getName());
 				exportTask(task, context, subDir);
 			} */ else {
 				throw new IllegalArgumentException("Unknown substructure component! Must be either group or task inside a chapter.");
 			}
+			previousNavigation = newCourseNavigation;
 		}
 	}
 
@@ -184,38 +200,70 @@ public class DownloadManager {
 		context.setVariable("group", group);
 		var chapterOverview = templateEngine.process("GROUP", context);
 		saveTemplateToFile(chapterOverview, outputDir, "overview.html");
-		for (var subChapter : group.getTaskOrder()) {
-			var newlevel = new CourseNavigation.MaterialLevel(level.getChapter(), level.getGroup(), subChapter.getName());
+		var tasks = group.getTaskOrder();
+		TaskOrder previousTask = null;
+		TaskOrder nextTask = null;
+		CourseNavigation previousNavigation = navigation;
+		for (int i = 0; i < tasks.size(); i++) {
+			var task = tasks.get(i);
+			var newTaskLevel = new CourseNavigation.MaterialLevel(level.getChapter(), level.getGroup(), task.getName());
+			nextTask = (i == tasks.size() - 2) ? tasks.get(i + 1) : null;
+			MaterialHierarchy next;
+			if (nextTask == null) {
+				next = new MaterialHierarchy(level.getChapter(), navigation.getNextGroup(), null, null, navigation.getCount() + 1, navigation.getSize());
+			} else {
+				next = new MaterialHierarchy(level.getChapter(), level.getGroup(), nextTask.getName(), null, i + 1, tasks.size());
+			}
+			CourseNavigation newCourseNavigation = new CourseNavigation(newTaskLevel, navigation.getCurrentMaterialHierarchy(), next, i, tasks.size());
 			/*if (subChapter instanceof GroupOrder subGroup) {
 				var subDir = new File(outputDir, subGroup.getName());
 				Files.createDirectory(subDir.toPath());
 				exportGroup(subGroup, context, subDir);
 			} else */
-			if (subChapter instanceof TaskOrder task) {
-				String taskName = task.getName() == null || task.getName().isBlank() ? "Task " + (group.getTaskOrder().indexOf(task) + 1) : task.getName();
+			if (task instanceof TaskOrder task1) {
+				String taskName = task1.getName() == null || task1.getName().isBlank() ? "Task " + (group.getTaskOrder().indexOf(task1) + 1) : task1.getName();
 				var subDir = new File(outputDir, taskName);
 				Files.createDirectory(subDir.toPath());
-				exportTask(task, newlevel, navigation, context, subDir, templateEngine);
+				exportTask(task1, newTaskLevel, newCourseNavigation, context, subDir, templateEngine);
 			} else {
 				throw new IllegalArgumentException("Unknown substructure component! Must be either group or task inside a group.");
 			}
+			previousTask = task;
+			previousNavigation = newCourseNavigation;
 		}
 	}
 
 	private void exportTask(TaskOrder task, CourseNavigation.MaterialLevel level, CourseNavigation navigation, WebContext context, File outputDir, TemplateEngine templateEngine) {
-		int number = 0;
 		final int taskSize = task.getMaterialOrder().size();
-		for (var material : task.getMaterialOrder()) {
+		var materials = task.getMaterialOrder();
+		Material previousMaterial = null;
+		Material nextMaterial;
+		CourseNavigation previousNavigation = navigation;
+		for (int i = 0; i < materials.size(); i++) {
 			context.clearVariables();
-			CourseNavigation.MaterialLevel newLevel = new CourseNavigation.MaterialLevel(level.getChapter(), level.getGroup(), task.getName(), Integer.toString(number));
-			context.setVariable("material", material);
-			var newNavigation = new CourseNavigation(newLevel, number, taskSize);
-			context.setVariable("navigation", newNavigation);
-			context.setVariable("rootPath", newLevel.getPathToRoot());
-			context.setVariable("title", material.getName());
-			String processedHtml = templateEngine.process("MATERIAL", context);
-			saveTemplateToFile(processedHtml, outputDir, String.format("Material_%s.html", number++));
+			var material = materials.get(i);
+			nextMaterial = (i == materials.size() - 2) ? materials.get(i + 1) : null;
+			MaterialHierarchy next;
+			if (nextMaterial == null) {
+				next = new MaterialHierarchy(level.getChapter(), level.getGroup(), navigation.getNextTask(), null, navigation.getCount() + 1, navigation.getSize());
+			} else {
+				next = new MaterialHierarchy(level.getChapter(), level.getGroup(), level.getTask(), "MATERIAL_" + (i + 1), i + 1, materials.size());
+			}
+			CourseNavigation.MaterialLevel materialLevel = new CourseNavigation.MaterialLevel(level.getChapter(), level.getGroup(), task.getName(), "MATERIAL_" + i);
+			CourseNavigation newNavigation = new CourseNavigation(materialLevel, previousNavigation.getCurrentMaterialHierarchy(), next, i, taskSize);
+			exportMaterial(context, outputDir, templateEngine, i, material, materialLevel, newNavigation);
+			previousMaterial = material;
+			previousNavigation = newNavigation;
 		}
+	}
+
+	private void exportMaterial(WebContext context, File outputDir, TemplateEngine templateEngine, int materialNumber, Material material, CourseNavigation.MaterialLevel materialLevel, CourseNavigation newNavigation) {
+		context.setVariable("material", material);
+		context.setVariable("navigation", newNavigation);
+		context.setVariable("rootPath", materialLevel.getPathToRoot());
+		context.setVariable("title", material.getName());
+		String processedHtml = templateEngine.process("MATERIAL", context);
+		saveTemplateToFile(processedHtml, outputDir, String.format("Material_%s.html", materialNumber));
 	}
 
 	private void saveTemplateToFile(String templateContent, File outputDir, String fileName) {

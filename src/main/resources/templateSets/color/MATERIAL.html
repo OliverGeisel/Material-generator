@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <title th:text="${title}">Title</title>
     <th:block th:include="~{${material.template.templateType.type}:: head}"></th:block>
+
 </head>
-<body>
+<body class="container">
+<script th:src="${rootPath}+'/js/bootstrap.min.js'"></script>
+<script th:src="${rootPath}+'/js/bold-and-dark.js'"></script>
 <nav class="navbar navbar-dark navbar-expand-md sticky-top py-3" id="mainNav">
-    <div class="container"><a class="navbar-brand d-flex align-items-center" href="/"><span
+    <div class="container"><a class="navbar-brand d-flex align-items-center" th:href="${rootPath}+'/course.html'"><span
             class="bs-icon-sm bs-icon-circle bs-icon-primary shadow d-flex justify-content-center align-items-center me-2 bs-icon"><svg
             class="bi bi-bezier" fill="currentColor" height="1em" viewBox="0 0 16 16" width="1em"
             xmlns="http://www.w3.org/2000/svg">
@@ -20,7 +23,7 @@
         <div class="collapse navbar-collapse" id="navcol-1">
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item">
-                    <a th:href="${rootPath}+'/course.html'" th:text="Kursübersicht"></a>
+                    <a class="nav-link" th:href="${rootPath}+'/course.html'" th:text="Kursübersicht"></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="${rootPath}+'/'+${navigation.level.chapter}+'/overview.html'"
@@ -44,12 +47,12 @@
         <div th:replace="~{${material.template.templateType.type} :: content}"></div>
     </section>
     <section id="task-navigation">
-        <a th:href="${navigation.previousMaterial}" th:if="${navigation.hasPrevious}">
+        <a th:href="${navigation.previousMaterial}+'.html'" th:if="${navigation.hasPrevious}">
             <button class="btn btn-danger" type="submit">
                 Zurück
             </button>
         </a>
-        <a th:href="${navigation.nextMaterial}" th:if="${navigation.hasNext}">
+        <a th:href="${navigation.nextMaterial}+'.html'" th:if="${navigation.hasNext}">
             <button class="btn btn-success" type="submit">
                 Weiter
             </button>
