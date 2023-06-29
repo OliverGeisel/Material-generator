@@ -14,12 +14,14 @@ import de.olivergeisel.materialgenerator.generation.templates.TemplateSetReposit
 import de.olivergeisel.materialgenerator.generation.templates.template_infos.BasicTemplateRepository;
 import de.olivergeisel.materialgenerator.generation.templates.template_infos.TemplateInfoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
 import static de.olivergeisel.materialgenerator.generation.TemplateService.PLAIN;
 
 @Service
+@Transactional
 public class GeneratorService {
 
 	private final KnowledgeManagement knowledgeManagement;
@@ -62,7 +64,7 @@ public class GeneratorService {
 		}
 		var output = generator.output();
 		materialRepository.saveAll(output.getAllMaterial());
-		mappingRepository.saveAll(output.getAllMappings());
+		//mappingRepository.saveAll(output.getAllMappings()); Todo deactivated because of save error
 		return output.getMaterialAndMapping();
 	}
 

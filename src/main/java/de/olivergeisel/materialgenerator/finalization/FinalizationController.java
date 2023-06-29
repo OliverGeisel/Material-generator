@@ -58,6 +58,15 @@ public class FinalizationController {
 		return "redirect:/edit";
 	}
 
+	@PostMapping({"edit/{id}/deletePart",})
+	public String deleteCoursePart(@PathVariable UUID id, @RequestParam("id") UUID partId) {
+		repository.findById(id).ifPresent(course -> {
+			course.getMaterialOrder().remove(partId);
+			repository.save(course);
+		});
+		return "redirect:/edit";
+	}
+
 	@PostMapping("edit/{id}/export")
 	public void exportCourse(@PathVariable UUID id, HttpServletRequest request, HttpServletResponse response) {
 		service.exportCourse(id, request, response);

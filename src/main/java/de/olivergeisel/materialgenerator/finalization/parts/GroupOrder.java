@@ -99,6 +99,11 @@ public class GroupOrder extends MaterialOrderCollection {
 		return taskOrder.stream().anyMatch(t -> t.assignMaterial(materials));
 	}
 
+	@Override
+	public boolean remove(UUID partId) {
+		return taskOrder.stream().anyMatch(t -> t.remove(partId));
+	}
+
 	//region setter/getter
 	public List<TaskOrder> getTaskOrder() {
 		return Collections.unmodifiableList(taskOrder);

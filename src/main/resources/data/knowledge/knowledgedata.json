@@ -52,6 +52,10 @@
         {
           "relation_id": "Algorithmus-DEFINITION",
           "relation_type": "defined-by"
+        },
+        {
+          "relation_id": "Algorithmus-2-DEFINITION",
+          "relation_type": "defined-by"
         }
       ]
     },
@@ -60,6 +64,18 @@
       "id": "Algorithmus-DEFINITION",
       "structure": "Algorithmus-Bergriff",
       "content": "Ein Algorithmus ist eine eindeutige Handlungsvorschrift zur Lösung eines Problems oder einer Klasse von Problemen.",
+      "relations": [
+        {
+          "relation_id": "Algorithmus-TERM",
+          "relation_type": "defines"
+        }
+      ]
+    },
+    {
+      "type": "DEFINITION",
+      "id": "Algorithmus-2-DEFINITION",
+      "structure": "Algorithmus-Bergriff",
+      "content": "Ein Algorithmus ist eine eine geordnete Reihenfolge von Handlungsschritten, die ein Problem lösen. Er kennzeichnet sich durch Endlichkeit, Eindeutigkeit, Determiniertheit und Effektivität.",
       "relations": [
         {
           "relation_id": "Algorithmus-TERM",

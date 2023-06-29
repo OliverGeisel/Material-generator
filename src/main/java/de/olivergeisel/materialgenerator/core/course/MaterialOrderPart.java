@@ -18,7 +18,7 @@ public abstract class MaterialOrderPart {
 	 * @param id id of the part
 	 * @return the part or null if not found
 	 */
-	public abstract Object find(UUID id);
+	public abstract MaterialOrderPart find(UUID id);
 
 	//region getter / setter
 	public String getName() {
@@ -49,10 +49,7 @@ public abstract class MaterialOrderPart {
 
 	@Override
 	public String toString() {
-		return "MaterialOrderPart{" +
-				"name='" + name +
-				", id=" + id + '\'' +
-				'}';
+		return "MaterialOrderPart{" + "name='" + name + ", id=" + id + '\'' + '}';
 	}
 }
 

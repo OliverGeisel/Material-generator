@@ -149,7 +149,7 @@ public class DownloadManager {
 		for (int i = 0; i < chapters.size(); i++) {
 			var chapter = plan.getMaterialOrder().getChapterOrder().get(i);
 			String chapterName = chapter.getName() == null || chapter.getName().isBlank() ? "Kapitel " + (chapters.indexOf(chapter) + 1) : chapter.getName();
-			var nextChapter = i + 1 < chapters.size() ? chapters.get(i + 1) : null;
+			var nextChapter = i < chapters.size() - 1 ? chapters.get(i + 1) : null;
 			var chapterNavigation = navigation.nextChapter(nextChapter);
 			var subDir = Files.createDirectory(new File(outputDir, chapterName).toPath());
 			var newLevel = new CourseNavigation.MaterialLevel(chapter.getName(), "", "", "");
@@ -172,7 +172,7 @@ public class DownloadManager {
 		for (int i = 0; i < groups.size(); i++) {
 			var group = groups.get(i);
 			var newLevel = new CourseNavigation.MaterialLevel(level.getChapter(), group.getName());
-			nextGroup = (i == groups.size() - 2) ? groups.get(i + 1) : null;
+			nextGroup = (i < groups.size() - 1) ? groups.get(i + 1) : null;
 			MaterialHierarchy next;
 			if (nextGroup == null) {
 				next = new MaterialHierarchy(navigation.getNextChapter(), null, null, null, navigation.getCount() + 1, navigation.getSize());
@@ -207,7 +207,7 @@ public class DownloadManager {
 		for (int i = 0; i < tasks.size(); i++) {
 			var task = tasks.get(i);
 			var newTaskLevel = new CourseNavigation.MaterialLevel(level.getChapter(), level.getGroup(), task.getName());
-			nextTask = (i == tasks.size() - 2) ? tasks.get(i + 1) : null;
+			nextTask = (i < tasks.size() - 1) ? tasks.get(i + 1) : null;
 			MaterialHierarchy next;
 			if (nextTask == null) {
 				next = new MaterialHierarchy(level.getChapter(), navigation.getNextGroup(), null, null, navigation.getCount() + 1, navigation.getSize());
@@ -242,7 +242,7 @@ public class DownloadManager {
 		for (int i = 0; i < materials.size(); i++) {
 			context.clearVariables();
 			var material = materials.get(i);
-			nextMaterial = (i == materials.size() - 2) ? materials.get(i + 1) : null;
+			nextMaterial = (i < materials.size() - 1) ? materials.get(i + 1) : null;
 			MaterialHierarchy next;
 			if (nextMaterial == null) {
 				next = new MaterialHierarchy(level.getChapter(), level.getGroup(), navigation.getNextTask(), null, navigation.getCount() + 1, navigation.getSize());

@@ -17,7 +17,6 @@ public enum RelationType {
 	CAN_BE, PART_OF, IS_USED_BY, HAS_ACRONYM, HAS_SYNONYM, DEFINED_BY, DESCRIBES, HAS_EXAMPLE, PROOFS;
 
 	//region setter/getter
-	//region getter / setter
 	public RelationType getInverted() {
 		return switch (this) {
 			case IS -> RelationType.CAN_BE;
@@ -42,6 +41,5 @@ public enum RelationType {
 			default -> throw new IllegalStateException("Unexpected value: " + this);
 		};
 	}
-//endregion
 //endregion
 }

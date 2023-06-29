@@ -166,10 +166,22 @@ public class KnowledgeModel {
 		return adding;
 	}
 
+	/**
+	 * Adds a collection of KnowledgeObjects to the model.
+	 *
+	 * @param sources the elements to add.
+	 * @return true if at least one element was added, false if not.
+	 */
 	public boolean addSource(Collection<KnowledgeSource> sources) {
 		return this.sources.addAll(sources);
 	}
 
+	/**
+	 * Adds a source to the model.
+	 *
+	 * @param sources the source to add
+	 * @return true if the source was added, false if not
+	 */
 	public boolean addSource(KnowledgeSource sources) {
 		return this.sources.add(sources);
 	}
@@ -205,9 +217,9 @@ public class KnowledgeModel {
 	/**
 	 * Check if the model contains the given KnowledgeElement.
 	 *
-	 * @param elementId
-	 * @return
-	 * @throws IllegalArgumentException
+	 * @param elementId the id of the element
+	 * @return true if the model contains the element, false if not
+	 * @throws IllegalArgumentException if the elementId was null
 	 */
 	public boolean contains(String elementId) throws IllegalArgumentException {
 		if (elementId == null) {
@@ -216,6 +228,13 @@ public class KnowledgeModel {
 		return graph.vertexSet().stream().anyMatch(it -> it.getId().equals(elementId));
 	}
 
+	/**
+	 * Check if the model contains the given KnowledgeElement.
+	 *
+	 * @param element the element to check
+	 * @return true if the model contains the element, false if not
+	 * @throws IllegalArgumentException if the element was null
+	 */
 	public boolean contains(KnowledgeElement element) throws IllegalArgumentException {
 		if (element == null) {
 			throw new IllegalArgumentException("KnowledgeElement was null!");
@@ -237,18 +256,24 @@ public class KnowledgeModel {
 
 	private Collection<String> findRelatedElementIDs(String elementId) {
 		var element = get(elementId);
-		return Arrays.stream(getRelatedElements(element)).map(KnowledgeElement::getId).collect(Collectors.toList());
+		return Arrays.stream(getRelatedElements(element)).map(KnowledgeElement::getId).toList();
 	}
 
 	public KnowledgeElement get(String id) throws NoSuchElementException {
 		return graph.vertexSet().stream().filter(it -> it.getId().equals(id)).findFirst().orElseThrow(() -> new NoSuchElementException("No element with id " + id + " found"));
 	}
 
-	public KnowledgeNode getKnowledgeNode(String targetId) throws NoSuchElementException {
-		if (!contains(targetId)) {
-			throw new NoSuchElementException("No element with id " + targetId + " found");
+	/**
+	 * Returns all elements that are connected with the given element in the model.
+	 *
+	 * @param elementId the element id of the element
+	 * @return a set of all elements that are connected with the given element
+	 */
+	public KnowledgeNode getKnowledgeNode(String elementId) throws NoSuchElementException {
+		if (!contains(elementId)) {
+			throw new NoSuchElementException("No element with id " + elementId + " found");
 		}
-		var element = get(targetId);
+		var element = get(elementId);
 		var structureObject = structure.getObjectById(element.getStructureId());
 		var relatedElements = getRelatedElements(element);
 		var relations = getAllRelations(element);
@@ -284,19 +309,44 @@ public class KnowledgeModel {
 		return !unfinishedRelations.isEmpty();
 	}
 
+	/**
+	 * Links the given elements with the given relation.
+	 *
+	 * @param from     the element to link from
+	 * @param to       the element to link to
+	 * @param relation the relation to link with
+	 * @return true if the elements were linked, false if not
+	 */
 	public boolean link(KnowledgeElement from, KnowledgeElement to, Relation relation) {
 		var edge = new RelationEdge(relation.getType());
-		graph.addEdge(from, to, edge);
-		graph.addEdge(to, from, new RelationEdge(relation.getType().getInverted(), edge));
-		return true;
+		boolean back = graph.addEdge(from, to, edge);
+		back = back && graph.addEdge(to, from, new RelationEdge(relation.getType().getInverted(), edge));
+		return back;
 	}
 
+	/**
+	 * Links the given elements with the given edge.
+	 *
+	 * @param from the element to link from
+	 * @param to   the element to link to
+	 * @param edge the edge to link with
+	 * @return true if the elements were linked, false if not
+	 */
 	public boolean link(KnowledgeElement from, KnowledgeElement to, RelationEdge edge) {
 		graph.addEdge(from, to, edge);
 		graph.addEdge(to, from, new RelationEdge(edge.getRelation(), edge));
 		return true;
 	}
 
+	/**
+	 * Links the given elements with the given type.
+	 *
+	 * @param from the element to link from
+	 * @param to   the element to link to
+	 * @param type the type of the relation
+	 * @return the created edge
+	 * @throws IllegalStateException if one of the elements is not in the model
+	 */
 	public RelationEdge link(KnowledgeElement from, KnowledgeElement to, RelationType type) throws IllegalStateException {
 		var newEdge = new RelationEdge(type);
 		if (!contains(from) || !contains(to)) {
@@ -312,6 +362,12 @@ public class KnowledgeModel {
 		return newEdge;
 	}
 
+	/**
+	 * Removes the given element from the model.
+	 *
+	 * @param element the element to remove
+	 * @return true if the element was removed, false if not
+	 */
 	public boolean remove(KnowledgeElement element) {
 		return graph.removeVertex(element);
 	}
@@ -344,7 +400,14 @@ public class KnowledgeModel {
 		}
 	}
 
-	public List<KnowledgeNode> getKnowledgeNodesFor(String structureId) {
+	/**
+	 * Returns all elements that are connected with the given structure object in the model.
+	 *
+	 * @param structureId the id of the structure object
+	 * @return a list of all elements that are connected with the given structure object
+	 */
+	public Set<KnowledgeNode> getKnowledgeNodesFor(String structureId) {
+		var back = new HashSet<KnowledgeNode>();
 		if (!hasStructureObject(structureId)) {
 			logger.warn("No structure object with id {} found.\nSearch for Object that contains structureName", structureId);
 		} else if (!hasStructureSimilar(structureId)) {
@@ -352,7 +415,6 @@ public class KnowledgeModel {
 		} else {
 			var similarObject = structure.getRoot().getSimilarObjectById(structureId);
 			var elements = similarObject.getLinkedElements();
-			var back = new ArrayList<KnowledgeNode>();
 			for (var element : elements) {
 				back.add(getKnowledgeNode(element.getId()));
 			}
@@ -360,7 +422,6 @@ public class KnowledgeModel {
 		}
 		var structureObject = structure.getObjectById(structureId);
 		var elements = structureObject.getLinkedElements();
-		var back = new ArrayList<KnowledgeNode>();
 		for (var element : elements) {
 			back.add(getKnowledgeNode(element.getId()));
 		}
@@ -437,7 +498,7 @@ class RelationEdge extends DefaultEdge {
 		if (inverted == null) {
 			throw new IllegalArgumentException("inverted must not be null");
 		}
-		if (inverted.getInverted().type != type) {
+		if (inverted.type.getInverted() != type) {
 			throw new IllegalArgumentException("inverted must not have an inverted edge");
 		}
 		inverted.setInverted(this);

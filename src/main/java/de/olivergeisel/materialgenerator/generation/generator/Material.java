@@ -61,7 +61,7 @@ public class Material extends MaterialOrderPart {
 	}
 
 	@Override
-	public Object find(UUID id) {
+	public MaterialOrderPart find(UUID id) {
 		if (this.getId().equals(id)) return this;
 		return null;
 	}

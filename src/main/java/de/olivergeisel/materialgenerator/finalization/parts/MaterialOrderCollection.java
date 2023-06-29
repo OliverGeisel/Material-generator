@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 public abstract class MaterialOrderCollection extends MaterialOrderPart {
@@ -34,6 +35,8 @@ public abstract class MaterialOrderCollection extends MaterialOrderPart {
 	public boolean removeAlias(String alternative) {
 		return alias.remove(alternative);
 	}
+
+	public abstract boolean remove(UUID partId);
 
 
 	//region setter/getter

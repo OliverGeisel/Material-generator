@@ -90,6 +90,11 @@ public class ChapterOrder extends MaterialOrderCollection {
 		return groupOrder.stream().anyMatch(g -> g.assignMaterial(materials));
 	}
 
+	@Override
+	public boolean remove(UUID partId) {
+		return groupOrder.stream().anyMatch(g -> g.remove(partId));
+	}
+
 	//region setter/getter
 	public List<GroupOrder> getGroupOrder() {
 		return Collections.unmodifiableList(groupOrder);

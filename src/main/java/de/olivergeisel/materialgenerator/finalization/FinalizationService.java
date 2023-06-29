@@ -6,6 +6,7 @@ import de.olivergeisel.materialgenerator.finalization.parts.*;
 import de.olivergeisel.materialgenerator.generation.generator.Material;
 import de.olivergeisel.materialgenerator.generation.generator.MaterialAndMapping;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class FinalizationService {
 
 	private final DownloadManager downloadManager;

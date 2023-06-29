@@ -82,7 +82,11 @@ public class TaskOrder extends MaterialOrderCollection {
 		return back;
 	}
 
-	//region getter / setter
+	@Override
+	public boolean remove(UUID partId) {
+		return materialOrder.removeIf(m -> m.getId().equals(partId));
+	}
+
 
 	//region setter/getter
 	public List<Material> getMaterialOrder() {
@@ -90,5 +94,4 @@ public class TaskOrder extends MaterialOrderCollection {
 	}
 //endregion
 
-//endregion
 }

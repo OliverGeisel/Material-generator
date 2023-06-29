@@ -1,13 +1,10 @@
 package de.olivergeisel.materialgenerator.generation.generator;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class GeneratorOutput {
-	private final Set<Material> allMaterial = new HashSet<>();
-	private final Set<MaterialMappingEntry> allMappings = new HashSet<>();
+	private final List<Material> allMaterial = new LinkedList<>();
+	private final List<MaterialMappingEntry> allMappings = new LinkedList<>();
 
 	public void add(MaterialAndMapping materialAndMapping) {
 		addMapping(materialAndMapping.mapping());
@@ -69,12 +66,12 @@ public class GeneratorOutput {
 		return result;
 	}
 
-	public Set<MaterialMappingEntry> getAllMappings() {
-		return Collections.unmodifiableSet(allMappings);
+	public List<MaterialMappingEntry> getAllMappings() {
+		return allMappings;
 	}
 
-	public Set<Material> getAllMaterial() {
-		return Collections.unmodifiableSet(allMaterial);
+	public List<Material> getAllMaterial() {
+		return allMaterial;
 	}
 //endregion
 }

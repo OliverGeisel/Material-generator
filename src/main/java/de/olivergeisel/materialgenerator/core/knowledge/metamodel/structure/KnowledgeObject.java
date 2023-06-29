@@ -34,18 +34,15 @@ public abstract class KnowledgeObject {
 	}
 
 
-	//
 	public String getId() {
 		return id;
 	}
 
-//region setter/getter
+	//region setter/getter
 	public Set<KnowledgeElement> getLinkedElements() {
-
 		return Collections.unmodifiableSet(linkedElements);
 	}
 //endregion
-//
 
 
 }

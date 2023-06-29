@@ -77,6 +77,10 @@ public class MaterialOrder {
 		}
 	}
 
+	public boolean remove(UUID partId) {
+		return chapterOrder.stream().anyMatch(c -> c.remove(partId));
+	}
+
 	//region setter/getter
 	public List<ChapterOrder> getChapterOrder() {
 		return Collections.unmodifiableList(chapterOrder);
