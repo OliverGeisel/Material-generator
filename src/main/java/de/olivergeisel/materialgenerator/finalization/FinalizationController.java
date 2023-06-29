@@ -24,6 +24,7 @@ public class FinalizationController {
 	private static final String TEMPLATE_SET_FROM_TEMPLATES_FOLDER = "../templateSets/";
 
 	private static final String PATH = "finalization/";
+	private static final String REDIRECT_EDIT = "redirect:/edit/";
 	private final RawCourseRepository repository;
 
 	private final FinalizationService service;
@@ -48,14 +49,14 @@ public class FinalizationController {
 			model.addAttribute("course", course);
 			model.addAttribute("RELEVANCE", Arrays.stream(Relevance.values()).filter(it -> it != Relevance.TO_SET).toList());
 			return PATH + "edit-course";
-		}).orElse("redirect:/edit");
+		}).orElse(REDIRECT_EDIT);
 	}
 
 
 	@PostMapping({"edit/{id}/delete",})
-	public String deleteCourse(@PathVariable UUID id) {
+	public String deleteCourse(@PathVariable UUID id, HttpServletRequest request) {
 		repository.deleteById(id);
-		return "redirect:/edit";
+		return REDIRECT_EDIT;
 	}
 
 	@PostMapping({"edit/{id}/deletePart",})
@@ -64,7 +65,7 @@ public class FinalizationController {
 			course.getMaterialOrder().remove(partId);
 			repository.save(course);
 		});
-		return "redirect:/edit";
+		return REDIRECT_EDIT + id + "#Themen";
 	}
 
 	@PostMapping("edit/{id}/export")
@@ -81,8 +82,8 @@ public class FinalizationController {
 		}
 		return repository.findById(id).map(course -> {
 			model.addAttribute("course", course);
-			return "redirect:/edit/" + course.getId() + "#Themen";
-		}).orElse("redirect:/edit");
+			return REDIRECT_EDIT + course.getId() + "#Themen";
+		}).orElse(REDIRECT_EDIT);
 	}
 
 

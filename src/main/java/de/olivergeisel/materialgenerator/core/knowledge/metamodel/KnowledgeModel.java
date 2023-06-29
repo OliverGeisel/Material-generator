@@ -404,7 +404,7 @@ public class KnowledgeModel {
 	 * Returns all elements that are connected with the given structure object in the model.
 	 *
 	 * @param structureId the id of the structure object
-	 * @return a list of all elements that are connected with the given structure object
+	 * @return a set of all elements that are connected with the given structure object
 	 */
 	public Set<KnowledgeNode> getKnowledgeNodesFor(String structureId) {
 		var back = new HashSet<KnowledgeNode>();
