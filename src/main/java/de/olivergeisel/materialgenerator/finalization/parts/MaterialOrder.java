@@ -20,7 +20,7 @@ public class MaterialOrder {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", nullable = false)
-	private UUID id = UUID.randomUUID();
+	private UUID id;
 
 	public MaterialOrder(CoursePlan plan, Set<Goal> goals) {
 		for (var chapter : plan.getStructure().getOrder()) {

@@ -12,7 +12,9 @@ public class CourseMetadataFinalization {
 	@MapKeyColumn(name = "key_column")
 	@Column(name = "value_column")
 	private final Map<String, String> otherInfos;
+
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", nullable = false)
 	private UUID id;
 	private String name;
@@ -20,15 +22,18 @@ public class CourseMetadataFinalization {
 	private String level;
 	private String type;
 	private String description;
+	private UUID courseId;
+
+	public CourseMetadataFinalization(CoursePlan plan) {
+		this(plan.getMetadata().getName(), plan.getMetadata().getYear(), plan.getMetadata().getLevel(), plan.getMetadata().getType(), plan.getMetadata().getDescription(), plan.getMetadata().getOtherInfos());
+		courseId = plan.getId();
+	}
 
 	protected CourseMetadataFinalization() {
 		otherInfos = new HashMap<>();
 	}
 
-	public CourseMetadataFinalization(CoursePlan plan) {
-		this(plan.getMetadata().getName(), plan.getMetadata().getYear(), plan.getMetadata().getLevel(), plan.getMetadata().getType(), plan.getMetadata().getDescription(), plan.getMetadata().getOtherInfos());
-		id = plan.getId();
-	}
+	//region setter/getter
 
 	public CourseMetadataFinalization(Optional<String> name, Optional<String> year, Optional<String> level, Optional<String> type, Optional<String> description, Map<String, String> rest) {
 		this(name.orElse(""), year.orElse(""), level.orElse(""), type.orElse(""), description.orElse(""), rest);
@@ -58,15 +63,19 @@ public class CourseMetadataFinalization {
 		}
 		return otherInfos.remove(key) != null;
 	}
-
-	//region setter/getter
-	//region getter / setter
+	public UUID getCourseId() {
+		return courseId;
+	}
 	public UUID getId() {
 		return id;
 	}
 
 	public Optional<String> getDescription() {
 		return Optional.ofNullable(description);
+	}
+
+	public void setCourseId(UUID courseId) {
+		this.courseId = courseId;
 	}
 
 	public void setDescription(String description) {
