@@ -346,6 +346,7 @@ public class TranslateGenerator implements Generator {
 		processGoals(goals.stream().toList());
 		setUnchanged(true);
 	}
+
 	public void setTemplateSet(TemplateSet templateSet) {
 		this.templateSet = templateSet;
 		changed();
@@ -360,6 +361,7 @@ public class TranslateGenerator implements Generator {
 		this.plan = plan;
 		changed();
 	}
+
 	public boolean isReady() {
 		return templateSet != null && model != null && plan != null;
 	}

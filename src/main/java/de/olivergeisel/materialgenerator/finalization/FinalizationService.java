@@ -137,10 +137,6 @@ public class FinalizationService {
 		rawCourseRepository.save(course);
 	}
 
-	public void generateAndDownloadTemplate(HttpServletRequest request, HttpServletResponse response) {
-		downloadManager.createSingle("test", request, response);
-	}
-
 	public void exportCourse(UUID id, HttpServletRequest request, HttpServletResponse response) {
 		generateAndDownloadTemplates(rawCourseRepository.findById(id).orElseThrow(), request, response);
 	}
