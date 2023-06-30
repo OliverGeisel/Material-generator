@@ -285,9 +285,7 @@ public class KnowledgeModel {
 		var ownRelations = element.getRelations();
 		var elementId = element.getId();
 		var otherRelations = graph.incomingEdgesOf(element).stream().map(graph::getEdgeSource).map(KnowledgeElement::getRelations).flatMap(it -> it.stream().filter(relation -> relation.getToId().equals(elementId))).toList();
-		var returnList = new ArrayList<Relation>();
-		returnList.addAll(ownRelations);
-		returnList.addAll(otherRelations);
+		var returnList = new ArrayList<>(ownRelations);
 		return returnList.toArray(new Relation[0]);
 	}
 

@@ -12,6 +12,7 @@ import de.olivergeisel.materialgenerator.generation.templates.template_infos.*;
 import org.slf4j.Logger;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A Generator for @see Material objects for MDtea. This Generator can only create the simplest form of Material in MDTea.
@@ -114,10 +115,10 @@ public class TranslateGenerator implements Generator {
 	 */
 	private List<MaterialAndMapping> createDefinitions(Set<KnowledgeNode> knowledge) throws NoTemplateInfoException, IllegalArgumentException {
 		var templateInfo = basicTemplateInfo.stream().filter(DefinitionTemplate.class::isInstance).findFirst().orElseThrow(() -> new NoTemplateInfoException("No Definition Template found"));
+		List<MaterialAndMapping> back = new ArrayList<>(); // todo find correct TERM (first is not enough)
 		var mainKnowledge = knowledge.stream().filter(it -> it.getMainElement().getType().equals(KnowledgeType.TERM)).findFirst().orElseThrow();
 		var mainTerm = mainKnowledge.getMainElement();
-		List<MaterialAndMapping> back = new ArrayList<>();
-		var definitionRelations = Arrays.stream(mainKnowledge.getRelations()).filter(it -> it.getType().equals(RelationType.DEFINES));
+		var definitionRelations = Arrays.stream(mainKnowledge.getRelatedElements()).flatMap(it -> it.getRelations().stream().filter(relation -> relation.getType().equals(RelationType.DEFINES))).collect(Collectors.toSet());
 		definitionRelations.forEach(it -> {
 			var defId = it.getFromId();
 			try {

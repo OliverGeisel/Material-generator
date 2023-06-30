@@ -17,6 +17,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -25,6 +27,7 @@ public class DownloadManager {
 
 	private final Logger logger = org.slf4j.LoggerFactory.getLogger(DownloadManager.class);
 	private final ServletContext servletContext;
+	private Map<String, String> overallInfos = new HashMap<>();
 
 	public DownloadManager(ServletContext servletContext) {
 		this.servletContext = servletContext;
@@ -145,6 +148,7 @@ public class DownloadManager {
 		WebContext context = new WebContext(request, response, servletContext);
 		CourseNavigation.MaterialLevel level = new CourseNavigation.MaterialLevel();
 		var navigation = new CourseNavigation(level);
+		overallInfos.put("courseName", plan.getMetadata().getName().orElse("Kurs"));
 		var chapters = plan.getMaterialOrder().getChapterOrder();
 		for (int i = 0; i < chapters.size(); i++) {
 			var chapter = plan.getMaterialOrder().getChapterOrder().get(i);
@@ -155,7 +159,11 @@ public class DownloadManager {
 			var newLevel = new CourseNavigation.MaterialLevel(chapter.getName(), "", "", "");
 			exportChapter(chapter, newLevel, chapterNavigation, context, subDir.toFile(), templateEngine);
 		}
+		context.clearVariables();
 		context.setVariable("course", plan);
+		for (var entry : overallInfos.entrySet()) {
+			context.setVariable(entry.getKey(), entry.getValue());
+		}
 		var course = templateEngine.process("COURSE", context);
 		saveTemplateToFile(course, outputDir, "Course.html");
 		saveIncludes(outputDir, templateSet);
@@ -241,6 +249,7 @@ public class DownloadManager {
 		CourseNavigation previousNavigation = navigation;
 		for (int i = 0; i < materials.size(); i++) {
 			context.clearVariables();
+			setOverallInfos(context);
 			var material = materials.get(i);
 			nextMaterial = (i < materials.size() - 1) ? materials.get(i + 1) : null;
 			MaterialHierarchy next;
@@ -258,6 +267,7 @@ public class DownloadManager {
 	}
 
 	private void exportMaterial(WebContext context, File outputDir, TemplateEngine templateEngine, int materialNumber, Material material, CourseNavigation.MaterialLevel materialLevel, CourseNavigation newNavigation) {
+		setOverallInfos(context);
 		context.setVariable("material", material);
 		context.setVariable("navigation", newNavigation);
 		context.setVariable("rootPath", materialLevel.getPathToRoot());
@@ -265,6 +275,14 @@ public class DownloadManager {
 		String processedHtml = templateEngine.process("MATERIAL", context);
 		saveTemplateToFile(processedHtml, outputDir, String.format("Material_%s.html", materialNumber));
 	}
+
+//region setter/getter
+	private void setOverallInfos(WebContext context) {
+		for (var entry : overallInfos.entrySet()) {
+			context.setVariable(entry.getKey(), entry.getValue());
+		}
+	}
+//endregion
 
 	private void saveTemplateToFile(String templateContent, File outputDir, String fileName) {
 		try (Writer writer = new BufferedWriter(new FileWriter(new File(outputDir, fileName)))) {

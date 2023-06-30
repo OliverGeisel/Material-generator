@@ -42,7 +42,7 @@ public abstract class KnowledgeElement {
 		return this.relations.addAll(relations);
 	}
 
-	//region getter / setter
+	//region setter/getter
 	public String getStructureId() {
 		return structureId;
 	}
@@ -66,6 +66,7 @@ public abstract class KnowledgeElement {
 	public KnowledgeType getType() {
 		return type;
 	}
+//endregion
 
 	@Override
 	public boolean equals(Object o) {
@@ -99,6 +100,5 @@ public abstract class KnowledgeElement {
 				", content='" + content + '\'' +
 				'}';
 	}
-//endregion
 
 }

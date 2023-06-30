@@ -4,6 +4,9 @@ import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.Knowle
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.Relation;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeObject;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public class KnowledgeNode {
 
 	private KnowledgeObject structurePoint;
@@ -18,7 +21,7 @@ public class KnowledgeNode {
 		this.relations = relations;
 	}
 
-	//region getter / setter
+	//region setter/getter
 	public KnowledgeObject getStructurePoint() {
 		return structurePoint;
 	}
@@ -49,6 +52,29 @@ public class KnowledgeNode {
 
 	public void setRelations(Relation[] relations) {
 		this.relations = relations;
+	}
+//endregion
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof KnowledgeNode that)) return false;
+
+		if (!Objects.equals(structurePoint, that.structurePoint)) return false;
+		if (!Objects.equals(mainElement, that.mainElement)) return false;
+		// Probably incorrect - comparing Object[] arrays with Arrays.equals
+		if (!Arrays.equals(relatedElements, that.relatedElements)) return false;
+		// Probably incorrect - comparing Object[] arrays with Arrays.equals
+		return Arrays.equals(relations, that.relations);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = structurePoint != null ? structurePoint.hashCode() : 0;
+		result = 31 * result + (mainElement != null ? mainElement.hashCode() : 0);
+		result = 31 * result + Arrays.hashCode(relatedElements);
+		result = 31 * result + Arrays.hashCode(relations);
+		return result;
 	}
 //endregion
 
