@@ -87,8 +87,23 @@ public class TaskOrder extends MaterialOrderCollection {
 		return materialOrder.removeIf(m -> m.getId().equals(partId));
 	}
 
-
 	//region setter/getter
+
+	/**
+	 * Check if all Parts match there relevance.
+	 *
+	 * @return true if all parts are valid
+	 */
+	@Override
+	public boolean isValid() {
+		return switch (relevance) {
+			case OPTIONAL, INFORMATIONAL -> true;
+			case TO_SET -> false;
+			case MANDATORY -> materialOrder.size() > 0;
+			default -> false;
+		};
+	}
+
 	public List<Material> getMaterialOrder() {
 		return materialOrder;
 	}

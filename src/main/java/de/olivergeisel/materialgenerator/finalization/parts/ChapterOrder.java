@@ -65,6 +65,8 @@ public class ChapterOrder extends MaterialOrderCollection {
 		return groupOrder.stream().map(g -> g.find(id)).filter(Objects::nonNull).findFirst().orElse(null);
 	}
 
+	//region setter/getter
+
 	public GroupOrder findGroup(UUID groupID) {
 		return groupOrder.stream().filter(g -> g.getId().equals(groupID)).findFirst().orElse(null);
 	}
@@ -102,8 +104,16 @@ public class ChapterOrder extends MaterialOrderCollection {
 	public boolean remove(UUID partId) {
 		return groupOrder.stream().anyMatch(g -> g.remove(partId));
 	}
-
-	//region setter/getter
+	/**
+	 * Check if all Parts match there relevance.
+	 *
+	 * @return true if all parts are valid
+	 */
+	@Override
+	public boolean isValid() {
+		return groupOrder.stream().allMatch(MaterialOrderPart::isValid)
+				&& groupOrder.stream().allMatch(group -> group.relevance.ordinal() <= relevance.ordinal());
+	}
 	public List<GroupOrder> getGroupOrder() {
 		return Collections.unmodifiableList(groupOrder);
 	}

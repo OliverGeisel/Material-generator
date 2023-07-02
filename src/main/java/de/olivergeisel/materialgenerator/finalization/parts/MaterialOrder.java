@@ -32,6 +32,8 @@ public class MaterialOrder {
 
 	}
 
+	//region setter/getter
+
 	public int materialCount() {
 		return chapterOrder.stream().mapToInt(ChapterOrder::materialCount).sum();
 	}
@@ -80,8 +82,9 @@ public class MaterialOrder {
 	public boolean remove(UUID partId) {
 		return chapterOrder.stream().anyMatch(c -> c.remove(partId));
 	}
-
-	//region setter/getter
+	public boolean isValid() {
+		return chapterOrder.stream().allMatch(ChapterOrder::isValid);
+	}
 	public List<ChapterOrder> getChapterOrder() {
 		return Collections.unmodifiableList(chapterOrder);
 	}

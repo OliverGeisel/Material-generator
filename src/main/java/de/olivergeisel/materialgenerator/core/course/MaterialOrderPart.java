@@ -20,6 +20,15 @@ public abstract class MaterialOrderPart {
 	 */
 	public abstract MaterialOrderPart find(UUID id);
 
+//region setter/getter
+	/**
+	 * Check if all Parts match there relevance.
+	 *
+	 * @return true if all parts are valid
+	 */
+	public abstract boolean isValid();
+//endregion
+
 	//region getter / setter
 	public String getName() {
 		return name;

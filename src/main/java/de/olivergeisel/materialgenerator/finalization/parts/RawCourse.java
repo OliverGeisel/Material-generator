@@ -45,11 +45,19 @@ public class RawCourse extends Course {
 		setPlanId(plan.getId());
 	}
 
+	//region setter/getter
+
 	public boolean assignMaterial(Set<MaterialAndMapping> materials) {
 		return materialOrder.assignMaterial(materials);
 	}
-
-	//region setter/getter
+	/**
+	 * Say if a course has enough materials and fulfill all requirements to use.
+	 *
+	 * @return True if all requirements are fulfilled. False otherwise
+	 */
+	public boolean isValid() {
+		return materialOrder.isValid();
+	}
 	public UUID getId() {
 		return id;
 	}

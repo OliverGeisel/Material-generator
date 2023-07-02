@@ -70,6 +70,8 @@ public class GroupOrder extends MaterialOrderCollection {
 		return taskOrder.stream().map(t -> t.find(id)).filter(Objects::nonNull).findFirst().orElse(null);
 	}
 
+	//region setter/getter
+
 	public TaskOrder findTask(UUID taskId) {
 		return taskOrder.stream().filter(t -> t.getId().equals(taskId)).findFirst().orElse(null);
 	}
@@ -103,8 +105,16 @@ public class GroupOrder extends MaterialOrderCollection {
 	public boolean remove(UUID partId) {
 		return taskOrder.stream().anyMatch(t -> t.remove(partId));
 	}
-
-	//region setter/getter
+	/**
+	 * Check if all Parts match there relevance.
+	 *
+	 * @return true if all parts are valid
+	 */
+	@Override
+	public boolean isValid() {
+		return taskOrder.stream().allMatch(MaterialOrderPart::isValid)
+				&& taskOrder.stream().allMatch(t -> t.getRelevance().ordinal() <= relevance.ordinal());
+	}
 	public List<TaskOrder> getTaskOrder() {
 		return Collections.unmodifiableList(taskOrder);
 	}
