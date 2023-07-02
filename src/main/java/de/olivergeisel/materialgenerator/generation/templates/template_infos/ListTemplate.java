@@ -15,6 +15,7 @@ public class ListTemplate extends BasicTemplate {
 		var allFields = new HashSet<>(TemplateInfo.FIELDS);
 		allFields.add("headline");
 		allFields.add("entries");
+		allFields.add("numerated");
 		FIELDS = Collections.unmodifiableSet(allFields);
 	}
 

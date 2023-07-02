@@ -4,8 +4,8 @@ import de.olivergeisel.materialgenerator.core.course.MaterialOrderPart;
 import de.olivergeisel.materialgenerator.core.courseplan.structure.Relevance;
 import de.olivergeisel.materialgenerator.core.courseplan.structure.StructureTask;
 import de.olivergeisel.materialgenerator.finalization.Goal;
-import de.olivergeisel.materialgenerator.generation.generator.Material;
-import de.olivergeisel.materialgenerator.generation.generator.MaterialAndMapping;
+import de.olivergeisel.materialgenerator.generation.material.Material;
+import de.olivergeisel.materialgenerator.generation.material.MaterialAndMapping;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;

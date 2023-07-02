@@ -6,6 +6,7 @@ import de.olivergeisel.materialgenerator.core.knowledge.IncompleteJSONException;
 import de.olivergeisel.materialgenerator.generation.GeneratorService;
 import de.olivergeisel.materialgenerator.generation.StorageService;
 import de.olivergeisel.materialgenerator.generation.TemplateService;
+import de.olivergeisel.materialgenerator.generation.material.MaterialRepository;
 import de.olivergeisel.materialgenerator.generation.templates.TemplateSetRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

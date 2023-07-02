@@ -9,7 +9,7 @@ import java.util.Set;
 
 public class StructureChapter extends StructureElement {
 
-	private final List<StructureElementPart> parts;
+	private final List<StructureElementPart> parts = new ArrayList<>();
 	private double weight;
 
 	/**
@@ -21,16 +21,13 @@ public class StructureChapter extends StructureElement {
 	 * @param weight       Weight of the chapter
 	 * @param alternatives List of alternatives for the chapter
 	 */
-	public StructureChapter(ContentTarget target, Relevance relevance, String name, double weight,
-							Set<String> alternatives) {
+	public StructureChapter(ContentTarget target, Relevance relevance, String name, double weight, Set<String> alternatives) {
 		super(target, relevance, name, alternatives);
 		this.weight = weight;
-		parts = new ArrayList<>();
 	}
 
 	protected StructureChapter() {
 		super();
-		parts = new ArrayList<>();
 	}
 
 	@Override
@@ -48,8 +45,7 @@ public class StructureChapter extends StructureElement {
 
 	public boolean contains(StructureElementPart element) {
 		for (StructureElement element1 : parts) {
-			if (element1 instanceof StructureGroup group && group.contains(element))
-				return true;
+			if (element1 instanceof StructureGroup group && group.contains(element)) return true;
 			else {
 				if (element1.equals(element)) {
 					return true;
@@ -71,17 +67,7 @@ public class StructureChapter extends StructureElement {
 		return back;
 	}
 
-	@Override
-	public String toString() {
-		return "StructureChapter{" +
-				"name=" + getName() +
-				", parts=" + parts.size() +
-				", weight=" + weight +
-				", relevance=" + relevance +
-				'}';
-	}
-
-	//region getter / setter
+//region setter/getter
 	public List<StructureElementPart> getParts() {
 		return parts;
 	}
@@ -94,6 +80,11 @@ public class StructureChapter extends StructureElement {
 		this.weight = weight;
 	}
 //endregion
+
+	@Override
+	public String toString() {
+		return "StructureChapter{" + "name=" + getName() + ", parts=" + parts.size() + ", weight=" + weight + ", relevance=" + relevance + '}';
+	}
 
 
 }

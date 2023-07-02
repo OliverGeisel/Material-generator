@@ -4,8 +4,8 @@ import de.olivergeisel.materialgenerator.core.course.MaterialOrderPart;
 import de.olivergeisel.materialgenerator.core.courseplan.structure.Relevance;
 import de.olivergeisel.materialgenerator.core.courseplan.structure.StructureChapter;
 import de.olivergeisel.materialgenerator.finalization.Goal;
-import de.olivergeisel.materialgenerator.generation.generator.Material;
-import de.olivergeisel.materialgenerator.generation.generator.MaterialAndMapping;
+import de.olivergeisel.materialgenerator.generation.material.Material;
+import de.olivergeisel.materialgenerator.generation.material.MaterialAndMapping;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -18,8 +18,16 @@ public class ChapterOrder extends MaterialOrderCollection {
 	@OneToMany(cascade = CascadeType.ALL)
 	private final List<GroupOrder> groupOrder;
 
-	public ChapterOrder(StructureChapter chapter, Set<Goal> goals) {
+	/**
+	 * Creates a new ChapterOrder from a StructureChapter
+	 *
+	 * @param chapter the chapter to be ordered
+	 * @param goals   the goals of the course
+	 * @throws IllegalArgumentException if chapter is null
+	 */
+	public ChapterOrder(StructureChapter chapter, Set<Goal> goals) throws IllegalArgumentException {
 		groupOrder = new LinkedList<>();
+		if (chapter == null) throw new IllegalArgumentException("chapter must not be null");
 		for (var group : chapter.getParts()) {
 			groupOrder.add(new GroupOrder(group, goals));
 		}

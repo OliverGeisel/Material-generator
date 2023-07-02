@@ -1,4 +1,4 @@
-package de.olivergeisel.materialgenerator.generation.generator;
+package de.olivergeisel.materialgenerator.generation.material;
 
 import org.springframework.data.repository.CrudRepository;
 

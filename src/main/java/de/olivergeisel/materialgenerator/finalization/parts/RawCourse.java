@@ -4,7 +4,7 @@ package de.olivergeisel.materialgenerator.finalization.parts;
 import de.olivergeisel.materialgenerator.core.course.Course;
 import de.olivergeisel.materialgenerator.core.courseplan.CoursePlan;
 import de.olivergeisel.materialgenerator.finalization.Goal;
-import de.olivergeisel.materialgenerator.generation.generator.MaterialAndMapping;
+import de.olivergeisel.materialgenerator.generation.material.MaterialAndMapping;
 
 import javax.persistence.*;
 import java.util.Set;

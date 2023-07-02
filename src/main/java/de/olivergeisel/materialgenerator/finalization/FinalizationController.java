@@ -2,7 +2,7 @@ package de.olivergeisel.materialgenerator.finalization;
 
 
 import de.olivergeisel.materialgenerator.core.courseplan.structure.Relevance;
-import de.olivergeisel.materialgenerator.generation.generator.MaterialRepository;
+import de.olivergeisel.materialgenerator.generation.material.MaterialRepository;
 import de.olivergeisel.materialgenerator.generation.templates.template_infos.DefinitionTemplate;
 import de.olivergeisel.materialgenerator.generation.templates.template_infos.TemplateInfo;
 import org.springframework.stereotype.Controller;
@@ -92,10 +92,10 @@ public class FinalizationController {
 		AtomicReference<String> materialType = new AtomicReference<>();
 		materialRepository.findById(materialId).ifPresent(material -> {
 			TemplateInfo info;
-			if (material.getTemplate() == null) { // todo fix templateInfo
+			if (material.getTemplateInfo() == null) { // todo fix templateInfo
 				info = new DefinitionTemplate();
 			} else {
-				info = material.getTemplate();
+				info = material.getTemplateInfo();
 			}
 			materialType.set(info.getTemplateType().getType());
 			model.addAttribute("material", material);

@@ -5,10 +5,11 @@ import de.olivergeisel.materialgenerator.core.knowledge.KnowledgeManagement;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement;
 import de.olivergeisel.materialgenerator.finalization.FinalizationService;
 import de.olivergeisel.materialgenerator.finalization.parts.RawCourse;
-import de.olivergeisel.materialgenerator.generation.generator.MappingRepository;
-import de.olivergeisel.materialgenerator.generation.generator.MaterialAndMapping;
-import de.olivergeisel.materialgenerator.generation.generator.MaterialRepository;
 import de.olivergeisel.materialgenerator.generation.generator.TranslateGenerator;
+import de.olivergeisel.materialgenerator.generation.material.MappingRepository;
+import de.olivergeisel.materialgenerator.generation.material.Material;
+import de.olivergeisel.materialgenerator.generation.material.MaterialAndMapping;
+import de.olivergeisel.materialgenerator.generation.material.MaterialRepository;
 import de.olivergeisel.materialgenerator.generation.templates.TemplateSet;
 import de.olivergeisel.materialgenerator.generation.templates.TemplateSetRepository;
 import de.olivergeisel.materialgenerator.generation.templates.template_infos.BasicTemplateRepository;
@@ -63,8 +64,9 @@ public class GeneratorService {
 			generator.update();
 		}
 		var output = generator.output();
+		templateInfoRepository.saveAll(output.getAllMaterial().stream().map(Material::getTemplateInfo).toList());
 		materialRepository.saveAll(output.getAllMaterial());
-		//mappingRepository.saveAll(output.getAllMappings()); Todo deactivated because of save error
+		mappingRepository.saveAll(output.getAllMappings());
 		return output.getMaterialAndMapping();
 	}
 

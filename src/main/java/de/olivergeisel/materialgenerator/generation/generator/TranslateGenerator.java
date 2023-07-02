@@ -7,6 +7,10 @@ import de.olivergeisel.materialgenerator.core.knowledge.metamodel.KnowledgeModel
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeType;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.RelationType;
 import de.olivergeisel.materialgenerator.generation.KnowledgeNode;
+import de.olivergeisel.materialgenerator.generation.material.Material;
+import de.olivergeisel.materialgenerator.generation.material.MaterialAndMapping;
+import de.olivergeisel.materialgenerator.generation.material.MaterialMappingEntry;
+import de.olivergeisel.materialgenerator.generation.material.MaterialType;
 import de.olivergeisel.materialgenerator.generation.templates.TemplateSet;
 import de.olivergeisel.materialgenerator.generation.templates.template_infos.*;
 import org.slf4j.Logger;

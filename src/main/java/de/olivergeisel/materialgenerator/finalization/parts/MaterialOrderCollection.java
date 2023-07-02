@@ -3,7 +3,7 @@ package de.olivergeisel.materialgenerator.finalization.parts;
 import de.olivergeisel.materialgenerator.core.course.MaterialOrderPart;
 import de.olivergeisel.materialgenerator.core.courseplan.structure.Relevance;
 import de.olivergeisel.materialgenerator.finalization.Topic;
-import de.olivergeisel.materialgenerator.generation.generator.MaterialAndMapping;
+import de.olivergeisel.materialgenerator.generation.material.MaterialAndMapping;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;

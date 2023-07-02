@@ -1,6 +1,6 @@
 package de.olivergeisel.materialgenerator.finalization.parts;
 
-import de.olivergeisel.materialgenerator.generation.generator.Material;
+import de.olivergeisel.materialgenerator.generation.material.Material;
 
 import java.nio.file.Paths;
 

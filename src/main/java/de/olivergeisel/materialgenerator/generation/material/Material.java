@@ -1,4 +1,4 @@
-package de.olivergeisel.materialgenerator.generation.generator;
+package de.olivergeisel.materialgenerator.generation.material;
 
 import de.olivergeisel.materialgenerator.core.course.MaterialOrderPart;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement;
@@ -27,7 +27,7 @@ public class Material extends MaterialOrderPart {
 	@Enumerated(EnumType.ORDINAL)
 	private MaterialType type;
 	@ManyToOne(cascade = CascadeType.ALL)
-	private TemplateInfo template;
+	private TemplateInfo templateInfo;
 	@ElementCollection
 	@CollectionTable(name = "material_entity_map", joinColumns = @JoinColumn(name = "entity_id"))
 	@MapKeyColumn(name = "key_column")
@@ -38,9 +38,13 @@ public class Material extends MaterialOrderPart {
 
 	}
 
+	protected Material(MaterialType type) {
+		this.type = type;
+	}
+
 	public Material(MaterialType type, String term, String termId, String structureId) {
 		this.type = type;
-		template = null;
+		templateInfo = null;
 		this.termId = termId;
 		this.term = term;
 		this.structureId = structureId;
@@ -48,7 +52,7 @@ public class Material extends MaterialOrderPart {
 
 	public Material(MaterialType type, KnowledgeElement element) {
 		this.type = type;
-		template = null;
+		templateInfo = null;
 		if (element == null) {
 			throw new IllegalArgumentException("element must not be null");
 		}
@@ -107,17 +111,17 @@ public class Material extends MaterialOrderPart {
 		this.type = type;
 	}
 
-	public TemplateInfo getTemplate() {
-		return template;
+	public TemplateInfo getTemplateInfo() {
+		return templateInfo;
 	}
 
-	public void setTemplate(TemplateInfo template) {
-		this.template = template;
+	public void setTemplateInfo(TemplateInfo templateInfo) {
+		this.templateInfo = templateInfo;
 	}
 //endregion
 
 	@Override
 	public String toString() {
-		return "Material{" + "term='" + term + '\'' + ", structureId='" + structureId + '\'' + ", type=" + type + ", template=" + template + ", values=" + values + '}';
+		return "Material{" + "term='" + term + '\'' + ", structureId='" + structureId + '\'' + ", type=" + type + ", template=" + templateInfo + ", values=" + values + '}';
 	}
 }
