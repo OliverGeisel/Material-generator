@@ -13,6 +13,15 @@ public class KnowledgeFragment extends KnowledgeObject {
 		this(name, null);
 	}
 
+	public KnowledgeFragment(String name, KnowledgeObject part) {
+		super(name);
+		this.name = name;
+		if (part == null) {
+			return;
+		}
+		children.add(part);
+	}
+
 	public boolean containsSimilar(String structureId) {
 		if (structureId == null) {
 			return false;
@@ -30,15 +39,6 @@ public class KnowledgeFragment extends KnowledgeObject {
 			}
 		}
 		return false;
-	}
-
-	public KnowledgeFragment(String name, KnowledgeObject part) {
-		super(name);
-		this.name = name;
-		if (part == null) {
-			return;
-		}
-		children.add(part);
 	}
 
 	public boolean addObject(KnowledgeObject object) {
@@ -130,15 +130,14 @@ public class KnowledgeFragment extends KnowledgeObject {
 		throw new NoSuchElementException("No element with id " + id + " found");
 	}
 
-	//region setter/getter
-
-
 	public boolean removeObject(KnowledgeObject object) {
 		if (!children.contains(object)) {
 			return false;
 		}
 		return children.remove(object);
 	}
+
+	//region setter/getter
 	@Override
 	public Set<KnowledgeElement> getLinkedElements() {
 		var ownElements = super.getLinkedElements();
@@ -148,12 +147,10 @@ public class KnowledgeFragment extends KnowledgeObject {
 		}
 		return back;
 	}
-	//region getter / setter
-	//
+
 	public List<KnowledgeObject> getChildren() {
 		return Collections.unmodifiableList(children);
 	}
-//endregion
 
 	public String getName() {
 		return name;
