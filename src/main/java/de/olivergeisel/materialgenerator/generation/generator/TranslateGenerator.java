@@ -306,19 +306,23 @@ public class TranslateGenerator implements Generator {
 		return back;
 	}
 
-	private List<MaterialAndMapping> createProofs(KnowledgeNode knowledgeNode) {
-		var mainTerm = knowledgeNode.getMainElement();
+	private List<MaterialAndMapping> createProofs(Set<KnowledgeNode> knowledge) {
+		var templateInfo = getBasicTemplateInfo(TemplateInfo.class);
+		var mainKnowledge = knowledge.stream().filter(it -> it.getMainElement().getType().equals(KnowledgeType.TERM))
+				.findFirst().orElseThrow();
 		List<MaterialAndMapping> back = new ArrayList<>();
-		var relations = Arrays.stream(knowledgeNode.getRelations()).filter(it -> it.getType().equals(RelationType.PROVEN_BY));
+		var mainTerm = mainKnowledge.getMainElement();
+		var relations = getWantedRelationsFromRelated(mainKnowledge, RelationType.PROOFS);
 		relations.forEach(it -> {
 			var targetId = it.getToId();
 			try {
-				var element = Arrays.stream(knowledgeNode.getRelatedElements()).filter(elem -> elem.getId().equals(targetId)).findFirst().orElseThrow();
-
-				Material material = new Material(MaterialType.WIKI, mainTerm.getContent(), mainTerm.getId(), mainTerm.getStructureId());
-				MaterialMappingEntry mapping = new MaterialMappingEntry(material);
-				mapping.add(mainTerm, element);
-				back.add(new MaterialAndMapping(material, mapping));
+				var element = Arrays.stream(mainKnowledge.getRelatedElements())
+						.filter(elem -> elem.getId().equals(targetId)).findFirst().orElseThrow();
+				var name = getUniqueMaterialName(back, "Beweis " + mainTerm.getContent(), targetId);
+				var values = Map.of("term", mainTerm.getContent(), "proof", element.getContent());
+				var materialAndMapping = new MaterialCreator().createExampleMaterial(mainTerm, name, templateInfo, values,
+						element);
+				back.add(materialAndMapping);
 			} catch (Exception ignored) {
 				logger.debug("No proof found for {}", mainTerm.getContent());
 			}
