@@ -6,6 +6,11 @@ import javax.persistence.*;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * The TemplateInfo class is the base class for all template information classes.
+ * It contains the type of the template and the main term id.
+ * All classes that extend this class are have a FIELD set, which contains all fields of the class.
+ */
 @Entity
 public abstract class TemplateInfo {
 
@@ -18,7 +23,7 @@ public abstract class TemplateInfo {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", nullable = false)
-	private UUID id = UUID.randomUUID();
+	private UUID id;
 	/**
 	 * The name of the template file
 	 */

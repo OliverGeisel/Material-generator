@@ -10,7 +10,7 @@ import java.util.UUID;
 @Entity
 public class BasicTemplates {
 
-	public static final Set<String> TEMPLATES = Set.of("DEFINITION", "TEXT", "EXAMPLE", "ACRONYM", "LIST", "SYNONYM");
+	public static final Set<String> TEMPLATES = Set.of("DEFINITION", "TEXT", "EXAMPLE", "ACRONYM", "LIST", "SYNONYM", "PROOF");
 	@Transient
 	private static BasicTemplates instance;
 
@@ -30,15 +30,15 @@ public class BasicTemplates {
 	@ManyToOne
 	@JoinColumn(name = "example_template_id")
 	private ExampleTemplate exampleTemplate;
-
 	@ManyToOne
-	@JoinColumn(name = "acronym_template_id")
-	private AcronymTemplate acronymTemplate;
-
-
+	@JoinColumn(name = "proof_template_id")
+	private ProofTemplate proofTemplate;
 	@ManyToOne
 	@JoinColumn(name = "list_template_id")
 	private ListTemplate listTemplate;
+	@ManyToOne
+	@JoinColumn(name = "acronym_template_id")
+	private AcronymTemplate acronymTemplate;
 	@ManyToOne
 	@JoinColumn(name = "synonym_template_id")
 	private SynonymTemplate synonymTemplate;
@@ -53,6 +53,14 @@ public class BasicTemplates {
 	}
 
 	//region setter/getter
+	public ProofTemplate getProofTemplate() {
+		return proofTemplate;
+	}
+
+	public void setProofTemplate(ProofTemplate proofTemplate) {
+		this.proofTemplate = proofTemplate;
+	}
+
 	public static BasicTemplates getInstance() {
 		if (instance == null) {
 			instance = new BasicTemplates();
@@ -68,7 +76,6 @@ public class BasicTemplates {
 		return Set.of(definitionTemplate, textTemplate, exampleTemplate, acronymTemplate, listTemplate, synonymTemplate);
 	}
 
-	//region getter / setter
 	public DefinitionTemplate getDefinitionTemplate() {
 		return definitionTemplate;
 	}
@@ -130,5 +137,4 @@ public class BasicTemplates {
 	public int hashCode() {
 		return id != null ? id.hashCode() : 0;
 	}
-//endregion
 }

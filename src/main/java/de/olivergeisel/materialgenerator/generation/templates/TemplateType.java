@@ -12,6 +12,7 @@ public class TemplateType {
 	public static final TemplateType ACRONYM = new TemplateType("ACRONYM");
 	public static final TemplateType LIST = new TemplateType("LIST");
 	public static final TemplateType EXAMPLE = new TemplateType("EXAMPLE");
+	public static final TemplateType PROOF = new TemplateType("PROOF");
 	private String type;
 
 	public TemplateType(String type) {
@@ -30,6 +31,9 @@ public class TemplateType {
 			case "TEXT" -> TEXT;
 			case "LIST" -> LIST;
 			case "EXAMPLE" -> EXAMPLE;
+			case "ACRONYM" -> ACRONYM;
+			case "SYNONYM" -> SYNONYM;
+			case "PROOF" -> PROOF;
 			default -> new TemplateType(typeString);
 		};
 	}

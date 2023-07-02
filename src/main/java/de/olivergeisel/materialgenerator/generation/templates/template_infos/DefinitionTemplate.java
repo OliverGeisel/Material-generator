@@ -34,7 +34,6 @@ public class DefinitionTemplate extends BasicTemplate {
 	}
 
 	//region setter/getter
-	//region getter / setter
 	public String getDefinition() {
 		return values.getDefinition();
 	}
@@ -47,7 +46,6 @@ public class DefinitionTemplate extends BasicTemplate {
 		values.clearRelatedTerms();
 		terms.forEach(t -> values.addTermId(UUID.fromString(t)));
 	}
-//endregion
 //endregion
 
 }

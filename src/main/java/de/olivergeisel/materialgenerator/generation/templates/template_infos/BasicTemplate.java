@@ -8,15 +8,15 @@ import java.util.UUID;
 @Entity
 public abstract class BasicTemplate extends TemplateInfo {
 
-	public BasicTemplate(TemplateType type) {
+	protected BasicTemplate(TemplateType type) {
 		super(type);
 	}
 
-	public BasicTemplate(TemplateType type, UUID mainTermId) {
+	protected BasicTemplate(TemplateType type, UUID mainTermId) {
 		super(type, mainTermId);
 	}
 
-	public BasicTemplate() {
+	protected BasicTemplate() {
 		super();
 	}
 

@@ -1,9 +1,5 @@
-package de.olivergeisel.materialgenerator.generation;
+package de.olivergeisel.materialgenerator.generation.templates;
 
-import de.olivergeisel.materialgenerator.generation.templates.BasicTemplates;
-import de.olivergeisel.materialgenerator.generation.templates.TemplateSet;
-import de.olivergeisel.materialgenerator.generation.templates.TemplateSetRepository;
-import de.olivergeisel.materialgenerator.generation.templates.TemplateType;
 import de.olivergeisel.materialgenerator.generation.templates.template_infos.ExtraTemplate;
 import de.olivergeisel.materialgenerator.generation.templates.template_infos.TemplateInfoRepository;
 import org.springframework.boot.CommandLineRunner;
