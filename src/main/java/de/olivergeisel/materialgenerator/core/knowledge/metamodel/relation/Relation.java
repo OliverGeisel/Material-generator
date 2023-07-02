@@ -43,14 +43,34 @@ public abstract class Relation {
 		return name;
 	}
 
-	public KnowledgeElement getTo() {
+//region setter/getter
+	/**
+	 * Get the target of the relation
+	 *
+	 * @return target of the relation
+	 * @throws IllegalStateException if target is not set
+	 */
+	public KnowledgeElement getTo() throws IllegalStateException {
+		if (to == null) {
+			throw new IllegalStateException("to is not set");
+		}
 		return to;
 	}
 
+	/**
+	 * @param to
+	 */
 	public void setTo(KnowledgeElement to) {
+		if (to == null) {
+			throw new IllegalArgumentException("to must not be null");
+		}
+		if (to.getId() == null || !to.getId().equals(toId)) {
+			throw new IllegalArgumentException("to.id must not be null and must match toId");
+		}
 		this.to = to;
 		toId = to.getId();
 	}
+//endregion
 
 	public RelationType getType() {
 		return type;

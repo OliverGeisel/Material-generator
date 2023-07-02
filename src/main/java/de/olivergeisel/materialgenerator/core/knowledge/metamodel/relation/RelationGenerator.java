@@ -17,17 +17,19 @@ public class RelationGenerator {
 	 * @return A new Relation object
 	 */
 	public static Relation create(String typeName) {
-		RelationType type;
-		try {
-			type = RelationType.valueOf(typeName);
-		} catch (IllegalArgumentException iae) {
-			type = RelationType.CUSTOM;
-		}
-		return type != RelationType.CUSTOM ?
-				new BasicRelation(type, UNKNOWN, UNKNOWN) : new CustomRelation(UNKNOWN, type);
+		return create(typeName, UNKNOWN, UNKNOWN);
 	}
 
 	public static Relation create(String typeName, String fromId, String toId) {
+		if (typeName == null) {
+			throw new IllegalArgumentException("typeName must not be null");
+		}
+		if (typeName.isBlank()) {
+			throw new IllegalArgumentException("typeName must not be blank");
+		}
+		if (fromId == null || toId == null) {
+			throw new IllegalArgumentException("fromId and toId must not be null");
+		}
 		RelationType type;
 		try {
 			type = RelationType.valueOf(typeName.toUpperCase().replace("-", "_"));

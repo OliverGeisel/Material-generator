@@ -28,6 +28,7 @@ public enum RelationType {
 			case DESCRIBED_AS -> RelationType.DESCRIBES;
 			case EXAMPLE_FOR -> RelationType.HAS_EXAMPLE;
 			case PROVEN_BY -> RelationType.PROOFS;
+			case CUSTOM -> RelationType.CUSTOM;
 			// Inverted relations
 			case CAN_BE -> RelationType.IS;
 			case PART_OF -> RelationType.HAS;
