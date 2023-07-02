@@ -5,14 +5,15 @@ import de.olivergeisel.materialgenerator.core.courseplan.content.ContentGoal;
 import de.olivergeisel.materialgenerator.core.courseplan.content.ContentGoalExpression;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.KnowledgeModel;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeType;
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.Relation;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.RelationType;
 import de.olivergeisel.materialgenerator.generation.KnowledgeNode;
-import de.olivergeisel.materialgenerator.generation.material.Material;
-import de.olivergeisel.materialgenerator.generation.material.MaterialAndMapping;
-import de.olivergeisel.materialgenerator.generation.material.MaterialMappingEntry;
-import de.olivergeisel.materialgenerator.generation.material.MaterialType;
+import de.olivergeisel.materialgenerator.generation.material.*;
 import de.olivergeisel.materialgenerator.generation.templates.TemplateSet;
-import de.olivergeisel.materialgenerator.generation.templates.template_infos.*;
+import de.olivergeisel.materialgenerator.generation.templates.template_infos.BasicTemplate;
+import de.olivergeisel.materialgenerator.generation.templates.template_infos.DefinitionTemplate;
+import de.olivergeisel.materialgenerator.generation.templates.template_infos.ListTemplate;
+import de.olivergeisel.materialgenerator.generation.templates.template_infos.TemplateInfo;
 import org.slf4j.Logger;
 
 import java.util.*;
@@ -25,39 +26,6 @@ public class TranslateGenerator implements Generator {
 
 	private final Set<TemplateInfo> basicTemplateInfo = new HashSet<>();
 	private final Logger logger = org.slf4j.LoggerFactory.getLogger(TranslateGenerator.class);
-
-	/**
-	 * Create all Materials for a Goal
-	 *
-	 * @param expression the Goal to create Materials for
-	 * @param knowledge  the Knowledge to use
-	 * @param templates  the Templates to use
-	 */
-	private void create(ContentGoalExpression expression, Set<KnowledgeNode> knowledge, TemplateSet templates) {
-		var templateName = templates.getName();
-		var materialAndMapping = switch (expression) {
-			case FIRST_LOOK -> materialForFirstLook(expression, knowledge, templateName);
-			case KNOW -> materialForKnow(expression, knowledge, templateName);
-			case USE -> materialForUse(expression, knowledge, templateName);
-			case CREATE -> materialForCreate(expression, knowledge, templateName);
-			case TRANSLATE -> materialForTranslate(expression, knowledge, templateName);
-			case COMMENT -> materialForComment(expression, knowledge, templateName);
-			case CONTROL -> materialForControl(expression, knowledge, templateName);
-		};
-		var material = materialAndMapping.stream().map(MaterialAndMapping::material).toList();
-		var mapping = materialAndMapping.stream().map(MaterialAndMapping::mapping).toList();
-		output.addMaterial(material);
-		output.addMapping(mapping);
-	}
-
-	private List<MaterialAndMapping> materialForControl(ContentGoalExpression expression, Set<KnowledgeNode> knowledge, String templateName) {
-		return materialForComment(expression, knowledge, templateName);
-	}
-
-	private List<MaterialAndMapping> materialForComment(ContentGoalExpression expression, Set<KnowledgeNode> knowledge, String templateName) {
-		return materialForTranslate(expression, knowledge, templateName);
-	}
-
 	private TemplateSet templateSet;
 	private KnowledgeModel model;
 	private CoursePlan plan;
@@ -80,29 +48,109 @@ public class TranslateGenerator implements Generator {
 		this.plan = plan;
 	}
 
+	/**
+	 * Get all Relations of a KnowledgeNode that match a RelationType.
+	 * It searches in the relatedElements of the KnowledgeNode.
+	 *
+	 * @param mainKnowledge KnowledgeNode to search in
+	 * @param type          RelationType to search for. Should be a Relation, that points to the main Element of the KnowledgeNode
+	 * @return Set of Relations that match the RelationType
+	 */
+	private static Set<Relation> getWantedRelationsFromRelated(KnowledgeNode mainKnowledge, RelationType type) {
+		return Arrays.stream(mainKnowledge.getRelatedElements()).flatMap(it -> it.getRelations().stream().filter(relation -> relation.getType().equals(type))).collect(Collectors.toSet());
+	}
+
+	/**
+	 * Get all Relations of a KnowledgeNode that match a RelationType. Search only in the mainElement of the KnowledgeNode.
+	 *
+	 * @param knowledgeNode KnowledgeNode to search in
+	 * @param type          RelationType to search for. Should be a Relation, that goes from the main Element of the KnowledgeNode. Like DefinedBy
+	 * @return Set of Relations that match the RelationType
+	 */
+	private static Set<Relation> getWantedRelationsFromMain(KnowledgeNode knowledgeNode, RelationType type) {
+		return knowledgeNode.getMainElement().getRelations().stream().filter(relation -> relation.getType().equals(type)).collect(Collectors.toSet());
+	}
+
+	private static String getUniqueMaterialName(List<MaterialAndMapping> back, String startName, String defId) {
+		String name = startName;
+		final String finalName = name;
+		if (back.stream().anyMatch(mat -> mat.material().getName().equals(finalName))) {
+			name = defId;
+		}
+		return name;
+	}
+
 	private void changed() {
 		setUnchanged(false);
 	}
 
-	private List<MaterialAndMapping> materialForTranslate(ContentGoalExpression expression, Set<KnowledgeNode> knowledge, String templateName) {
-		return materialForCreate(expression, knowledge, templateName);
+	private void processGoals(List<ContentGoal> goals) {
+		for (var goal : goals) {
+			var expression = goal.getExpression();
+			var masterKeyword = goal.getMasterKeyword();
+			try {
+				var knowledge = loadKnowledgeForStructure(masterKeyword);
+				knowledge.forEach(it -> it.setGoal(goal));
+				createMaterialForGoal(expression, knowledge, templateSet);
+			} catch (NoSuchElementException e) {
+				logger.info("No knowledge found for MasterKeyword {}", masterKeyword);
+			}
+		}
 	}
 
-	private List<MaterialAndMapping> materialForCreate(ContentGoalExpression expression, Set<KnowledgeNode> knowledge, String templateName) {
-		return materialForUse(expression, knowledge, templateName);
+	/**
+	 * Create all Materials for a Goal
+	 *
+	 * @param expression the Goal to create Materials for
+	 * @param knowledge  the Knowledge to use
+	 * @param templates  the Templates to use
+	 */
+	private void createMaterialForGoal(ContentGoalExpression expression, Set<KnowledgeNode> knowledge, TemplateSet templates) {
+		var templateName = templates.getName();
+		var materialAndMapping = switch (expression) {
+			case FIRST_LOOK -> materialForFirstLook(knowledge, templateName);
+			case KNOW -> materialForKnow(knowledge, templateName);
+			case USE -> materialForUse(knowledge, templateName);
+			case CREATE -> materialForCreate(knowledge, templateName);
+			case TRANSLATE -> materialForTranslate(knowledge, templateName);
+			case COMMENT -> materialForComment(knowledge, templateName);
+			case CONTROL -> materialForControl(knowledge, templateName);
+		};
+		var material = materialAndMapping.stream().map(MaterialAndMapping::material).toList();
+		var mapping = materialAndMapping.stream().map(MaterialAndMapping::mapping).toList();
+		output.addMaterial(material);
+		output.addMapping(mapping);
 	}
 
-	private List<MaterialAndMapping> materialForUse(ContentGoalExpression expression, Set<KnowledgeNode> knowledge, String templateName) {
-		var materials = materialForKnow(expression, knowledge, templateName);
+	private List<MaterialAndMapping> materialForControl(Set<KnowledgeNode> knowledge, String templateName) {
+		return materialForComment(knowledge, templateName);
+	}
+
+	private List<MaterialAndMapping> materialForComment(Set<KnowledgeNode> knowledge, String templateName) {
+		return materialForTranslate(knowledge, templateName);
+	}
+
+	private List<MaterialAndMapping> materialForTranslate(Set<KnowledgeNode> knowledge, String templateName) {
+		return materialForCreate(knowledge, templateName);
+	}
+
+	private List<MaterialAndMapping> materialForCreate(Set<KnowledgeNode> knowledge, String templateName) {
+		return materialForUse(knowledge, templateName);
+	}
+
+	private List<MaterialAndMapping> materialForUse(Set<KnowledgeNode> knowledge, String templateName) {
+		var materials = materialForKnow(knowledge, templateName);
 		return materials;
 	}
 
-	private List<MaterialAndMapping> materialForKnow(ContentGoalExpression expression, Set<KnowledgeNode> knowledge, String templateName) {
-		var materials = materialForFirstLook(expression, knowledge, templateName);
+	private List<MaterialAndMapping> materialForKnow(Set<KnowledgeNode> knowledge, String templateName) {
+		var materials = materialForFirstLook(knowledge, templateName);
+		materials.addAll(createProofs(knowledge));
+		materials.addAll(createExamples(knowledge));
 		return materials;
 	}
 
-	private List<MaterialAndMapping> materialForFirstLook(ContentGoalExpression expression, Set<KnowledgeNode> knowledge, String templateName) {
+	private List<MaterialAndMapping> materialForFirstLook(Set<KnowledgeNode> knowledge, String templateName) {
 		var materials = createDefinitions(knowledge);
 		//materials.addAll(createAcronyms(knowledge));
 		//materials.addAll(createExamples(knowledge));
@@ -351,6 +399,20 @@ public class TranslateGenerator implements Generator {
 		processGoals(goals.stream().toList());
 		setUnchanged(true);
 	}
+
+	//region setter/getter
+	public boolean isReady() {
+		return templateSet != null && model != null && plan != null;
+	}
+
+	private boolean isUnchanged() {
+		return unchanged;
+	}
+
+	private void setUnchanged(boolean unchanged) {
+		this.unchanged = unchanged;
+	}
+
 	public void setTemplateSet(TemplateSet templateSet) {
 		this.templateSet = templateSet;
 		changed();
@@ -365,21 +427,11 @@ public class TranslateGenerator implements Generator {
 		this.plan = plan;
 		changed();
 	}
-	public boolean isReady() {
-		return templateSet != null && model != null && plan != null;
-	}
-
-	private boolean isUnchanged() {
-		return unchanged;
-	}
-
-	private void setUnchanged(boolean unchanged) {
-		this.unchanged = unchanged;
-	}
 
 	public void setBasicTemplateInfo(Set<BasicTemplate> basicTemplateInfo) {
 		this.basicTemplateInfo.clear();
 		this.basicTemplateInfo.addAll(basicTemplateInfo);
+		changed();
 	}
 //endregion
 }
