@@ -6,12 +6,26 @@ import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.Knowle
 import de.olivergeisel.materialgenerator.generation.templates.template_infos.TemplateInfo;
 
 import javax.persistence.*;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * A material is a part of a course. It can be a text, an example, a proof, a definition and so on. It contains all
+ * values for the specific Materialtype and TemplateInfo. It is used to generate the final material. The TemplateInfo
+ * has all information for the template. Specific Materials have more Information about the Material.  @see
+ * TemplateInfo for more information.
+ * <p>
+ * The MaterialType is a general type of the material. It is only a classification from MDTea.
+ */
 @Entity
 public class Material extends MaterialOrderPart {
 
+	@ElementCollection
+	@CollectionTable(name = "material_entity_map", joinColumns = @JoinColumn(name = "entity_id"))
+	@MapKeyColumn(name = "key_column")
+	@Column(name = "value_column")
+	private final Map<String, String> values = new HashMap<>();
 	/**
 	 * The term name of the material, which is used in the template
 	 */
@@ -28,11 +42,6 @@ public class Material extends MaterialOrderPart {
 	private MaterialType type;
 	@ManyToOne(cascade = CascadeType.ALL)
 	private TemplateInfo templateInfo;
-	@ElementCollection
-	@CollectionTable(name = "material_entity_map", joinColumns = @JoinColumn(name = "entity_id"))
-	@MapKeyColumn(name = "key_column")
-	@Column(name = "value_column")
-	private Map<String, String> values;
 
 	protected Material() {
 
@@ -64,6 +73,20 @@ public class Material extends MaterialOrderPart {
 		this.structureId = element.getStructureId();
 	}
 
+	public boolean addValue(String key, String value) {
+		if (key == null || value == null) {
+			throw new IllegalArgumentException("key and value must not be null");
+		}
+		return values.put(key, value) != null;
+	}
+
+	public boolean removeValue(String key) {
+		if (key == null) {
+			throw new IllegalArgumentException("key must not be null");
+		}
+		return values.remove(key) != null;
+	}
+
 	@Override
 	public MaterialOrderPart find(UUID id) {
 		if (this.getId().equals(id)) return this;
@@ -71,6 +94,17 @@ public class Material extends MaterialOrderPart {
 	}
 
 	//region setter/getter
+
+	/**
+	 * Check if all Parts match there relevance.
+	 *
+	 * @return true if all parts are valid
+	 */
+	@Override
+	public boolean isValid() {
+		return true;
+	}
+
 	public String getStructureId() {
 		return structureId;
 	}
@@ -99,8 +133,17 @@ public class Material extends MaterialOrderPart {
 		return values;
 	}
 
+	/**
+	 * Set the values of the material. Deletes all existing values and replaces them with the new ones.
+	 *
+	 * @param values the values to set (must not be null)
+	 */
 	public void setValues(Map<String, String> values) {
-		this.values = values;
+		if (values == null) {
+			throw new IllegalArgumentException("values must not be null");
+		}
+		this.values.clear();
+		this.values.putAll(values);
 	}
 
 	public MaterialType getType() {
@@ -122,6 +165,7 @@ public class Material extends MaterialOrderPart {
 
 	@Override
 	public String toString() {
-		return "Material{" + "term='" + term + '\'' + ", structureId='" + structureId + '\'' + ", type=" + type + ", template=" + templateInfo + ", values=" + values + '}';
+		return "Material{" + "term='" + term + '\'' + ", structureId='" + structureId + '\''
+				+ ", type=" + type + ", template=" + templateInfo + ", values=" + values + '}';
 	}
 }
