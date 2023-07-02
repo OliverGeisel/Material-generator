@@ -160,32 +160,30 @@ public class TranslateGenerator implements Generator {
 	/**
 	 * Create Definition Materials for a KnowledgeNode
 	 *
-	 * @param knowledge KnowledgeNode
+	 * @param knowledge KnowledgeNodes to create Materials for
 	 * @return List of Materials
 	 * @throws NoTemplateInfoException  if no Definition Template is found
-	 * @throws IllegalArgumentException if no Definition Relation is found
+	 * @throws IllegalArgumentException if no Definition Relation is found or if the KnowledgeNode has no MasterKeyword
 	 */
 	private List<MaterialAndMapping> createDefinitions(Set<KnowledgeNode> knowledge) throws NoTemplateInfoException, IllegalArgumentException {
-		var templateInfo = basicTemplateInfo.stream().filter(DefinitionTemplate.class::isInstance).findFirst().orElseThrow(() -> new NoTemplateInfoException("No Definition Template found"));
-		List<MaterialAndMapping> back = new ArrayList<>(); // todo find correct TERM (first is not enough)
-		var mainKnowledge = knowledge.stream().filter(it -> it.getMainElement().getType().equals(KnowledgeType.TERM)).findFirst().orElseThrow();
+		var templateInfo = getBasicTemplateInfo(DefinitionTemplate.class);
+		// var masterKeyword = knowledge.stream().findFirst().orElseThrow().getMasterKeyWord().orElseThrow();
+		var mainKnowledge = knowledge.stream().filter(it -> it.getMainElement().getType().equals(KnowledgeType.TERM))
+				//&& it.getMainElement().getContent().contains(masterKeyword))
+				.findFirst().orElseThrow(); // todo need a Class that say a MasterKeyword is matching to the mainElement.
+		List<MaterialAndMapping> back = new ArrayList<>();
 		var mainTerm = mainKnowledge.getMainElement();
-		var definitionRelations = Arrays.stream(mainKnowledge.getRelatedElements()).flatMap(it -> it.getRelations().stream().filter(relation -> relation.getType().equals(RelationType.DEFINES))).collect(Collectors.toSet());
+		var definitionRelations = getWantedRelationsFromRelated(mainKnowledge, RelationType.DEFINES);
 		definitionRelations.forEach(it -> {
 			var defId = it.getFromId();
 			try {
-				var definitionElement = Arrays.stream(mainKnowledge.getRelatedElements()).filter(elem -> elem.getId().equals(defId)).findFirst().orElseThrow();
-				Material defMaterial = new Material(MaterialType.WIKI, mainTerm);
-				var name = "Definition " + mainTerm.getContent();
-				if (back.stream().map(mat -> mat.material().getName()).toList().contains(name)) {
-					name = defId;
-				}
-				defMaterial.setName(name);
-				defMaterial.setTemplate(templateInfo);
-				defMaterial.setValues(Map.of("term", mainTerm.getContent(), "definition", definitionElement.getContent()));
-				MaterialMappingEntry mapping = new MaterialMappingEntry(defMaterial);
-				mapping.add(mainTerm, definitionElement);
-				back.add(new MaterialAndMapping(defMaterial, mapping));
+				var definitionElement = Arrays.stream(mainKnowledge.getRelatedElements())
+						.filter(elem -> elem.getId().equals(defId)).findFirst().orElseThrow();
+				String name = getUniqueMaterialName(back, "Definition " + mainTerm.getContent(), defId);
+				var values = Map.of("term", mainTerm.getContent(), "definition", definitionElement.getContent());
+				var materialAndMapping = new MaterialCreator().createWikiMaterial(mainTerm, name, templateInfo, values,
+						definitionElement);
+				back.add(materialAndMapping);
 			} catch (NoSuchElementException ignored) {
 				logger.warn("No definition found for {}", mainTerm.getContent());
 			}
@@ -328,7 +326,23 @@ public class TranslateGenerator implements Generator {
 		return back;
 	}
 
-	//region setter/getter
+	/**
+	 * Returns the basic templateInfo for the given class.
+	 *
+	 * @param templateInfoClass the class of the templateInfo
+	 * @return the templateInfo
+	 * @throws NoTemplateInfoException if no templateInfo is found
+	 */
+	private TemplateInfo getBasicTemplateInfo(Class<? extends TemplateInfo> templateInfoClass) throws NoTemplateInfoException {
+		return basicTemplateInfo.stream().filter(templateInfoClass::isInstance).findFirst().orElseThrow(() -> new NoTemplateInfoException(String.format("No Template %s found", templateInfoClass.getSimpleName())));
+	}
+
+	private Set<KnowledgeNode> loadKnowledgeForStructure(String structureId) {
+		if (structureId == null) {
+			return Collections.emptySet();
+		}
+		return model.getKnowledgeNodesFor(structureId, true);
+	}
 
 	/**
 	 * Initial method to set the input for the generator. All parameters cant be null.
