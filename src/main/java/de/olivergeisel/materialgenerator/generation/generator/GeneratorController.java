@@ -5,7 +5,6 @@ import de.olivergeisel.materialgenerator.core.courseplan.CoursePlanParser;
 import de.olivergeisel.materialgenerator.core.knowledge.IncompleteJSONException;
 import de.olivergeisel.materialgenerator.generation.GeneratorService;
 import de.olivergeisel.materialgenerator.generation.StorageService;
-import de.olivergeisel.materialgenerator.generation.TemplateService;
 import de.olivergeisel.materialgenerator.generation.material.MaterialRepository;
 import de.olivergeisel.materialgenerator.generation.templates.TemplateSetRepository;
 import org.springframework.stereotype.Controller;
@@ -24,8 +23,7 @@ import static de.olivergeisel.materialgenerator.generation.TemplateService.*;
 @RequestMapping("/generator")
 public class GeneratorController {
 
-
-	public static final String UPLOAD = "UPLOAD";
+	private static final String UPLOAD = "UPLOAD";
 	private static final String PATH = "generation/";
 	private final GeneratorService service;
 	private final StorageService storageService;
@@ -52,7 +50,7 @@ public class GeneratorController {
 	@GetMapping("/plan-selection")
 	public String generatorAuto(@RequestParam("template") String templateSetName, Model model) {
 		var curriculums = new LinkedList<String>();
-		curriculums.add("UPLOAD");
+		curriculums.add(UPLOAD);
 		curriculums.addAll(storageService.loadAll().map(path -> path.getFileName().toString()).toList());
 		model.addAttribute("templateSetName", templateSetName);
 		model.addAttribute("curriculums", curriculums);
@@ -130,16 +128,6 @@ public class GeneratorController {
 		var coursePlan = parser.parseFromFile(coursePlanFile.toFile());
 		var rawcourse = service.generateRawCourse(coursePlan, template);
 		return "redirect:/edit/" + rawcourse.getId();
-	}
-
-	@GetMapping("def-show")
-	public String showDefinition(@RequestParam String term, @RequestParam String definition, @RequestParam(required = false) String template, Model model) {
-		model.addAttribute("term", term);
-		model.addAttribute("definition", definition);
-		if (template == null || template.isBlank()) {
-			template = PLAIN;
-		}
-		return TemplateService.TEMPLATE_SET_FROM_TEMPLATES_FOLDER + template + "/DEFINITION";
 	}
 
 	@GetMapping("materials")
