@@ -329,21 +329,25 @@ public class TranslateGenerator implements Generator {
 		return back;
 	}
 
-	private List<MaterialAndMapping> createExamples(Set<KnowledgeNode> knowledgeNode) {
-		var mainTerm = knowledgeNode.getMainElement();
+	private List<MaterialAndMapping> createExamples(Set<KnowledgeNode> knowledge) {
+		var templateInfo = getBasicTemplateInfo(ExampleTemplate.class);
+		var mainKnowledge = knowledge.stream().filter(it -> it.getMainElement().getType().equals(KnowledgeType.TERM))
+				.findFirst().orElseThrow();
 		List<MaterialAndMapping> back = new ArrayList<>();
-		var relations = Arrays.stream(knowledgeNode.getRelations()).filter(it -> it.getType().equals(RelationType.EXAMPLE_FOR));
+		var mainTerm = mainKnowledge.getMainElement();
+		var relations = getWantedRelationsFromRelated(mainKnowledge, RelationType.EXAMPLE_FOR);
 		relations.forEach(it -> {
-			var targetId = it.getFromId();
+			var mainId = it.getFromId();
 			try {
-				var element = Arrays.stream(knowledgeNode.getRelatedElements()).filter(elem -> elem.getId().equals(targetId)).findFirst().orElseThrow();
-
-
-				Material material = new Material(MaterialType.EXAMPLE, mainTerm.getContent(), mainTerm.getId(), mainTerm.getStructureId());
-				MaterialMappingEntry mapping = new MaterialMappingEntry(material);
-				mapping.add(mainTerm, element);
-				back.add(new MaterialAndMapping(material, mapping));
+				var elements = Arrays.stream(mainKnowledge.getRelatedElements())
+						.filter(elem -> elem.getId().equals(mainId)).findFirst().orElseThrow();
+				String name = getUniqueMaterialName(back, "Definition " + mainTerm.getContent(), mainId);
+				var values = Map.of("term", mainTerm.getContent(), "example", elements.getContent());
+				var materialAndMapping = new MaterialCreator().createExampleMaterial(mainTerm, name, templateInfo, values,
+						elements);
+				back.add(materialAndMapping);
 			} catch (Exception ignored) {
+				logger.warn("No example found for {}", mainTerm.getContent());
 			}
 		});
 		return back;
