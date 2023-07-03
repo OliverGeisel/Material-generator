@@ -73,6 +73,14 @@ public class Material extends MaterialOrderPart {
 		this.structureId = element.getStructureId();
 	}
 
+	protected Material(String term, String termId, String structureId, MaterialType type, TemplateInfo templateInfo) {
+		this.term = term;
+		this.termId = termId;
+		this.structureId = structureId;
+		this.type = type;
+		this.templateInfo = templateInfo;
+	}
+
 	public boolean addValue(String key, String value) {
 		if (key == null || value == null) {
 			throw new IllegalArgumentException("key and value must not be null");

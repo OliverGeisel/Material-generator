@@ -1,5 +1,7 @@
 package de.olivergeisel.materialgenerator.generation.material;
 
+import de.olivergeisel.materialgenerator.generation.templates.template_infos.TemplateInfo;
+
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import java.util.Collection;
@@ -18,8 +20,17 @@ public class ListMaterial extends Material {
 		super(MaterialType.WIKI);
 	}
 
-	protected ListMaterial(MaterialType type) {
+	protected ListMaterial(MaterialType type, TemplateInfo templateInfo) {
 		super(type);
+		setTemplateInfo(templateInfo);
+	}
+
+	protected ListMaterial(MaterialType type, TemplateInfo templateInfo, String headline, Collection<String> entries, boolean numerated) {
+		super(type);
+		setTemplateInfo(templateInfo);
+		this.entries.addAll(entries);
+		this.headline = headline;
+		this.numerated = numerated;
 	}
 
 	public ListMaterial(String headline, Collection<String> entries, boolean numerated) {
