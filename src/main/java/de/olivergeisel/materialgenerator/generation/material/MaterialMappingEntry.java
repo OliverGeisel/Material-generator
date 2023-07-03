@@ -47,6 +47,12 @@ public class MaterialMappingEntry {
 		return true;
 	}
 
+	public void addAll(KnowledgeElement[] array) {
+		for (var elem : array) {
+			add(elem);
+		}
+	}
+
 	//region setter/getter
 	public UUID getId() {
 		return id;
