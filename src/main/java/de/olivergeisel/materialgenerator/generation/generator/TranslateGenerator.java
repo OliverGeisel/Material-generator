@@ -168,7 +168,14 @@ public class TranslateGenerator implements Generator {
 	private List<MaterialAndMapping> materialForFirstLook(Set<KnowledgeNode> knowledge, String templateName) {
 		var materials = createDefinitions(knowledge);
 		materials.addAll(createLists(knowledge));
-		materials.addAll(createAcronyms(knowledge));
+		var synonyms = createSynonyms(knowledge);
+		if (synonyms != null) {
+			materials.add(synonyms);
+		}
+		var acronyms = createAcronyms(knowledge);
+		if (acronyms != null) {
+			materials.add(acronyms);
+		}
 		materials.addAll(createWikis(knowledge));
 		return materials;
 	}
@@ -229,6 +236,13 @@ public class TranslateGenerator implements Generator {
 		return back;
 	}
 
+	/**
+	 * Create a List Material for a KnowledgeNode with Synonyms
+	 *
+	 * @param knowledge KnowledgeNode to create Material for
+	 * @return A material with synonyms and a mapping. If no synonyms are found, null is returned
+	 */
+
 	private MaterialAndMapping createSynonyms(Set<KnowledgeNode> knowledge) {
 		var templateInfo = getBasicTemplateInfo(SynonymTemplate.class);
 		var mainKnowledge = knowledge.stream().filter(it -> it.getMainElement().getType().equals(KnowledgeType.TERM))
@@ -246,6 +260,9 @@ public class TranslateGenerator implements Generator {
 				synonymsElements.add(synonymElement);
 			}
 		});
+		if (synonyms.isEmpty()) {
+			return null;
+		}
 		Material material = new SynonymMaterial(synonyms, false, templateInfo);
 		MaterialMappingEntry mapping = new MaterialMappingEntry(material);
 		mapping.add(mainTerm);
@@ -254,6 +271,12 @@ public class TranslateGenerator implements Generator {
 		return new MaterialAndMapping(material, mapping);
 	}
 
+	/**
+	 * Create a List Material for a KnowledgeNode with Acronyms
+	 *
+	 * @param knowledge
+	 * @return
+	 */
 	private MaterialAndMapping createAcronyms(Set<KnowledgeNode> knowledge) {
 		var templateInfo = getBasicTemplateInfo(AcronymTemplate.class);
 		var mainKnowledge = knowledge.stream().filter(it -> it.getMainElement().getType().equals(KnowledgeType.TERM))
@@ -271,6 +294,9 @@ public class TranslateGenerator implements Generator {
 				acronymsElements.add(synonymElement);
 			}
 		});
+		if (acronyms.isEmpty()) {
+			return null;
+		}
 		Material material = new AcronymMaterial(acronyms, false, templateInfo);
 		MaterialMappingEntry mapping = new MaterialMappingEntry(material);
 		mapping.add(mainTerm);
