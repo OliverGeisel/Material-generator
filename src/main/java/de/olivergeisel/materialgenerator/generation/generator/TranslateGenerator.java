@@ -254,6 +254,31 @@ public class TranslateGenerator implements Generator {
 		return new MaterialAndMapping(material, mapping);
 	}
 
+	private MaterialAndMapping createAcronyms(Set<KnowledgeNode> knowledge) {
+		var templateInfo = getBasicTemplateInfo(AcronymTemplate.class);
+		var mainKnowledge = knowledge.stream().filter(it -> it.getMainElement().getType().equals(KnowledgeType.TERM))
+				.findFirst().orElseThrow();
+		var mainTerm = mainKnowledge.getMainElement();
+		List<String> acronyms = new LinkedList<>();
+		List<KnowledgeElement> acronymsElements = new LinkedList<>();
+
+		var mainId = mainTerm.getId();
+		var acryRelations = getWantedRelationsFromRelated(mainKnowledge, RelationType.IS_SYNONYM_FOR);
+		acryRelations.forEach(it -> {
+			if (it.getToId().equals(mainId)) {
+				var synonymElement = it.getFrom();
+				acronyms.add(synonymElement.getContent());
+				acronymsElements.add(synonymElement);
+			}
+		});
+		Material material = new AcronymMaterial(acronyms, false, templateInfo);
+		MaterialMappingEntry mapping = new MaterialMappingEntry(material);
+		mapping.add(mainTerm);
+		acronymsElements.forEach(mapping::add);
+		material.setValues(Map.of("term", mainTerm.getContent()));
+		return new MaterialAndMapping(material, mapping);
+	}
+
 	private List<MaterialAndMapping> createTexts(List<KnowledgeNode> knowledgeNode) {
 		var templateInfo = getBasicTemplateInfo(ListTemplate.class);
 		var mainKnowledge = knowledgeNode.stream().filter(it -> it.getMainElement().getType().equals(KnowledgeType.TERM)).findFirst().orElseThrow();
@@ -273,25 +298,6 @@ public class TranslateGenerator implements Generator {
 				back.add(new MaterialAndMapping(textMaterial, mapping));
 			} catch (NoSuchElementException ignored) {
 				logger.warn("No text found for {}", mainTerm.getContent());
-			}
-		});
-		return back;
-	}
-
-	private List<MaterialAndMapping> createAcronyms(Set<KnowledgeNode> knowledgeNode) {
-		var mainTerm = knowledgeNode.getMainElement();
-		List<MaterialAndMapping> back = new ArrayList<>();
-		var relations = Arrays.stream(knowledgeNode.getRelations()).filter(it -> it.getType().equals(RelationType.IS_ACRONYM_FOR));
-		relations.forEach(it -> {
-			var targetId = it.getFromId();
-			try {
-				var element = Arrays.stream(knowledgeNode.getRelatedElements()).filter(elem -> elem.getId().equals(targetId)).findFirst().orElseThrow();
-
-				Material acroMaterial = new Material(MaterialType.WIKI, mainTerm.getContent(), mainTerm.getId(), mainTerm.getStructureId());
-				MaterialMappingEntry mapping = new MaterialMappingEntry(acroMaterial);
-				mapping.add(mainTerm, element);
-				back.add(new MaterialAndMapping(acroMaterial, mapping));
-			} catch (Exception ignored) {
 			}
 		});
 		return back;
