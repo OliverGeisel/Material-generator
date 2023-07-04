@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport">
+    <th:block th:fragment="head">
+        <link rel="stylesheet" th:href="${rootPath}+'/css/bootstrap.min.css'">
+    </th:block>
+    <title th:text="'Text:'+${material.headline} "></title>
+</head>
+<body>
+<main>
+    <div class="container" th:fragment="content">
+        <header th:if="${!material.headline.isEmpty}">
+            <h1 class="text-center" style="color: var(--bs-red); " th:text="${material.headline}"></h1>
+        </header>
+        <hr>
+        <p style="color: var(--bs-blue);font-style: italic;">Ein <span th:text="${material.term}">
+            </span> ist:<br>
+            <span th:text="${material.values.content}"></span>
+        </p>
+    </div>
+</main>
+<footer>
+    <div class="container">
+
+    </div>
+</footer>
+</body>
+</html>
