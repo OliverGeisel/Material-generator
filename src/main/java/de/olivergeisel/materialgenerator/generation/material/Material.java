@@ -20,7 +20,9 @@ import java.util.UUID;
  */
 @Entity
 public class Material extends MaterialOrderPart {
-
+	/**
+	 * The values of the material, which are used in the template
+	 */
 	@ElementCollection
 	@CollectionTable(name = "material_entity_map", joinColumns = @JoinColumn(name = "entity_id"))
 	@MapKeyColumn(name = "key_column")
@@ -49,6 +51,11 @@ public class Material extends MaterialOrderPart {
 
 	protected Material(MaterialType type) {
 		this.type = type;
+	}
+
+	protected Material(MaterialType type, TemplateInfo templateInfo) {
+		this.type = type;
+		this.templateInfo = templateInfo;
 	}
 
 	public Material(MaterialType type, String term, String termId, String structureId) {

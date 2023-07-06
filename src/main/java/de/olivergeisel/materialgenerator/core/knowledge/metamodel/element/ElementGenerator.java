@@ -18,6 +18,7 @@ public class ElementGenerator {
 	public static final String EXAMPLE = "EXAMPLE";
 	public static final String EXPLANATION = "EXPLANATION";
 	public static final String NODE = "NODE";
+	public static final String CODE = "CODE";
 	public static final String STATEMENT = "STATEMENT";
 
 	/**
@@ -43,6 +44,7 @@ public class ElementGenerator {
 			case EXAMPLE -> new Example(content, id, type, relations);
 			case STATEMENT -> new Statement(content, id, type, relations);
 			case NODE -> new NodeElement(content, id, type, relations);
+			case CODE -> new Code(content, id, type, relations);
 			default -> new CustomElement(content, id, "CUSTOM", relations, type);
 		};
 		element.setStructureId(structureId);
