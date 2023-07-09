@@ -1,7 +1,8 @@
 package de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation;
 
 /**
- * Relation types between two {@link de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement KnowledgeElements}
+ * Relation types between two
+ * {@link de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement KnowledgeElements}
  *
  * @author Oliver Geisel
  * @version 1.1
@@ -9,16 +10,36 @@ package de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation;
  */
 public enum RelationType {
 	/**
-	 * A synonym relation between two {@link de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement KnowledgeElements}
+	 * A synonym relation between two
+	 * {@link de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement KnowledgeElements}
 	 */
-	IS, HAS, USE, IS_SYNONYM_FOR, IS_ACRONYM_FOR, DEFINES, DESCRIBED_AS, EXAMPLE_FOR, PROVEN_BY, CUSTOM,
+	RELATED,
+	IS,
+	HAS,
+	USE,
+	IS_SYNONYM_FOR,
+	IS_ACRONYM_FOR,
+	DEFINES,
+	DESCRIBED_AS,
+	EXAMPLE_FOR,
+	PROVEN_BY,
+	CUSTOM,
 
 	// Inverted relations
-	CAN_BE, PART_OF, IS_USED_BY, HAS_ACRONYM, HAS_SYNONYM, DEFINED_BY, DESCRIBES, HAS_EXAMPLE, PROOFS;
+	CAN_BE,
+	PART_OF,
+	IS_USED_BY,
+	HAS_ACRONYM,
+	HAS_SYNONYM,
+	DEFINED_BY,
+	DESCRIBES,
+	HAS_EXAMPLE,
+	PROOFS;
 
 	//region setter/getter
 	public RelationType getInverted() {
 		return switch (this) {
+			case RELATED -> RelationType.RELATED;
 			case IS -> RelationType.CAN_BE;
 			case HAS -> RelationType.PART_OF;
 			case USE -> RelationType.IS_USED_BY;
