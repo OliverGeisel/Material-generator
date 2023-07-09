@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport">
     <th:block th:fragment="head">
-        <link rel="stylesheet" th:href="${rootPath}+'/css/bootstrap.min.css'">
     </th:block>
     <title th:text="'Definition für '+${material.term} "></title>
 </head>
@@ -25,7 +24,7 @@
             <div th:unless="${material.numerated}">
                 <h2 th:text="${material.headline}"></h2>
                 <ol>
-                    <li th:each="entry:${material.entries}" th:text="${entry}"></li>
+                    <li th:each="entry:${material.enties}" th:text="${entry}"></li>
                 </ol>
             </div>
         </main>

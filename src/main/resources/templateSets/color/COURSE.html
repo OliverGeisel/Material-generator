@@ -43,7 +43,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="chapter : ${course.materialOrder.chapterOrder}">
+            <tr th:each="chapter : ${course.courseOrder.chapterOrder}">
                 <td>
                     <a th:href="@{${chapter.name}+'/overview.html'}">
                         <h2 th:text="${chapter.name}"></h2>
