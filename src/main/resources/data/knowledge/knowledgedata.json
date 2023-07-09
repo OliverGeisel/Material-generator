@@ -27,7 +27,7 @@
     {
       "type": "TERM",
       "id": "Objekt-TERM",
-      "structure": "Bereich1-1",
+      "structure": "Bereich1-2",
       "content": "Objekt",
       "relations": [
         {
@@ -39,7 +39,7 @@
     {
       "type": "FACT",
       "id": "FactB-FACT",
-      "structure": "Bereich2",
+      "structure": "Java",
       "content": "Fakten sind immer wahr!",
       "relations": []
     },
@@ -82,6 +82,20 @@
           "relation_type": "defines"
         }
       ]
+    },
+    {
+      "type": "CODE",
+      "id": "Test-Code-CODE",
+      "structure": "Java",
+      "content": "Java\nBeispiel.java\npublic class Beispiel{\n\tprivate int number;\n}",
+      "relations": []
+    },
+    {
+      "type": "CODE",
+      "id": "Java-Pattern-Matching-CODE",
+      "structure": "Java",
+      "content": "Java\nPatternMatchingBeispiel.java\npublic class PatternMatchingBeispiel{\n\tprivate int number;\n\tpublic void setNumber(int number){\n\t\tthis.number = number;\n\t}\n\tpublic int getNumber(){\n\t\treturn number;\n\t}\n\tpublic void patternMatching(){\n\t\tswitch(object):\n\t\t\tcase Integer i -> System.out.println(i);\n\t\t\tcase String s -> System.out.println(s);\n\t\t\tdefault -> System.out.println(\"Kein String oder Integer\");\n\t}\n}",
+      "relations": []
     }
   ],
   "sources": [
@@ -125,7 +139,7 @@
       },
       {
         "key": "_root/2",
-        "name": "Bereich2",
+        "name": "Java",
         "children": []
       }
     ]

@@ -36,28 +36,42 @@
         "Algorithmus-Begriff",
         "Programmiersprache"
       ]
+    },
+    "goal-3": {
+      "key": "goal-3",
+      "expression": "Translate",
+      "target": "Java",
+      "completeSentence": "\u00dcbertrage die Features von Java in einfache Beispiele.",
+      "content": [
+        "Java 19",
+        "Programmiersprache"
+      ]
     }
   },
   "structure": [
     {
       "key": "chapter-1",
-      "name": "Kapitel 1",
+      "name": "Java 19",
       "weight": 8.0,
-      "alternatives": [],
-      "topic": "Inhalt 1",
+      "alternatives": [
+        "Java"
+      ],
+      "topic": "Java",
       "groups": [
         {
           "key": "group-1-1",
-          "name": "Gruppe 1-1",
+          "name": "Java 19 Features",
           "alternatives": [],
-          "topic": "",
+          "topic": "Java Features",
           "tasks": [
             {
               "key": "task-1-1-1",
-              "name": "Name",
-              "topic": "",
+              "name": "Java Feature: Pattern Matching for switch",
+              "topic": "Java Features",
               "relevance": "MANDATORY",
-              "alternatives": []
+              "alternatives": [
+                "Pattern Matching for switch"
+              ]
             }
           ]
         }
