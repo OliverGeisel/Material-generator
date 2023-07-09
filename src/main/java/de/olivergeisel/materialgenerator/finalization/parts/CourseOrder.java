@@ -56,8 +56,15 @@ public class CourseOrder {
 						   .orElse(null);
 	}
 
+	/**
+	 * Assign materials to the course. This will be done by the implementation of the OrderParts.
+	 *
+	 * @param materials Materials to assign
+	 * @return True if all chapters, groups and parts could assign to the materials. False otherwise
+	 */
 	public boolean assignMaterial(Set<MaterialAndMapping> materials) {
-		return chapterOrder.stream().anyMatch(c -> c.assignMaterial(materials));
+		chapterOrder.forEach(c -> c.assignMaterial(materials));
+		return true;
 	}
 
 	public void moveUp(ChapterOrder chapter) {

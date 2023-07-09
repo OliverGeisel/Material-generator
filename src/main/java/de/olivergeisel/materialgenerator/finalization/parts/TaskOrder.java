@@ -77,14 +77,22 @@ public class TaskOrder extends MaterialOrderCollection {
 	@Override
 	public boolean assignMaterial(Set<MaterialAndMapping> materials) {
 		boolean back = false;
-		for (var material : materials) {
-			if (getAlias().stream().anyMatch(alias -> alias.contains(material.material().getStructureId())) || getAlias().stream().anyMatch(alias -> alias.contains(material.material().getStructureId().split("-")[0].trim()))) {
-				materialOrder.add(material.material());
+		for (var material : materials.stream().map(MaterialAndMapping::material).toList()) {
+			if (isAssignable(material)) {
+				materialOrder.add(material);
 				back = true;
 			}
 		}
 		return back;
 	}
+
+	private boolean isAssignable(Material material) {
+		return getAlias().stream().anyMatch(
+				alias -> alias.contains(material.getStructureId()))
+			   || getAlias().stream().anyMatch(
+				alias -> alias.contains(material.getStructureId().split("-")[0].trim()));
+	}
+
 
 	@Override
 	public boolean remove(UUID partId) {

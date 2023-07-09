@@ -88,7 +88,8 @@ public class ChapterOrder extends MaterialOrderCollection {
 
 	@Override
 	public boolean assignMaterial(Set<MaterialAndMapping> materials) {
-		return groupOrder.stream().anyMatch(g -> g.assignMaterial(materials));
+		groupOrder.forEach(g -> g.assignMaterial(materials));
+		return true;
 	}
 
 	@Override

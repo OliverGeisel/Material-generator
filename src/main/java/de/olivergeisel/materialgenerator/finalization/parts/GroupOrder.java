@@ -69,25 +69,38 @@ public class GroupOrder extends MaterialOrderCollection {
 		return taskOrder.stream().map(t -> t.find(id)).filter(Objects::nonNull).findFirst().orElse(null);
 	}
 
-	//region setter/getter
+	@Override
+	public Relevance updateRelevance() {
+		return getRelevance();
+	}
 
 	public TaskOrder findTask(UUID taskId) {
 		return taskOrder.stream().filter(t -> t.getId().equals(taskId)).findFirst().orElse(null);
 	}
 
 	public Material findMaterial(UUID materialId) {
-		return taskOrder.stream().map(t -> t.findMaterial(materialId)).filter(Objects::nonNull).findFirst().orElse(null);
+		return taskOrder.stream().map(t -> t.findMaterial(materialId)).filter(Objects::nonNull).findFirst()
+						.orElse(null);
 	}
 
 	@Override
 	public boolean assignMaterial(Set<MaterialAndMapping> materials) {
-		return taskOrder.stream().anyMatch(t -> t.assignMaterial(materials));
+		taskOrder.forEach(t -> t.assignMaterial(materials));
+		return true;
 	}
+
+	@Override
+	public int materialCount() {
+		return taskOrder.stream().mapToInt(TaskOrder::materialCount).sum();
+	}
+
+	//region setter/getter
 
 	@Override
 	public boolean remove(UUID partId) {
 		return taskOrder.stream().anyMatch(t -> t.remove(partId));
 	}
+
 	/**
 	 * Get the relevance of this part.
 	 *
