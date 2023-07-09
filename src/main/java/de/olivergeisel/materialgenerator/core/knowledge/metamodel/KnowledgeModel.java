@@ -23,13 +23,14 @@ import java.util.stream.Collectors;
  */
 public class KnowledgeModel {
 
-	private static final Logger logger = LoggerFactory.getLogger(KnowledgeModel.class);
-	private final Map<Relation, RelationIdPair> unfinishedRelations = new HashMap<>();
-	private final Set<KnowledgeSource> sources = new HashSet<>();
-	private final KnowledgeStructure structure;
-	private final Graph<KnowledgeElement, RelationEdge> graph;
-	private final String version;
-	private final String name;
+	private static final Logger                                logger              = LoggerFactory.getLogger(
+			KnowledgeModel.class);
+	private final        Map<Relation, RelationIdPair>         unfinishedRelations = new HashMap<>();
+	private final        Set<KnowledgeSource>                  sources             = new HashSet<>();
+	private final        KnowledgeStructure                    structure;
+	private final        Graph<KnowledgeElement, RelationEdge> graph;
+	private final        String                                version;
+	private final        String                                name;
 
 	public KnowledgeModel() {
 		this(new RootStructureElement());
@@ -91,7 +92,8 @@ public class KnowledgeModel {
 	 * @param elementFrom the element from which the relation goes
 	 * @param elementTo   the element to which the relation goes
 	 * @param relation    the relation
-	 * @return true if both elements were added and linked, false if not. false is also returned if the relation doesn't
+	 * @return true if both elements were added and linked, false if not. false is also returned if the relation
+	 * doesn't
 	 * contain the elements.
 	 * @throws IllegalArgumentException if one of the arguments was null.
 	 */
@@ -151,7 +153,8 @@ public class KnowledgeModel {
 	}
 
 	/**
-	 * Adds a collection of elements to the model. Link all new elements with all elements that are already in the model
+	 * Adds a collection of elements to the model. Link all new elements with all elements that are already in the
+	 * model
 	 * and described in the relations.
 	 *
 	 * @param elements the elements to add.
@@ -263,13 +266,17 @@ public class KnowledgeModel {
 	}
 
 	public KnowledgeElement get(String id) throws NoSuchElementException {
-		return graph.vertexSet().stream().filter(it -> it.getId().equals(id)).findFirst().orElseThrow(() -> new NoSuchElementException("No element with id " + id + " found"));
+		return graph.vertexSet().stream().filter(it -> it.getId().equals(id)).findFirst()
+					.orElseThrow(() -> new NoSuchElementException("No element with id " + id + " found"));
 	}
 
 	private Relation[] getAllRelations(KnowledgeElement element) {
 		var ownRelations = element.getRelations();
 		var elementId = element.getId();
-		var otherRelations = graph.incomingEdgesOf(element).stream().map(graph::getEdgeSource).map(KnowledgeElement::getRelations).flatMap(it -> it.stream().filter(relation -> relation.getToId().equals(elementId))).toList(); // todo still needed?
+		var otherRelations = graph.incomingEdgesOf(element).stream().map(graph::getEdgeSource)
+								  .map(KnowledgeElement::getRelations)
+								  .flatMap(it -> it.stream().filter(relation -> relation.getToId().equals(elementId)))
+								  .toList(); // todo still needed?
 		var returnList = new ArrayList<>(ownRelations);
 		return returnList.toArray(new Relation[0]);
 	}
@@ -330,7 +337,8 @@ public class KnowledgeModel {
 	 * @return the created edge
 	 * @throws IllegalStateException if one of the elements is not in the model
 	 */
-	public RelationEdge link(KnowledgeElement from, KnowledgeElement to, RelationType type) throws IllegalStateException {
+	public RelationEdge link(KnowledgeElement from, KnowledgeElement to, RelationType type)
+	throws IllegalStateException {
 		var newEdge = new RelationEdge(type);
 		if (!contains(from) || !contains(to)) {
 			throw new IllegalStateException();
@@ -387,22 +395,65 @@ public class KnowledgeModel {
 	 * Returns all elements that are connected with the given structure object in the model.
 	 *
 	 * @param structureId    the id of the structure object
-	 * @param includeSimilar if true, also search for elements that contain the given structureId in their own structureId
+	 * @param includeSimilar if true, also search for elements that contain the given structureId in their own
+	 *                       structureId
 	 * @return a set of all elements that are connected with the given structure object
 	 */
-	public Set<KnowledgeNode> getKnowledgeNodesFor(String structureId, boolean includeSimilar) {
-		Set<KnowledgeNode> back = new HashSet<KnowledgeNode>();
-		if (hasStructureObject(structureId)) {
+	private Set<KnowledgeNode> getKnowledgeNodesFor(String structureId, boolean includeSimilar,
+													boolean similarWhenFound) {
+		Set<KnowledgeNode> back = new HashSet<>();
+		var hasStructureObject = hasStructureObject(structureId);
+		if (hasStructureObject) {
 			var structureObject = structure.getObjectById(structureId);
 			var elements = structureObject.getLinkedElements();
 			for (var element : elements) {
 				back.add(getKnowledgeNode(element.getId()));
 			}
-		} else if (includeSimilar) {
-			logger.warn("No structure object with id {} found.\nSearch for Object that contains structureName", structureId);
-			back = getKnowledgeNodesForSimilar(structureId);
+		} else {
+			logger.warn("No structure object with id {} found.", structureId);
+		}
+		if (includeSimilar && (similarWhenFound || !hasStructureObject)) {
+			logger.info("Include similar objects for structure object {}.", structureId);
+			try {
+				back.addAll(getKnowledgeNodesForSimilar(structureId));
+			} catch (NoSuchElementException e) {
+				logger.info("No similar object for structure object {} found.", structureId);
+			}
 		}
 		return back;
+	}
+
+	/**
+	 * Returns all elements that are connected with the given structure object in the model.
+	 * If the structure object is not found, it will not be searched for similar objects.
+	 *
+	 * @param structureId the id of the structure object
+	 * @return a set of all elements that are connected with the given structure object.
+	 */
+	public Set<KnowledgeNode> getKnowledgeNodesFor(String structureId) {
+		return getKnowledgeNodesFor(structureId, false, false);
+	}
+
+	/**
+	 * Returns all elements that are connected with the given structure object in the model.
+	 * If the structure object is not found, it will be searched for similar objects.
+	 *
+	 * @param structureId the id of the structure object
+	 * @return a set of all elements that are connected with the given structure object.
+	 */
+	public Set<KnowledgeNode> getKnowledgeNodesOrSimilarIfNotFoundFor(String structureId) {
+		return getKnowledgeNodesFor(structureId, true, false);
+	}
+
+	/**
+	 * Returns all elements that are connected with the given structure object in the model.
+	 * It inclueds similar objects in the structure.
+	 *
+	 * @param structureId the id of the structure object
+	 * @return a set of all elements that are connected with the given structure object.
+	 */
+	public Set<KnowledgeNode> getKnowledgeNodesIncludingSimilarFor(String structureId) {
+		return getKnowledgeNodesFor(structureId, true, true);
 	}
 
 	private Set<KnowledgeNode> getKnowledgeNodesForSimilar(String structureId) throws NoSuchElementException {
@@ -508,7 +559,7 @@ public class KnowledgeModel {
  */
 class RelationEdge extends DefaultEdge {
 	private final RelationType type;
-	private RelationEdge inverted;
+	private       RelationEdge inverted;
 
 	/**
 	 * Creates a new RelationEdge with the given type and inverted edge.

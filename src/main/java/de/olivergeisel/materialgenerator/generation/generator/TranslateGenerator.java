@@ -103,8 +103,13 @@ public class TranslateGenerator implements Generator {
 		for (var goal : goals) {
 			var expression = goal.getExpression();
 			var masterKeyword = goal.getMasterKeyword();
+			var topics = goal.getContent().stream().map(ContentTarget::getTopic).toList();
 			try {
-				var knowledge = loadKnowledgeForStructure(masterKeyword);
+				var knowledge = loadKnowledgeForStructure(masterKeyword, topics);
+				if (knowledge.isEmpty()) {
+					logger.info("No knowledge found for MasterKeyword {}", masterKeyword);
+					continue;
+				}
 				knowledge.forEach(it -> it.setGoal(goal));
 				createMaterialForGoal(expression, knowledge, templateSet);
 			} catch (NoSuchElementException e) {
@@ -385,14 +390,35 @@ public class TranslateGenerator implements Generator {
 	 * @throws NoTemplateInfoException if no templateInfo is found
 	 */
 	private <T extends TemplateInfo> T getBasicTemplateInfo(Class<T> templateInfoClass) throws NoTemplateInfoException {
-		return (T) basicTemplateInfo.stream().filter(templateInfoClass::isInstance).findFirst().orElseThrow(() -> new NoTemplateInfoException(String.format("No Template %s found", templateInfoClass.getSimpleName())));
+		return (T) basicTemplateInfo.stream()
+									.filter(it -> templateInfoClass.equals(it.getClass()))
+									.findFirst().orElseThrow(() -> new NoTemplateInfoException(
+						String.format("No Template %s found", templateInfoClass.getName())));
+	}
+
+	private Set<KnowledgeNode> loadKnowledgeForStructure(String structureId, Collection<String> target) {
+		return loadKnowledgeForStructure(structureId, target.toArray(new String[0]));
+	}
+
+	private Set<KnowledgeNode> loadKnowledgeForStructure(String structureId, String... targets) {
+		if (structureId == null) {
+			return Collections.emptySet();
+		}
+		var back = new HashSet<>(loadKnowledgeForStructure(structureId));
+		for (String target : targets) {
+			if (target == null) {
+				continue;
+			}
+			back.addAll(loadKnowledgeForStructure(target));
+		}
+		return back;
 	}
 
 	private Set<KnowledgeNode> loadKnowledgeForStructure(String structureId) {
 		if (structureId == null) {
 			return Collections.emptySet();
 		}
-		return model.getKnowledgeNodesFor(structureId, true);
+		return model.getKnowledgeNodesIncludingSimilarFor(structureId);
 	}
 
 	/**
