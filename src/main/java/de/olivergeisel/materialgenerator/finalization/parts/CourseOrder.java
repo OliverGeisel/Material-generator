@@ -83,6 +83,14 @@ public class CourseOrder {
 		}
 	}
 
+	public boolean append(ChapterOrder chapter) {
+		return chapterOrder.add(chapter);
+	}
+
+	public boolean remove(ChapterOrder chapter) {
+		return chapterOrder.remove(chapter);
+	}
+
 	public boolean remove(UUID partId) {
 		return chapterOrder.stream().anyMatch(c -> c.remove(partId));
 	}

@@ -39,11 +39,6 @@ public class TaskOrder extends MaterialOrderCollection {
 		relatedTask.getAlternatives().forEach(this::addAlias);
 	}
 
-	public MaterialOrderPart find(UUID id) {
-		if (this.getId().equals(id)) return this;
-		return materialOrder.stream().filter(m -> m.getId().equals(id)).findFirst().orElse(null);
-	}
-
 	public void moveUp(Material material) {
 		int index = materialOrder.indexOf(material);
 		if (index > 0) {
@@ -58,6 +53,19 @@ public class TaskOrder extends MaterialOrderCollection {
 			materialOrder.remove(index);
 			materialOrder.add(index + 1, material);
 		}
+	}
+
+	public boolean append(Material material) {
+		return materialOrder.add(material);
+	}
+
+	public boolean remove(Material material) {
+		return materialOrder.remove(material);
+	}
+
+	public MaterialOrderPart find(UUID id) {
+		if (this.getId().equals(id)) return this;
+		return materialOrder.stream().filter(m -> m.getId().equals(id)).findFirst().orElse(null);
 	}
 
 	public Material findMaterial(UUID materialId) {

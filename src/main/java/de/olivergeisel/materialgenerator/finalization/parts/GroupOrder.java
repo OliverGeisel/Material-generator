@@ -39,7 +39,8 @@ public class GroupOrder extends MaterialOrderCollection {
 		}
 		setName(group.getName());
 		var groupTopic = group.getTopic();
-		var topic = goals.stream().flatMap(goal -> goal.getTopics().stream().filter(t -> t.isSame(groupTopic))).findFirst().orElse(null);
+		var topic = goals.stream().flatMap(goal -> goal.getTopics().stream().filter(t -> t.isSame(groupTopic)))
+						 .findFirst().orElse(null);
 		setTopic(topic);
 		part.getAlternatives().forEach(this::addAlias);
 	}
@@ -62,6 +63,14 @@ public class GroupOrder extends MaterialOrderCollection {
 			taskOrder.remove(index);
 			taskOrder.add(index + 1, task);
 		}
+	}
+
+	public boolean remove(TaskOrder task) {
+		return taskOrder.remove(task);
+	}
+
+	public void append(TaskOrder task) {
+		taskOrder.add(task);
 	}
 
 	public MaterialOrderPart find(UUID id) {
@@ -94,13 +103,12 @@ public class GroupOrder extends MaterialOrderCollection {
 		return taskOrder.stream().mapToInt(TaskOrder::materialCount).sum();
 	}
 
-	//region setter/getter
-
 	@Override
 	public boolean remove(UUID partId) {
 		return taskOrder.stream().anyMatch(t -> t.remove(partId));
 	}
 
+	//region setter/getter
 	/**
 	 * Get the relevance of this part.
 	 *
@@ -121,6 +129,7 @@ public class GroupOrder extends MaterialOrderCollection {
 		return taskOrder.stream().allMatch(MaterialOrderPart::isValid)
 			   && taskOrder.stream().allMatch(t -> t.getRelevance().ordinal() <= getRelevance().ordinal());
 	}
+
 	public List<TaskOrder> getTaskOrder() {
 		return Collections.unmodifiableList(taskOrder);
 	}

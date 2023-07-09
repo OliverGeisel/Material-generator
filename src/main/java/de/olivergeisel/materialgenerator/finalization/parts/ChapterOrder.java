@@ -33,7 +33,8 @@ public class ChapterOrder extends MaterialOrderCollection {
 		}
 		setName(chapter.getName());
 		var chapterTopic = chapter.getTopic();
-		var topic = goals.stream().flatMap(goal -> goal.getTopics().stream().filter(t -> t.isSame(chapterTopic))).findFirst().orElse(null);
+		var topic = goals.stream().flatMap(goal -> goal.getTopics().stream().filter(t -> t.isSame(chapterTopic)))
+						 .findFirst().orElse(null);
 		setTopic(topic);
 		chapter.getAlternatives().forEach(this::addAlias);
 	}
@@ -59,6 +60,14 @@ public class ChapterOrder extends MaterialOrderCollection {
 		}
 	}
 
+	public boolean append(GroupOrder group) {
+		return groupOrder.add(group);
+	}
+
+	public boolean remove(GroupOrder group) {
+		return groupOrder.remove(group);
+	}
+
 	public MaterialOrderPart find(UUID id) {
 		if (this.getId().equals(id)) return this;
 		return groupOrder.stream().map(g -> g.find(id)).filter(Objects::nonNull).findFirst().orElse(null);
@@ -68,12 +77,13 @@ public class ChapterOrder extends MaterialOrderCollection {
 		return groupOrder.stream().filter(g -> g.getId().equals(groupID)).findFirst().orElse(null);
 	}
 
-	public TaskOrder findTask(UUID groupId) {
-		return groupOrder.stream().map(g -> g.findTask(groupId)).filter(Objects::nonNull).findFirst().orElse(null);
+	public TaskOrder findTask(UUID taskId) {
+		return groupOrder.stream().map(g -> g.findTask(taskId)).filter(Objects::nonNull).findFirst().orElse(null);
 	}
 
 	public Material findMaterial(UUID materialId) {
-		return groupOrder.stream().map(g -> g.findMaterial(materialId)).filter(Objects::nonNull).findFirst().orElse(null);
+		return groupOrder.stream().map(g -> g.findMaterial(materialId)).filter(Objects::nonNull).findFirst()
+						 .orElse(null);
 	}
 
 	@Override
@@ -117,7 +127,7 @@ public class ChapterOrder extends MaterialOrderCollection {
 	 */
 	@Override
 	public boolean isValid() {
-		return groupOrder.stream().allMatch(MaterialOrderPart::isValid)
+		return groupOrder.stream().allMatch(GroupOrder::isValid)
 			   && groupOrder.stream().allMatch(group -> group.getRelevance().compareTo(getRelevance()) < 1);
 	}
 
