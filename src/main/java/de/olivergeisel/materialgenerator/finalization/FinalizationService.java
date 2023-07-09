@@ -20,7 +20,7 @@ public class FinalizationService {
 
 	private final DownloadManager downloadManager;
 
-	private final MaterialOrderRepository              materialOrderRepository;
+	private final CourseOrderRepository                courseOrderRepository;
 	private final ChapterOrderRepository               chapterOrderRepository;
 	private final GroupOrderRepository                 groupOrderRepository;
 	private final TaskOrderRepository                  taskOrderRepository;
@@ -29,14 +29,14 @@ public class FinalizationService {
 	private final GoalRepository                       goalRepository;
 	private final TopicRepository                      topicRepository;
 
-	public FinalizationService(DownloadManager downloadManager, MaterialOrderRepository materialOrderRepository,
+	public FinalizationService(DownloadManager downloadManager, CourseOrderRepository courseOrderRepository,
 							   ChapterOrderRepository chapterOrderRepository,
 							   GroupOrderRepository groupOrderRepository, TaskOrderRepository taskOrderRepository,
 							   RawCourseRepository rawCourseRepository,
 							   CourseMetadataFinalizationRepository metadataRepository, GoalRepository goalRepository,
 							   TopicRepository topicRepository) {
 		this.downloadManager = downloadManager;
-		this.materialOrderRepository = materialOrderRepository;
+		this.courseOrderRepository = courseOrderRepository;
 		this.chapterOrderRepository = chapterOrderRepository;
 		this.groupOrderRepository = groupOrderRepository;
 		this.taskOrderRepository = taskOrderRepository;
@@ -71,7 +71,7 @@ public class FinalizationService {
 
 	private void saveMaterialOrder(CourseOrder courseOrder) {
 		saveChapterOrder(courseOrder.getChapterOrder());
-		materialOrderRepository.save(courseOrder);
+		courseOrderRepository.save(courseOrder);
 	}
 
 	private void saveMetadata(CourseMetadataFinalization metadata) {
