@@ -36,6 +36,12 @@ public abstract class MaterialAssigner {
 
 	public abstract boolean assign(Material material, MaterialOrderCollection part);
 
+	//region setter/getter
+	protected void setAssigned(Material material) {
+		materialMap.get(material).assigned = true;
+	}
+//endregion
+
 	protected static class MaterialStatus {
 		private boolean assigned = false;
 

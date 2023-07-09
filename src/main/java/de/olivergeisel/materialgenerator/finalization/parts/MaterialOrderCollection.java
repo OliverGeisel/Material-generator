@@ -30,7 +30,16 @@ public abstract class MaterialOrderCollection extends MaterialOrderPart {
 
 	public abstract int materialCount();
 
-	public abstract boolean assignMaterial(Set<Material> materials);
+	/**
+	 * Assign a set of Materials to this part. Can throw {@link UnsupportedOperationException} when no MAterial can
+	 * assigned direct to part.
+	 *
+	 * @param materials Materials to assign
+	 * @return materials that are assigned to the part
+	 */
+	public abstract Set<Material> assignMaterial(Set<Material> materials);
+
+	public abstract boolean assign(Material materials);
 
 	public abstract boolean assignMaterial(MaterialAssigner assigner);
 

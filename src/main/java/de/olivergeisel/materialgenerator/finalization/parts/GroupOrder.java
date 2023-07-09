@@ -13,6 +13,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 public class GroupOrder extends MaterialOrderCollection {
@@ -93,10 +94,26 @@ public class GroupOrder extends MaterialOrderCollection {
 						.orElse(null);
 	}
 
+	/**
+	 * Assigns materials to group part.
+	 *
+	 * @param materials the materials to assign
+	 * @return the assigned materials
+	 */
 	@Override
-	public boolean assignMaterial(Set<Material> materials) {
-		taskOrder.forEach(t -> t.assignMaterial(materials));
-		return true;
+	public Set<Material> assignMaterial(Set<Material> materials) {
+		return taskOrder.stream().map(t -> t.assignMaterial(materials)).flatMap(Collection::stream)
+						.collect(Collectors.toSet());
+	}
+
+	/**
+	 * @param materials
+	 * @return
+	 * @throws UnsupportedOperationException
+	 */
+	@Override
+	public boolean assign(Material materials) throws UnsupportedOperationException {
+		throw new UnsupportedOperationException("not supportet yet");
 	}
 
 	/**

@@ -11,14 +11,10 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 public class TaskOrder extends MaterialOrderCollection {
-
 
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "taskOrder_id")
@@ -82,16 +78,34 @@ public class TaskOrder extends MaterialOrderCollection {
 		return materialOrder.size();
 	}
 
+	/**
+	 * Assigns the materials to the task. Only materials that match the Topic will be assigned.
+	 *
+	 * @param materials the materials to assign
+	 * @return the materials that were assigned
+	 */
 	@Override
-	public boolean assignMaterial(Set<Material> materials) {
-		boolean back = false;
+	public Set<Material> assignMaterial(Set<Material> materials) {
+		Set<Material> back = new HashSet<>();
 		for (var material : materials) {
 			if (isAssignable(material)) {
 				materialOrder.add(material);
-				back = true;
+				back.add(material);
 			}
 		}
 		return back;
+	}
+
+	/**
+	 * Assigns the material to the part.
+	 *
+	 * @param materials the material to assign
+	 * @return true if a material was assigned, false if not
+	 */
+	@Override
+	public boolean assign(Material materials) {
+		if (materialOrder.contains(materials)) return false;
+		return materialOrder.add(materials);
 	}
 
 	/**
@@ -106,10 +120,11 @@ public class TaskOrder extends MaterialOrderCollection {
 	}
 
 	private boolean isAssignable(Material material) {
-		return getAlias().stream().anyMatch(
-				alias -> alias.contains(material.getStructureId()))
-			   || getAlias().stream().anyMatch(
-				alias -> alias.contains(material.getStructureId().split("-")[0].trim()));
+		return getAlias().stream().anyMatch(alias -> alias.contains(material.getStructureId())) || getAlias().stream()
+																											 .anyMatch(
+																													 alias -> alias.contains(
+																															 material.getStructureId()
+																																	 .split("-")[0].trim()));
 	}
 
 

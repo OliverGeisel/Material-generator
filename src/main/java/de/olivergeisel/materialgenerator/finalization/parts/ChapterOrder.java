@@ -11,6 +11,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 public class ChapterOrder extends MaterialOrderCollection {
@@ -96,10 +97,28 @@ public class ChapterOrder extends MaterialOrderCollection {
 		return groupOrder.stream().mapToInt(GroupOrder::materialCount).sum();
 	}
 
+	/**
+	 * Assigns a set of materials to the parts.
+	 *
+	 * @param materials the materials to be assigned
+	 * @return the set of materials that assigned to the chapter
+	 */
 	@Override
-	public boolean assignMaterial(Set<Material> materials) {
-		groupOrder.forEach(g -> g.assignMaterial(materials));
-		return true;
+	public Set<Material> assignMaterial(Set<Material> materials) {
+		return groupOrder.stream().map(g -> g.assignMaterial(materials)).flatMap(Collection::stream)
+						 .collect(Collectors.toSet());
+	}
+
+	/**
+	 * Assigns a materials to a part.
+	 *
+	 * @param materials the materials to be assigned
+	 * @return Exception
+	 * @throws UnsupportedOperationException ChapterOrder does not support assign(Material)
+	 */
+	@Override
+	public boolean assign(Material materials) throws UnsupportedOperationException {
+		throw new UnsupportedOperationException("ChapterOrder does not support assign(Material)");
 	}
 
 	/**
