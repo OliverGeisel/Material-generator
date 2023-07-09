@@ -26,7 +26,7 @@ public class TemplateSet {
 		this.name = name;
 	}
 
-	public boolean addAllTemplates(Set<? extends TemplateInfo> templates) {
+	public boolean addAllTemplates(TemplateInfo[] templates) {
 		return true;//extraTemplates.addAll(templates);
 	}
 

@@ -67,7 +67,7 @@ public class TemplateService {
 		var extraTemplates = Arrays.stream(Objects.requireNonNull(dir.listFiles())).filter(file -> !BasicTemplates.TEMPLATES.contains(file.getName().replace(HTML, "").toUpperCase())).toList();
 		for (File file : extraTemplates) {
 			if (file.isDirectory()) {
-				templateSet.addAllTemplates(loadExtraTemplates(file));
+				templateSet.addAllTemplates(loadExtraTemplates(file).toArray(new TemplateInfo[0]));
 			} else {
 				templateSet.addTemplate(loadTemplate(file));
 			}

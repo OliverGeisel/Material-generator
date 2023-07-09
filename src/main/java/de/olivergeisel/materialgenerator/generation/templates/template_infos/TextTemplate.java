@@ -16,11 +16,12 @@ public class TextTemplate extends BasicTemplate {
 	static {
 		var allFields = new HashSet<>(TemplateInfo.FIELDS);
 		allFields.add("text");
+		allFields.add("headline");
 		FIELDS = Collections.unmodifiableSet(allFields);
 	}
 
 	private String text;
-
+	private String headline;
 	public TextTemplate() {
 		super(TemplateType.TEXT);
 	}
@@ -29,12 +30,21 @@ public class TextTemplate extends BasicTemplate {
 		super(TemplateType.TEXT, mainTermId);
 	}
 
-	public TextTemplate(UUID mainTermId, String text) {
+	public TextTemplate(UUID mainTermId, String text, String headline) {
 		super(TemplateType.TEXT, mainTermId);
 		this.text = text;
+		this.headline = headline;
 	}
 
 	//region setter/getter
+	public String getHeadline() {
+		return headline;
+	}
+
+	public void setHeadline(String headline) {
+		this.headline = headline;
+	}
+
 	public String getText() {
 		return text;
 	}

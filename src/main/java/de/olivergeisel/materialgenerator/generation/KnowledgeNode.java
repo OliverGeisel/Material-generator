@@ -16,13 +16,14 @@ import java.util.Optional;
  */
 public class KnowledgeNode {
 
-	private KnowledgeObject structurePoint;
-	private KnowledgeElement mainElement;
-	private KnowledgeElement[] relatedElements;
-	private Relation[] relations;
+	private KnowledgeObject       structurePoint;
+	private KnowledgeElement      mainElement;
+	private KnowledgeElement[]    relatedElements;
+	private Relation[]            relations;
 	private Optional<ContentGoal> goal = Optional.empty();
 
-	public KnowledgeNode(KnowledgeObject structurePoint, KnowledgeElement mainElement, KnowledgeElement[] relatedElements, Relation[] relations) {
+	public KnowledgeNode(KnowledgeObject structurePoint, KnowledgeElement mainElement,
+						 KnowledgeElement[] relatedElements, Relation[] relations) {
 		this.structurePoint = structurePoint;
 		this.mainElement = mainElement;
 		this.relatedElements = relatedElements;
@@ -30,6 +31,17 @@ public class KnowledgeNode {
 	}
 
 	//region setter/getter
+	public Optional<ContentGoal> getGoal() {
+		return goal;
+	}
+
+	public void setGoal(ContentGoal goal) {
+		if (goal == null) {
+			throw new IllegalArgumentException("goal must not be null");
+		}
+		this.goal = Optional.of(goal);
+	}
+
 	public Optional<ContentGoalExpression> getExpression() {
 		return goal.map(ContentGoal::getExpression);
 	}
@@ -37,7 +49,6 @@ public class KnowledgeNode {
 	public Optional<String> getMasterKeyWord() {
 		return goal.map(ContentGoal::getMasterKeyword);
 	}
-
 
 	public KnowledgeObject getStructurePoint() {
 		return structurePoint;
@@ -69,13 +80,6 @@ public class KnowledgeNode {
 
 	public void setRelations(Relation[] relations) {
 		this.relations = relations;
-	}
-
-	public void setGoal(ContentGoal goal) {
-		if (goal == null) {
-			throw new IllegalArgumentException("goal must not be null");
-		}
-		this.goal = Optional.of(goal);
 	}
 //endregion
 

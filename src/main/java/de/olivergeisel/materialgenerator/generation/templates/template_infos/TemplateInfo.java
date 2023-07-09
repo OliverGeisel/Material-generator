@@ -13,19 +13,19 @@ import java.util.UUID;
  */
 @Entity
 public abstract class TemplateInfo {
-
-	public static final Set<String> FIELDS = Set.of("templateType", "mainTermId");
+	public static final Set<String>  FIELDS = Set.of("term", "termId", "structureId", "values", "templateType",
+													 "mainTermId");
 	/**
 	 * The type of the template. Specific template in the TemplateSet.
 	 */
 	@Embedded
-	protected final TemplateType templateType;
+	protected final     TemplateType templateType;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", nullable = false)
-	private UUID id;
+	private             UUID         id;
 	/**
-	 * The name of the template file
+	 * The name of the main term. the material is related to.
 	 */
 	private UUID mainTermId;
 

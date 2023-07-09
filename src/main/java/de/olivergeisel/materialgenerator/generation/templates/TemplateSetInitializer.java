@@ -24,22 +24,21 @@ public class TemplateSetInitializer implements CommandLineRunner {
 		this.templateInfoRepository = templateInfoRepository;
 	}
 
-	private Set<ExtraTemplate> getExtraTemplates(File templatePath) {
+	private ExtraTemplate[] getExtraTemplates(File templatePath) {
 		var back = new HashSet<ExtraTemplate>();
 		var extraTemplates = Arrays.stream(templatePath.listFiles()).filter(it -> {
 			var name = it.getName().replace(".html", "").toUpperCase();
 			return !ignoredFiles.contains(name) && !BasicTemplates.TEMPLATES.contains(name);
 		}).toList();
-		extraTemplates.forEach(it -> {
+		return extraTemplates.stream().map(it -> {
 			var name = it.getName().replace(".html", "").toUpperCase();
-			back.add(new ExtraTemplate(new TemplateType(name), it.getName()));
-		});
-		return back;
+			return new ExtraTemplate(new TemplateType(name), it.getName());
+		}).toArray(ExtraTemplate[]::new);
 	}
 
 	private void saveBasicTemplates() {
 		var basicTemplates = BasicTemplates.getInstance();
-		templateInfoRepository.saveAll(basicTemplates.getTemplates());
+		templateInfoRepository.saveAll(Arrays.stream(basicTemplates.getTemplates()).toList());
 	}
 
 	@Override

@@ -15,8 +15,8 @@ public class DefinitionTemplate extends BasicTemplate {
 
 	static {
 		var allFields = new HashSet<>(TemplateInfo.FIELDS);
-		allFields.add("definition");
-		allFields.add("relatedTerms");
+		allFields.add("values.definition");
+		allFields.add("values.relatedTerms");
 		FIELDS = Collections.unmodifiableSet(allFields);
 	}
 

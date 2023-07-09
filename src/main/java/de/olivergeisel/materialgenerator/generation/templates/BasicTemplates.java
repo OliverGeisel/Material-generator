@@ -10,9 +10,10 @@ import java.util.UUID;
 @Entity
 public class BasicTemplates {
 
-	public static final Set<String> TEMPLATES = Set.of("DEFINITION", "TEXT", "EXAMPLE", "ACRONYM", "LIST", "SYNONYM", "PROOF");
+	public static final Set<String>    TEMPLATES = Set.of("DEFINITION", "TEXT", "EXAMPLE", "ACRONYM", "LIST",
+														  "SYNONYM", "PROOF");
 	@Transient
-	private static BasicTemplates instance;
+	private static      BasicTemplates instance;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -32,16 +33,21 @@ public class BasicTemplates {
 	private ExampleTemplate exampleTemplate;
 	@ManyToOne
 	@JoinColumn(name = "proof_template_id")
-	private ProofTemplate proofTemplate;
+	private ProofTemplate   proofTemplate;
 	@ManyToOne
 	@JoinColumn(name = "list_template_id")
-	private ListTemplate listTemplate;
+	private ListTemplate    listTemplate;
 	@ManyToOne
 	@JoinColumn(name = "acronym_template_id")
 	private AcronymTemplate acronymTemplate;
 	@ManyToOne
 	@JoinColumn(name = "synonym_template_id")
 	private SynonymTemplate synonymTemplate;
+
+	@ManyToOne
+	@JoinColumn(name = "code_template_id")
+	private CodeTemplate codeTemplate;
+
 
 	protected BasicTemplates() {
 		this.definitionTemplate = new DefinitionTemplate();
@@ -50,6 +56,8 @@ public class BasicTemplates {
 		this.acronymTemplate = new AcronymTemplate();
 		this.listTemplate = new ListTemplate();
 		this.synonymTemplate = new SynonymTemplate();
+		this.proofTemplate = new ProofTemplate();
+		this.codeTemplate = new CodeTemplate();
 	}
 
 	//region setter/getter
@@ -72,8 +80,9 @@ public class BasicTemplates {
 		return id;
 	}
 
-	public Set<TemplateInfo> getTemplates() {
-		return Set.of(definitionTemplate, textTemplate, exampleTemplate, acronymTemplate, listTemplate, synonymTemplate);
+	public TemplateInfo[] getTemplates() {
+		return new TemplateInfo[]{definitionTemplate, textTemplate, exampleTemplate, acronymTemplate, listTemplate,
+				synonymTemplate, proofTemplate, codeTemplate};
 	}
 
 	public DefinitionTemplate getDefinitionTemplate() {

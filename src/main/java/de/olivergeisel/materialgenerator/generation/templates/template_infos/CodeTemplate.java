@@ -30,7 +30,7 @@ public class CodeTemplate extends BasicTemplate {
 		this.code = code;
 	}
 
-	protected CodeTemplate() {
+	public CodeTemplate() {
 		super(TemplateType.CODE);
 	}
 
