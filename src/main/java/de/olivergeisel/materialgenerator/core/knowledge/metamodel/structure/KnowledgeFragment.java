@@ -108,18 +108,27 @@ public class KnowledgeFragment extends KnowledgeObject {
 		return false;
 	}
 
-	public KnowledgeObject getObjectById(String id) throws NoSuchElementException {
+	/**
+	 * Returns the KnowledgeObject with the given id. If the id is not found, a NoSuchElementException is thrown.
+	 *
+	 * @param id the id of the object
+	 * @return the object with the given id
+	 * @throws IllegalArgumentException if id is null
+	 * @throws NoSuchElementException   if no object with the given id is found
+	 */
+	public KnowledgeObject getObjectById(String id) throws IllegalArgumentException, NoSuchElementException {
 		if (id == null) {
-			throw new NoSuchElementException("id must not be null");
+			throw new IllegalArgumentException("id must not be null");
 		}
 		if (id.equals(getId())) {
 			return this;
 		}
 		for (KnowledgeObject element : children) {
 			if (element instanceof KnowledgeFragment fragment) {
-				KnowledgeObject object = fragment.getObjectById(id);
-				if (object != null) {
-					return object;
+				try {
+					return fragment.getObjectById(id);
+				} catch (NoSuchElementException ignored) {
+					// no element found, continue
 				}
 			} else {
 				if (element.getId().equals(id)) {
