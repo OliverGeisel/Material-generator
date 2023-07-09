@@ -11,7 +11,13 @@ import java.util.Set;
 /**
  * Assign material to a MaterialOrderCollection. This is the basic implementation of the {@link MaterialAssigner}.
  * All this Assigner does is to call the assignMaterial method of the {@link MaterialOrderCollection}.
- * So the MaterialOrderCollection itself decides how to assign the material.
+ * So the MaterialOrderCollection itself decides how to assign the material. Only exception is when the mataerial was
+ * already assigned. In this case the material is not assigned to a new part.
+ *
+ * @author Oliver Geisel
+ * @version 1.0
+ * @see MaterialOrderCollection#assignMaterial(Set)
+ * @since 0.2.0
  */
 public class BasicMaterialAssigner extends MaterialAssigner {
 
@@ -33,8 +39,8 @@ public class BasicMaterialAssigner extends MaterialAssigner {
 			case ChapterOrder chapterOrder -> false;
 			case GroupOrder groupOrder -> false;
 			default -> {
-				var res = part.assignMaterial(materialMap.keySet());
-				res.forEach(material -> materialMap.get(material).setAssigned(true));
+				var res = part.assignMaterial(getUnassignedMaterials());
+				setAssigned(res);
 				yield !res.isEmpty();
 			}
 		};
