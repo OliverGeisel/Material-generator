@@ -13,7 +13,23 @@
     <artifactId>Material-generator</artifactId>
     <version>0.2.0-SNAPSHOT</version>
     <name>Material generator</name>
-    <description>Material generator for MDTea</description>
+    <description>Material generator for MDTea.
+        The generator creates a material for a given plan.
+        By selecting a TemplateSet and a plan the generator creates materials for the plan and build a raw course.
+        You can edit the course. Reorder the chapters, groups or tasks. Or delete them.
+        If you finished editing the course you can be exported as HTML-files. You get a zip-file with all files.
+    </description>
+    <developers>
+        <developer>
+            <name>Oliver Geisel</name>
+            <email>geisel.oliver@googlemail.com</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
+    <inceptionYear>2023</inceptionYear>
+
     <properties>
         <java.version>19</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -79,6 +95,11 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.1.2</version>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
