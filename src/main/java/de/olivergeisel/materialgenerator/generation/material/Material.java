@@ -2,7 +2,6 @@ package de.olivergeisel.materialgenerator.generation.material;
 
 import de.olivergeisel.materialgenerator.core.course.MaterialOrderPart;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement;
-import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeType;
 import de.olivergeisel.materialgenerator.generation.templates.template_infos.TemplateInfo;
 
 import javax.persistence.*;
@@ -31,19 +30,19 @@ public class Material extends MaterialOrderPart {
 	/**
 	 * The term name of the material, which is used in the template
 	 */
-	private String term;
+	private       String              term;
 	/**
 	 * The unique term id of the material, which is used in the template
 	 */
-	private String termId;
+	private       String              termId;
 	/**
 	 * Part in the structure of the knowledge base
 	 */
-	private String structureId;
+	private       String              structureId;
 	@Enumerated(EnumType.ORDINAL)
-	private MaterialType type;
+	private       MaterialType        type;
 	@ManyToOne(cascade = CascadeType.ALL)
-	private TemplateInfo templateInfo;
+	private       TemplateInfo        templateInfo;
 
 	protected Material() {
 
@@ -60,20 +59,28 @@ public class Material extends MaterialOrderPart {
 
 	public Material(MaterialType type, String term, String termId, String structureId) {
 		this.type = type;
-		templateInfo = null;
-		this.termId = termId;
 		this.term = term;
+		this.termId = termId;
 		this.structureId = structureId;
+		templateInfo = null;
 	}
 
-	public Material(MaterialType type, KnowledgeElement element) {
+	/**
+	 * Create a Material from a KnowledgeElement. The KnowledgeElement must not be null.
+	 * <p>
+	 * term will be the content of the KnowledgeElement termId will be the id of the KnowledgeElement structureId will
+	 * be the structureId of the KnowledgeElement. Should be used with care. When content is lage term is misused.
+	 * Use ist only for Terms.
+	 *
+	 * @param type    The MaterialType
+	 * @param element The KnowledgeElement
+	 * @throws IllegalArgumentException if element is null
+	 */
+	public Material(MaterialType type, KnowledgeElement element) throws IllegalArgumentException {
 		this.type = type;
 		templateInfo = null;
 		if (element == null) {
 			throw new IllegalArgumentException("element must not be null");
-		}
-		if (element.getType() != KnowledgeType.TERM) {
-			throw new IllegalArgumentException("element must be of type TERM");
 		}
 		this.termId = element.getId();
 		this.term = element.getContent();
@@ -106,6 +113,10 @@ public class Material extends MaterialOrderPart {
 	public MaterialOrderPart find(UUID id) {
 		if (this.getId().equals(id)) return this;
 		return null;
+	}
+
+	public String shortName() {
+		return getName();
 	}
 
 	//region setter/getter
@@ -181,6 +192,6 @@ public class Material extends MaterialOrderPart {
 	@Override
 	public String toString() {
 		return "Material{" + "term='" + term + '\'' + ", structureId='" + structureId + '\''
-				+ ", type=" + type + ", template=" + templateInfo + ", values=" + values + '}';
+			   + ", type=" + type + ", template=" + templateInfo + ", values=" + values + '}';
 	}
 }

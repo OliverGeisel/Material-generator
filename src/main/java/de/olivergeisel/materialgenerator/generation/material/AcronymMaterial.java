@@ -1,5 +1,6 @@
 package de.olivergeisel.materialgenerator.generation.material;
 
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement;
 import de.olivergeisel.materialgenerator.generation.templates.template_infos.TemplateInfo;
 
 import javax.persistence.Entity;
@@ -16,7 +17,8 @@ public class AcronymMaterial extends ListMaterial {
 		super(type, templateInfo);
 	}
 
-	public AcronymMaterial(List<String> acronyms, boolean numerated, TemplateInfo templateInfo) {
-		super(MaterialType.WIKI, templateInfo, "Abkürzung", acronyms, numerated);
+	public AcronymMaterial(List<String> acronyms, boolean numerated, TemplateInfo templateInfo,
+						   KnowledgeElement element) {
+		super(MaterialType.WIKI, templateInfo, "Abkürzung", acronyms, numerated, element);
 	}
 }

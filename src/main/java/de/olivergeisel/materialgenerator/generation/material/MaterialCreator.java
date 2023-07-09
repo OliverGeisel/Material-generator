@@ -19,7 +19,9 @@ public class MaterialCreator {
 		return fillMaterial(mainTerm, name, templateInfo, values, newMaterial, relatedElements);
 	}
 
-	private MaterialAndMapping fillMaterial(KnowledgeElement mainTerm, String name, TemplateInfo templateInfo, Map<String, String> values, Material newMaterial, KnowledgeElement[] relatedElements) {
+	private MaterialAndMapping fillMaterial(KnowledgeElement mainTerm, String name, TemplateInfo templateInfo,
+											Map<String, String> values, Material newMaterial,
+											KnowledgeElement[] relatedElements) {
 		newMaterial.setName(name);
 		newMaterial.setTemplateInfo(templateInfo);
 		newMaterial.setValues(values);

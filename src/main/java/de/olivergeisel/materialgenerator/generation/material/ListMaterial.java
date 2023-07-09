@@ -1,5 +1,6 @@
 package de.olivergeisel.materialgenerator.generation.material;
 
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement;
 import de.olivergeisel.materialgenerator.generation.templates.template_infos.TemplateInfo;
 
 import javax.persistence.ElementCollection;
@@ -25,8 +26,9 @@ public class ListMaterial extends Material {
 		setTemplateInfo(templateInfo);
 	}
 
-	protected ListMaterial(MaterialType type, TemplateInfo templateInfo, String headline, Collection<String> entries, boolean numerated) {
-		super(type);
+	protected ListMaterial(MaterialType type, TemplateInfo templateInfo, String headline, Collection<String> entries,
+						   boolean numerated, KnowledgeElement element) {
+		super(type, element);
 		setTemplateInfo(templateInfo);
 		this.entries.addAll(entries);
 		this.headline = headline;

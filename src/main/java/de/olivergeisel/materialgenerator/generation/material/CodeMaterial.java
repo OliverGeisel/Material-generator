@@ -1,5 +1,7 @@
 package de.olivergeisel.materialgenerator.generation.material;
 
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
@@ -7,11 +9,19 @@ import javax.persistence.Entity;
 public class CodeMaterial extends Material {
 
 	private String language;
-	@Column(length = 10000)
+	@Column(length = 100_000)
 	private String code;
+	private String title;
 
-	public CodeMaterial(String language, String code) {
-		super(MaterialType.WIKI);
+	public CodeMaterial(String language, String code, KnowledgeElement element) {
+		super(MaterialType.WIKI, element.getId(), element.getId(), element.getStructureId());
+		this.language = language;
+		this.code = code;
+	}
+
+	public CodeMaterial(String language, String code, String title, KnowledgeElement element) {
+		super(MaterialType.WIKI, title, element.getId(), element.getStructureId());
+		this.title = title;
 		this.language = language;
 		this.code = code;
 	}
@@ -20,7 +30,20 @@ public class CodeMaterial extends Material {
 		super(MaterialType.WIKI);
 	}
 
-//region setter/getter
+	@Override
+	public String shortName() {
+		return "Code: " + title;
+	}
+
+	//region setter/getter
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
 	public String getLanguage() {
 		return language;
 	}
@@ -38,4 +61,12 @@ public class CodeMaterial extends Material {
 	}
 //endregion
 
+	@Override
+	public String toString() {
+		return "CodeMaterial{" +
+			   "title='" + title + '\'' +
+			   ", code='" + code + '\'' +
+			   ", language='" + language + '\'' +
+			   '}';
+	}
 }
