@@ -12,16 +12,17 @@ import java.util.UUID;
 
 @Entity
 public class RawCourse extends Course {
-	private UUID planId;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", nullable = false)
 	private UUID id;
-	private String templateName;
+
+	private UUID                       planId;
+	private String                     templateName;
 	@OneToOne(cascade = CascadeType.ALL)
 	private CourseMetadataFinalization metadata;
 	@OneToOne(cascade = CascadeType.ALL)
-	private MaterialOrder materialOrder;
+	private CourseOrder                courseOrder;
 
 	@OneToMany(cascade = CascadeType.ALL)
 	private Set<Goal> goals;
@@ -34,36 +35,38 @@ public class RawCourse extends Course {
 		this.templateName = templateName;
 		this.goals = goals;
 		metadata = new CourseMetadataFinalization(plan);
-		materialOrder = new MaterialOrder(plan, goals);
+		courseOrder = new CourseOrder(plan, goals);
 	}
 
 	public int materialCount() {
-		return materialOrder.materialCount();
+		return courseOrder.materialCount();
 	}
 
 	public void changePlan(CoursePlan plan) {
 		setPlanId(plan.getId());
 	}
 
+	public boolean assignMaterial(Set<MaterialAndMapping> materials) {
+		return courseOrder.assignMaterial(materials);
+	}
+
 	//region setter/getter
 
-	public boolean assignMaterial(Set<MaterialAndMapping> materials) {
-		return materialOrder.assignMaterial(materials);
-	}
 	/**
 	 * Say if a course has enough materials and fulfill all requirements to use.
 	 *
 	 * @return True if all requirements are fulfilled. False otherwise
 	 */
 	public boolean isValid() {
-		return materialOrder.isValid();
+		return courseOrder.isValid();
 	}
+
 	public UUID getId() {
 		return id;
 	}
 
-	public MaterialOrder getMaterialOrder() {
-		return materialOrder;
+	public CourseOrder getCourseOrder() {
+		return courseOrder;
 	}
 
 	public String getTemplateName() {

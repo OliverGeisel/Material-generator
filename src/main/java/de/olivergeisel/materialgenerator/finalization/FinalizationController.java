@@ -62,7 +62,7 @@ public class FinalizationController {
 	@PostMapping({"edit/{id}/deletePart",})
 	public String deleteCoursePart(@PathVariable UUID id, @RequestParam("id") UUID partId) {
 		repository.findById(id).ifPresent(course -> {
-			course.getMaterialOrder().remove(partId);
+			course.getCourseOrder().remove(partId);
 			repository.save(course);
 		});
 		return REDIRECT_EDIT + id + "#Themen";
@@ -73,8 +73,19 @@ public class FinalizationController {
 		service.exportCourse(id, request, response);
 	}
 
+	@PostMapping("edit/{id}/relevance")
+	public String exportCourse(@PathVariable UUID id, @RequestParam("task") UUID taskID,
+							   @RequestParam Relevance relevance) {
+		service.setRelevance(id, taskID, relevance);
+		return REDIRECT_EDIT + id + "#Themen";
+	}
+
 	@PostMapping({"edit/{id}",})
-	public String editCourse(@PathVariable UUID id, @RequestParam(value = "chapter", required = false) UUID parentChapterId, @RequestParam(value = "group", required = false) UUID parentGroupId, @RequestParam(value = "task", required = false) UUID parentTaskId, @RequestParam(value = "up", required = false) UUID idUp, @RequestParam(value = "down", required = false) UUID idDown, Model model) {
+	public String editCourse(@PathVariable UUID id,
+							 @RequestParam(value = "chapter", required = false) UUID parentChapterId,
+							 @RequestParam(value = "group", required = false) UUID parentGroupId, @RequestParam(value
+			= "task", required = false) UUID parentTaskId, @RequestParam(value = "up", required = false) UUID idUp,
+							 @RequestParam(value = "down", required = false) UUID idDown, Model model) {
 		if (idUp != null) {
 			service.moveUp(id, parentChapterId, parentGroupId, parentTaskId, idUp);
 		} else if (idDown != null) {

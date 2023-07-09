@@ -9,6 +9,7 @@ import de.olivergeisel.materialgenerator.generation.material.MaterialAndMapping;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,7 +21,9 @@ public class TaskOrder extends MaterialOrderCollection {
 
 
 	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "taskOrder_id")
 	private final List<Material> materialOrder = new LinkedList<>();
+	private       Relevance      relevance     = Relevance.TO_SET;
 
 	protected TaskOrder() {
 	}
@@ -29,9 +32,10 @@ public class TaskOrder extends MaterialOrderCollection {
 		if (relatedTask == null) throw new IllegalArgumentException("relatedTask must not be null");
 		setName(relatedTask.getName());
 		var taskTopic = relatedTask.getTopic();
-		var topic = goals.stream().flatMap(goal -> goal.getTopics().stream().filter(t -> t.isSame(taskTopic))).findFirst().orElse(null);
+		var topic = goals.stream().flatMap(goal -> goal.getTopics().stream().filter(t -> t.isSame(taskTopic)))
+						 .findFirst().orElse(null);
 		setTopic(topic);
-		setRelevance(relatedTask.getRelevance());
+		relevance = relatedTask.getRelevance();
 		relatedTask.getAlternatives().forEach(this::addAlias);
 	}
 
@@ -88,6 +92,14 @@ public class TaskOrder extends MaterialOrderCollection {
 	}
 
 	//region setter/getter
+	@Override
+	public Relevance getRelevance() {
+		return relevance;
+	}
+
+	public void setRelevance(Relevance relevance) {
+		this.relevance = relevance;
+	}
 
 	/**
 	 * Check if all Parts match there relevance.
@@ -97,9 +109,9 @@ public class TaskOrder extends MaterialOrderCollection {
 	@Override
 	public boolean isValid() {
 		return switch (relevance) {
-			case OPTIONAL, INFORMATIONAL -> true;
+			case OPTIONAL, INFORMATIONAL, IMPORTANT -> true;
+			case MANDATORY -> !materialOrder.isEmpty();
 			case TO_SET -> false;
-			case MANDATORY -> materialOrder.size() > 0;
 			default -> false;
 		};
 	}

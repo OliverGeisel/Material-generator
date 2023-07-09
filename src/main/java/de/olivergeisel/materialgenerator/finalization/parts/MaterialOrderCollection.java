@@ -17,7 +17,6 @@ public abstract class MaterialOrderCollection extends MaterialOrderPart {
 
 	@ElementCollection
 	private final Set<String> alias = new HashSet<>(); // KnowledgeObject ids
-	protected Relevance relevance;
 
 	@ManyToOne
 	private Topic topic;
@@ -29,6 +28,8 @@ public abstract class MaterialOrderCollection extends MaterialOrderPart {
 	public abstract boolean assignMaterial(Set<MaterialAndMapping> materials);
 
 	public boolean addAlias(String alternative) {
+		if (alternative == null || alternative.isBlank())
+			return false;
 		return alias.add(alternative);
 	}
 
@@ -40,13 +41,7 @@ public abstract class MaterialOrderCollection extends MaterialOrderPart {
 
 
 	//region setter/getter
-	public Relevance getRelevance() {
-		return relevance;
-	}
-
-	public void setRelevance(Relevance relevance) {
-		this.relevance = relevance;
-	}
+	public abstract Relevance getRelevance();
 
 	public Topic getTopic() {
 		return topic;

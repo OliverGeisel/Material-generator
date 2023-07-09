@@ -31,7 +31,6 @@ public class ChapterOrder extends MaterialOrderCollection {
 		for (var group : chapter.getParts()) {
 			groupOrder.add(new GroupOrder(group, goals));
 		}
-		setRelevance(chapter.getRelevance());
 		setName(chapter.getName());
 		var chapterTopic = chapter.getTopic();
 		var topic = goals.stream().flatMap(goal -> goal.getTopics().stream().filter(t -> t.isSame(chapterTopic))).findFirst().orElse(null);
@@ -65,8 +64,6 @@ public class ChapterOrder extends MaterialOrderCollection {
 		return groupOrder.stream().map(g -> g.find(id)).filter(Objects::nonNull).findFirst().orElse(null);
 	}
 
-	//region setter/getter
-
 	public GroupOrder findGroup(UUID groupID) {
 		return groupOrder.stream().filter(g -> g.getId().equals(groupID)).findFirst().orElse(null);
 	}
@@ -81,13 +78,7 @@ public class ChapterOrder extends MaterialOrderCollection {
 
 	@Override
 	public Relevance updateRelevance() {
-		for (var group : groupOrder) {
-			Relevance groupRelevance = group.updateRelevance();
-			if (groupRelevance.ordinal() > relevance.ordinal()) {
-				relevance = groupRelevance;
-			}
-		}
-		return relevance;
+		return getRelevance();
 	}
 
 	@Override
@@ -104,6 +95,20 @@ public class ChapterOrder extends MaterialOrderCollection {
 	public boolean remove(UUID partId) {
 		return groupOrder.stream().anyMatch(g -> g.remove(partId));
 	}
+
+	//region setter/getter
+
+	/**
+	 * Get the relevance of the chapter.
+	 *
+	 * @return the relevance of the chapter. If no relevance is set, TO_SET is returned.
+	 */
+	@Override
+	public Relevance getRelevance() {
+		return groupOrder.stream().map(GroupOrder::getRelevance).max(Comparator.comparingInt(Enum::ordinal))
+						 .orElse(Relevance.TO_SET);
+	}
+
 	/**
 	 * Check if all Parts match there relevance.
 	 *
@@ -112,11 +117,12 @@ public class ChapterOrder extends MaterialOrderCollection {
 	@Override
 	public boolean isValid() {
 		return groupOrder.stream().allMatch(MaterialOrderPart::isValid)
-				&& groupOrder.stream().allMatch(group -> group.relevance.ordinal() <= relevance.ordinal());
+			   && groupOrder.stream().allMatch(group -> group.getRelevance().compareTo(getRelevance()) < 1);
 	}
+
 	public List<GroupOrder> getGroupOrder() {
 		return Collections.unmodifiableList(groupOrder);
 	}
 //endregion
-//endregion
+
 }

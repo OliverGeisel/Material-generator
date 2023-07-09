@@ -2,6 +2,7 @@ package de.olivergeisel.materialgenerator.finalization;
 
 import de.olivergeisel.materialgenerator.core.courseplan.CoursePlan;
 import de.olivergeisel.materialgenerator.core.courseplan.content.ContentGoal;
+import de.olivergeisel.materialgenerator.core.courseplan.structure.Relevance;
 import de.olivergeisel.materialgenerator.finalization.parts.*;
 import de.olivergeisel.materialgenerator.generation.material.Material;
 import de.olivergeisel.materialgenerator.generation.material.MaterialAndMapping;
@@ -11,10 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Transactional
@@ -22,16 +20,21 @@ public class FinalizationService {
 
 	private final DownloadManager downloadManager;
 
-	private final MaterialOrderRepository materialOrderRepository;
-	private final ChapterOrderRepository chapterOrderRepository;
-	private final GroupOrderRepository groupOrderRepository;
-	private final TaskOrderRepository taskOrderRepository;
-	private final RawCourseRepository rawCourseRepository;
+	private final MaterialOrderRepository              materialOrderRepository;
+	private final ChapterOrderRepository               chapterOrderRepository;
+	private final GroupOrderRepository                 groupOrderRepository;
+	private final TaskOrderRepository                  taskOrderRepository;
+	private final RawCourseRepository                  rawCourseRepository;
 	private final CourseMetadataFinalizationRepository metadataRepository;
-	private final GoalRepository goalRepository;
-	private final TopicRepository topicRepository;
+	private final GoalRepository                       goalRepository;
+	private final TopicRepository                      topicRepository;
 
-	public FinalizationService(DownloadManager downloadManager, MaterialOrderRepository materialOrderRepository, ChapterOrderRepository chapterOrderRepository, GroupOrderRepository groupOrderRepository, TaskOrderRepository taskOrderRepository, RawCourseRepository rawCourseRepository, CourseMetadataFinalizationRepository metadataRepository, GoalRepository goalRepository, TopicRepository topicRepository) {
+	public FinalizationService(DownloadManager downloadManager, MaterialOrderRepository materialOrderRepository,
+							   ChapterOrderRepository chapterOrderRepository,
+							   GroupOrderRepository groupOrderRepository, TaskOrderRepository taskOrderRepository,
+							   RawCourseRepository rawCourseRepository,
+							   CourseMetadataFinalizationRepository metadataRepository, GoalRepository goalRepository,
+							   TopicRepository topicRepository) {
 		this.downloadManager = downloadManager;
 		this.materialOrderRepository = materialOrderRepository;
 		this.chapterOrderRepository = chapterOrderRepository;
@@ -49,26 +52,26 @@ public class FinalizationService {
 		var rawCourse = new RawCourse(coursePlan, template, goals);
 		rawCourse.assignMaterial(materials);
 		saveMetadata(rawCourse.getMetadata());
-		saveMaterialOrder(rawCourse.getMaterialOrder());
+		saveMaterialOrder(rawCourse.getCourseOrder());
 		return rawCourseRepository.save(rawCourse);
 	}
 
 	private Set<Goal> createGoals(Set<ContentGoal> goals) {
 		var back = new HashSet<Goal>();
-		goals.forEach(contentGoal -> goalRepository.findByName(contentGoal.getName()).ifPresentOrElse(back::add, () -> {
+		for (var contentGoal : goals) {
 			var goal = new Goal(contentGoal);
 			goal = goalRepository.save(goal);
 			Goal finalGoal = goal;
 			goal.getTopics().forEach(topic -> topic.updateGoal(finalGoal));
 			topicRepository.saveAll(goal.getTopics());
 			back.add(goal);
-		}));
+		}
 		return back;
 	}
 
-	private void saveMaterialOrder(MaterialOrder materialOrder) {
-		saveChapterOrder(materialOrder.getChapterOrder());
-		materialOrderRepository.save(materialOrder);
+	private void saveMaterialOrder(CourseOrder courseOrder) {
+		saveChapterOrder(courseOrder.getChapterOrder());
+		materialOrderRepository.save(courseOrder);
 	}
 
 	private void saveMetadata(CourseMetadataFinalization metadata) {
@@ -95,7 +98,7 @@ public class FinalizationService {
 
 	public void moveUp(UUID id, UUID parentChapterId, UUID parentGroupId, UUID parentTaskId, UUID idUp) {
 		var course = rawCourseRepository.findById(id).orElseThrow();
-		var order = course.getMaterialOrder();
+		var order = course.getCourseOrder();
 		switch (order.find(idUp)) {
 			case ChapterOrder chapter -> order.moveUp(chapter);
 			case GroupOrder group -> {
@@ -117,7 +120,7 @@ public class FinalizationService {
 
 	public void moveDown(UUID id, UUID parentChapterId, UUID parentGroupId, UUID parentTaskId, UUID idDown) {
 		var course = rawCourseRepository.findById(id).orElseThrow();
-		var order = course.getMaterialOrder();
+		var order = course.getCourseOrder();
 		switch (order.find(idDown)) {
 			case ChapterOrder chapter -> order.moveDown(chapter);
 			case GroupOrder group -> {
@@ -141,8 +144,22 @@ public class FinalizationService {
 		generateAndDownloadTemplates(rawCourseRepository.findById(id).orElseThrow(), request, response);
 	}
 
-	public void generateAndDownloadTemplates(@PathVariable("courseId") RawCourse plan, HttpServletRequest request, HttpServletResponse response) {
+	public void generateAndDownloadTemplates(@PathVariable("courseId") RawCourse plan, HttpServletRequest request,
+											 HttpServletResponse response) {
 		var zipName = plan.getMetadata().getName().orElse("course");
 		downloadManager.createZip(zipName, plan.getTemplateName(), plan, request, response);
+	}
+
+	public void setRelevance(UUID id, UUID taskId, Relevance relevance)
+	throws IllegalArgumentException, NoSuchElementException {
+		var course = rawCourseRepository.findById(id).orElseThrow();
+		var order = course.getCourseOrder();
+		var taskOrder = order.findTask(taskId);
+		if (taskOrder != null) {
+			taskOrder.setRelevance(relevance);
+			rawCourseRepository.save(course);
+		} else {
+			throw new IllegalArgumentException("Task not found");
+		}
 	}
 }

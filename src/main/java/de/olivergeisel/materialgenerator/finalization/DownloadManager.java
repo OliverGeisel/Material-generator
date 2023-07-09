@@ -149,10 +149,11 @@ public class DownloadManager {
 		CourseNavigation.MaterialLevel level = new CourseNavigation.MaterialLevel();
 		var navigation = new CourseNavigation(level);
 		overallInfos.put("courseName", plan.getMetadata().getName().orElse("Kurs"));
-		var chapters = plan.getMaterialOrder().getChapterOrder();
+		var chapters = plan.getCourseOrder().getChapterOrder();
 		for (int i = 0; i < chapters.size(); i++) {
-			var chapter = plan.getMaterialOrder().getChapterOrder().get(i);
-			String chapterName = chapter.getName() == null || chapter.getName().isBlank() ? "Kapitel " + (chapters.indexOf(chapter) + 1) : chapter.getName();
+			var chapter = plan.getCourseOrder().getChapterOrder().get(i);
+			String chapterName = chapter.getName() == null || chapter.getName().isBlank() ?
+								 "Kapitel " + (chapters.indexOf(chapter) + 1) : chapter.getName();
 			var nextChapter = i < chapters.size() - 1 ? chapters.get(i + 1) : null;
 			var chapterNavigation = navigation.nextChapter(nextChapter);
 			var subDir = Files.createDirectory(new File(outputDir, chapterName).toPath());

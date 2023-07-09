@@ -14,25 +14,22 @@ import java.util.*;
  * This is the final order of the course. It is used to generate the final course. It's editable by the user.
  */
 @Entity
-public class MaterialOrder {
+public class CourseOrder {
 	@OneToMany(cascade = CascadeType.ALL)
 	private final List<ChapterOrder> chapterOrder = new LinkedList<>();
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", nullable = false)
-	private UUID id;
+	private       UUID               id;
 
-	public MaterialOrder(CoursePlan plan, Set<Goal> goals) {
+	protected CourseOrder() {
+	}
+
+	public CourseOrder(CoursePlan plan, Set<Goal> goals) {
 		for (var chapter : plan.getStructure().getOrder()) {
 			chapterOrder.add(new ChapterOrder(chapter, goals));
 		}
 	}
-
-	protected MaterialOrder() {
-
-	}
-
-	//region setter/getter
 
 	public int materialCount() {
 		return chapterOrder.stream().mapToInt(ChapterOrder::materialCount).sum();
@@ -55,13 +52,13 @@ public class MaterialOrder {
 	}
 
 	public Material findMaterial(UUID materialId) {
-		return chapterOrder.stream().map(c -> c.findMaterial(materialId)).filter(Objects::nonNull).findFirst().orElse(null);
+		return chapterOrder.stream().map(c -> c.findMaterial(materialId)).filter(Objects::nonNull).findFirst()
+						   .orElse(null);
 	}
 
 	public boolean assignMaterial(Set<MaterialAndMapping> materials) {
 		return chapterOrder.stream().anyMatch(c -> c.assignMaterial(materials));
 	}
-
 
 	public void moveUp(ChapterOrder chapter) {
 		int index = chapterOrder.indexOf(chapter);
@@ -82,9 +79,12 @@ public class MaterialOrder {
 	public boolean remove(UUID partId) {
 		return chapterOrder.stream().anyMatch(c -> c.remove(partId));
 	}
+
+	//region setter/getter
 	public boolean isValid() {
 		return chapterOrder.stream().allMatch(ChapterOrder::isValid);
 	}
+
 	public List<ChapterOrder> getChapterOrder() {
 		return Collections.unmodifiableList(chapterOrder);
 	}
@@ -97,7 +97,7 @@ public class MaterialOrder {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (!(o instanceof MaterialOrder that)) return false;
+		if (!(o instanceof CourseOrder that)) return false;
 
 		return id.equals(that.id);
 	}

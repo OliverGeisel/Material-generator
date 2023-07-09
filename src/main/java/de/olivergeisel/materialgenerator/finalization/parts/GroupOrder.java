@@ -37,7 +37,6 @@ public class GroupOrder extends MaterialOrderCollection {
 				throw new IllegalArgumentException("nested groups are not supported");
 			}
 		}
-		setRelevance(group.getRelevance());
 		setName(group.getName());
 		var groupTopic = group.getTopic();
 		var topic = goals.stream().flatMap(goal -> goal.getTopics().stream().filter(t -> t.isSame(groupTopic))).findFirst().orElse(null);
@@ -81,22 +80,6 @@ public class GroupOrder extends MaterialOrderCollection {
 	}
 
 	@Override
-	public Relevance updateRelevance() {
-		for (var task : taskOrder) {
-			Relevance taskRelevance = task.updateRelevance();
-			if (taskRelevance.ordinal() > relevance.ordinal()) {
-				relevance = taskRelevance;
-			}
-		}
-		return relevance;
-	}
-
-	@Override
-	public int materialCount() {
-		return taskOrder.stream().mapToInt(TaskOrder::materialCount).sum();
-	}
-
-	@Override
 	public boolean assignMaterial(Set<MaterialAndMapping> materials) {
 		return taskOrder.stream().anyMatch(t -> t.assignMaterial(materials));
 	}
@@ -106,6 +89,16 @@ public class GroupOrder extends MaterialOrderCollection {
 		return taskOrder.stream().anyMatch(t -> t.remove(partId));
 	}
 	/**
+	 * Get the relevance of this part.
+	 *
+	 * @return the relevance of this part
+	 */
+	@Override
+	public Relevance getRelevance() {
+		return taskOrder.stream().map(TaskOrder::getRelevance).max(Comparator.naturalOrder()).orElse(Relevance.TO_SET);
+	}
+
+	/**
 	 * Check if all Parts match there relevance.
 	 *
 	 * @return true if all parts are valid
@@ -113,7 +106,7 @@ public class GroupOrder extends MaterialOrderCollection {
 	@Override
 	public boolean isValid() {
 		return taskOrder.stream().allMatch(MaterialOrderPart::isValid)
-				&& taskOrder.stream().allMatch(t -> t.getRelevance().ordinal() <= relevance.ordinal());
+			   && taskOrder.stream().allMatch(t -> t.getRelevance().ordinal() <= getRelevance().ordinal());
 	}
 	public List<TaskOrder> getTaskOrder() {
 		return Collections.unmodifiableList(taskOrder);
