@@ -8,6 +8,8 @@ import de.olivergeisel.materialgenerator.core.courseplan.structure.*;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeObject;
 import org.apache.tomcat.util.json.JSONParser;
 import org.apache.tomcat.util.json.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,8 +20,12 @@ import java.util.regex.Pattern;
 
 public class CoursePlanParser {
 
-	private static final String TOPIC = "topic";
-	private static final String[] META_ATTRIBUTES = {"name", "year", "level", "type", "description"};
+	private static final String              TOPIC           = "topic";
+	private static final String[]            META_ATTRIBUTES = {"name", "year", "level", "type", "description"};
+	private static final String              TARGET          = "target";
+	private final        List<ContentTarget> targets         = new ArrayList<>();
+
+	private final Logger logger = LoggerFactory.getLogger(CoursePlanParser.class);
 
 	/**
 	 * Parses Metadata of plan.
@@ -43,8 +49,6 @@ public class CoursePlanParser {
 
 	}
 
-	private final List<ContentTarget> targets = new ArrayList<>();
-
 	private Set<KnowledgeObject> crateAliasObject(List<String> alternativesJSON) {
 		var back = new HashSet<KnowledgeObject>();
 		for (var elem : alternativesJSON) {
@@ -53,7 +57,30 @@ public class CoursePlanParser {
 		return back;
 	}
 
-	private StructureChapter createChapter(Map<String, ?> chapterJSON) {
+	private Set<String> crateAlias(String normalName, List<String> alternativesJSON) throws IllegalArgumentException {
+		var back = new HashSet<String>();
+		if (normalName == null || normalName.isEmpty()) {
+			throw new IllegalArgumentException("Normal name must not be null or empty");
+		}
+		back.add(normalName);
+		if (alternativesJSON != null) {
+			for (var elem : alternativesJSON) {
+				if (elem != null && !elem.isBlank()) {
+					back.add(elem);
+				}
+			}
+		}
+		return back;
+	}
+
+	/**
+	 * Parses a chapter plan from a parsed JSON.
+	 *
+	 * @param chapterJSON the parsed JSON
+	 * @return the parsed chapter plan
+	 * @throws IllegalArgumentException if the JSON is not valid. Like the name is null or empty
+	 */
+	private StructureChapter createChapter(Map<String, ?> chapterJSON) throws IllegalArgumentException {
 		List<Map<String, ?>> groups = (List<Map<String, ?>>) chapterJSON.get("groups");
 		String name = chapterJSON.get("name").toString();
 		String weight = chapterJSON.get("weight").toString();
@@ -71,17 +98,6 @@ public class CoursePlanParser {
 		return back;
 	}
 
-	private Set<String> crateAlias(String normalName, List<String> alternativesJSON) {
-		var back = new HashSet<String>();
-		if (alternativesJSON != null) {
-			back.add(normalName);
-		}
-		if (alternativesJSON != null) {
-			back.addAll(alternativesJSON);
-		}
-		return back;
-	}
-
 	/**
 	 * Gets relevant ContentTarget from the name;
 	 *
@@ -89,7 +105,8 @@ public class CoursePlanParser {
 	 * @return the ContentTarget or an empty ContentTarget if no target was found
 	 */
 	private ContentTarget findTopic(String topic) {
-		return targets.stream().filter(goalElement -> goalElement.getTopic().equals(topic)).findFirst().orElse(ContentTarget.EMPTY);
+		return targets.stream().filter(goalElement -> goalElement.getTopic().equals(topic)).findFirst()
+					  .orElse(ContentTarget.EMPTY);
 	}
 
 	private StructureElementPart createGroup(Map<String, ?> groupJSON) {
@@ -119,20 +136,19 @@ public class CoursePlanParser {
 		return new StructureTask(topic, relevance, name, alternatives);
 	}
 
-//region getter / setter
-	public List<ContentTarget> getTargets() {
-		return Collections.unmodifiableList(targets);
-	}
-//endregion
-
 	private CourseStructure parseCourseStructure(List<Map<String, ?>> structure) {
 		CourseStructure back = new CourseStructure();
 		for (var chapterJson : structure) {
-			StructureChapter newChapter = createChapter(chapterJson);
-			back.add(newChapter);
+			try {
+				StructureChapter newChapter = createChapter(chapterJson);
+				back.add(newChapter);
+			} catch (IllegalArgumentException e) {
+				logger.error("Could not parse chapter", e);
+			}
 		}
 		return back;
 	}
+//endregion
 
 	/**
 	 * Parses the CurriculumGoals from the given mapping.
@@ -146,17 +162,19 @@ public class CoursePlanParser {
 			String goalName = entry.getKey();
 			Map<String, ?> goalValues = (Map<String, ?>) entry.getValue();
 			String expression = goalValues.get("expression").toString().toUpperCase().replace("-", "_");
-			String target = goalValues.get("target").toString();
+			String target = goalValues.get(TARGET).toString();
 			String completeSentence = goalValues.get("completeSentence").toString();
-			List<String> contentRaw = goalValues.get("content") instanceof List<?> list ? (List<String>) list : List.of();
+			List<String> contentRaw =
+					goalValues.get("content") instanceof List<?> list ? (List<String>) list : List.of();
 			var content = contentRaw.stream().map(ContentTarget::new).toList();
-			back.add(new ContentGoal(ContentGoalExpression.valueOf(expression), target, content, completeSentence, goalName));
+			back.add(new ContentGoal(ContentGoalExpression.valueOf(expression), target, content, completeSentence,
+									 goalName));
 			targets.addAll(content);
 		}
 		return back;
 	}
 
-	public CoursePlan parseFromFile(InputStream file) throws FileNotFoundException, RuntimeException {
+	public CoursePlan parseFromFile(InputStream file) throws RuntimeException {
 		CoursePlan back = null;
 		var parser = new JSONParser(file);
 		Object parsedObject;
@@ -171,15 +189,16 @@ public class CoursePlanParser {
 			Map<String, Map<String, ?>> goalsJSON = new HashMap<>();
 			// META
 			metaJSON = parsedPlan.get("meta") instanceof HashMap<?, ?> metaJSON_Temp
-					? (Map<String, ?>) metaJSON_Temp : null;
+					   ? (Map<String, ?>) metaJSON_Temp : null;
 			var meta = parseMetadata(metaJSON);
 			// CONTENT
 			contentJSON = (Map<String, ?>) parsedPlan.get("content");
 			var curriculumGoalsEntries = contentJSON.entrySet()
-					.stream().filter(entry -> Pattern.matches("goal-\\d+", entry.getKey()));
+													.stream()
+													.filter(entry -> Pattern.matches("goal-\\d+", entry.getKey()));
 			curriculumGoalsEntries.forEach(entry ->
-					goalsJSON.put(entry.getKey(), (Map<String, ?>) entry.getValue())
-			);
+												   goalsJSON.put(entry.getKey(), (Map<String, ?>) entry.getValue())
+										  );
 			List<ContentGoal> goals = parseCurriculumGoals(goalsJSON);
 			// STRUCTURE
 			List<Map<String, ?>> courseStructure = (List<Map<String, ?>>) parsedPlan.get("structure");
@@ -193,4 +212,10 @@ public class CoursePlanParser {
 		FileInputStream input = new FileInputStream(file);
 		return parseFromFile(input);
 	}
+
+	//region setter/getter
+	public List<ContentTarget> getTargets() {
+		return Collections.unmodifiableList(targets);
+	}
+//endregion
 }

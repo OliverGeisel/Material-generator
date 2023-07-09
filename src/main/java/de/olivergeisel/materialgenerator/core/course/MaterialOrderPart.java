@@ -9,7 +9,7 @@ public abstract class MaterialOrderPart {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", nullable = false)
-	private UUID id;
+	private UUID   id;
 	private String name;
 
 	/**
@@ -21,15 +21,14 @@ public abstract class MaterialOrderPart {
 	public abstract MaterialOrderPart find(UUID id);
 
 //region setter/getter
+
 	/**
 	 * Check if all Parts match there relevance.
 	 *
 	 * @return true if all parts are valid
 	 */
 	public abstract boolean isValid();
-//endregion
 
-	//region getter / setter
 	public String getName() {
 		return name;
 	}
@@ -44,16 +43,16 @@ public abstract class MaterialOrderPart {
 //endregion
 
 	@Override
-	public int hashCode() {
-		return id.hashCode();
-	}
-
-	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof MaterialOrderPart that)) return false;
 
 		return id.equals(that.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return id.hashCode();
 	}
 
 	@Override
