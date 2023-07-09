@@ -12,10 +12,11 @@ import java.util.UUID;
 public class Goal {
 	private final ContentGoalExpression expression;
 	private final String masterKeyword;
-	@OneToMany(mappedBy = "goalId")
+	@OneToMany(mappedBy = "goalId", cascade = CascadeType.ALL, orphanRemoval = true)
 	private final List<Topic> topics = new LinkedList<>();
 	//private final List<String> specificWords;
-	private final String completeSentence;
+	@Column(length = 2_000)
+	private final String      completeSentence;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", nullable = false)
