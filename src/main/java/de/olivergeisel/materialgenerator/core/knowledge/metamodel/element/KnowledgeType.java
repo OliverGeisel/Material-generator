@@ -8,5 +8,6 @@ public enum KnowledgeType {
 	EXERCISE,
 	EXPLANATION,
 	NODE,
+	CODE,
 	CUSTOM
 }
