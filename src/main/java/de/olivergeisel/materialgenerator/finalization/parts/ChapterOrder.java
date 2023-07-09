@@ -4,8 +4,8 @@ import de.olivergeisel.materialgenerator.core.course.MaterialOrderPart;
 import de.olivergeisel.materialgenerator.core.courseplan.structure.Relevance;
 import de.olivergeisel.materialgenerator.core.courseplan.structure.StructureChapter;
 import de.olivergeisel.materialgenerator.finalization.Goal;
+import de.olivergeisel.materialgenerator.finalization.material_assign.MaterialAssigner;
 import de.olivergeisel.materialgenerator.generation.material.Material;
-import de.olivergeisel.materialgenerator.generation.material.MaterialAndMapping;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -21,22 +21,22 @@ public class ChapterOrder extends MaterialOrderCollection {
 	/**
 	 * Creates a new ChapterOrder from a StructureChapter
 	 *
-	 * @param chapter the chapter to be ordered
-	 * @param goals   the goals of the course
+	 * @param stChapter the chapter to be ordered
+	 * @param goals     the goals of the course
 	 * @throws IllegalArgumentException if chapter is null
 	 */
-	public ChapterOrder(StructureChapter chapter, Set<Goal> goals) throws IllegalArgumentException {
+	public ChapterOrder(StructureChapter stChapter, Set<Goal> goals) throws IllegalArgumentException {
 		groupOrder = new LinkedList<>();
-		if (chapter == null) throw new IllegalArgumentException("chapter must not be null");
-		for (var group : chapter.getParts()) {
+		if (stChapter == null) throw new IllegalArgumentException("chapter must not be null");
+		for (var group : stChapter.getParts()) {
 			groupOrder.add(new GroupOrder(group, goals));
 		}
-		setName(chapter.getName());
-		var chapterTopic = chapter.getTopic();
+		setName(stChapter.getName());
+		var chapterTopic = stChapter.getTopic();
 		var topic = goals.stream().flatMap(goal -> goal.getTopics().stream().filter(t -> t.isSame(chapterTopic)))
 						 .findFirst().orElse(null);
 		setTopic(topic);
-		chapter.getAlternatives().forEach(this::addAlias);
+		stChapter.getAlternatives().forEach(this::addAlias);
 	}
 
 
@@ -97,8 +97,20 @@ public class ChapterOrder extends MaterialOrderCollection {
 	}
 
 	@Override
-	public boolean assignMaterial(Set<MaterialAndMapping> materials) {
+	public boolean assignMaterial(Set<Material> materials) {
 		groupOrder.forEach(g -> g.assignMaterial(materials));
+		return true;
+	}
+
+	/**
+	 * Assigns a materials to a part.
+	 *
+	 * @param assigner A MaterialAssigner that provides the materials
+	 * @return true if the assignment was successful
+	 */
+	@Override
+	public boolean assignMaterial(MaterialAssigner assigner) {
+		groupOrder.forEach(g -> g.assignMaterial(assigner));
 		return true;
 	}
 

@@ -4,8 +4,8 @@ import de.olivergeisel.materialgenerator.core.course.MaterialOrderPart;
 import de.olivergeisel.materialgenerator.core.courseplan.structure.Relevance;
 import de.olivergeisel.materialgenerator.core.courseplan.structure.StructureTask;
 import de.olivergeisel.materialgenerator.finalization.Goal;
+import de.olivergeisel.materialgenerator.finalization.material_assign.MaterialAssigner;
 import de.olivergeisel.materialgenerator.generation.material.Material;
-import de.olivergeisel.materialgenerator.generation.material.MaterialAndMapping;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -83,15 +83,26 @@ public class TaskOrder extends MaterialOrderCollection {
 	}
 
 	@Override
-	public boolean assignMaterial(Set<MaterialAndMapping> materials) {
+	public boolean assignMaterial(Set<Material> materials) {
 		boolean back = false;
-		for (var material : materials.stream().map(MaterialAndMapping::material).toList()) {
+		for (var material : materials) {
 			if (isAssignable(material)) {
 				materialOrder.add(material);
 				back = true;
 			}
 		}
 		return back;
+	}
+
+	/**
+	 * Assigns the material to the part.
+	 *
+	 * @param assigner the assigner to use
+	 * @return true if a material was assigned, false if not
+	 */
+	@Override
+	public boolean assignMaterial(MaterialAssigner assigner) {
+		return assigner.assign(this);
 	}
 
 	private boolean isAssignable(Material material) {

@@ -9,6 +9,7 @@ import de.olivergeisel.materialgenerator.generation.material.MaterialAndMapping;
 import javax.persistence.*;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 public class RawCourse extends Course {
@@ -47,7 +48,8 @@ public class RawCourse extends Course {
 	}
 
 	public boolean assignMaterial(Set<MaterialAndMapping> materials) {
-		return courseOrder.assignMaterial(materials);
+		return courseOrder.assignMaterial(materials.stream().map(MaterialAndMapping::material).collect(
+				Collectors.toSet()));
 	}
 
 	//region setter/getter

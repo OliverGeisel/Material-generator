@@ -3,7 +3,8 @@ package de.olivergeisel.materialgenerator.finalization.parts;
 import de.olivergeisel.materialgenerator.core.course.MaterialOrderPart;
 import de.olivergeisel.materialgenerator.core.courseplan.structure.Relevance;
 import de.olivergeisel.materialgenerator.finalization.Topic;
-import de.olivergeisel.materialgenerator.generation.material.MaterialAndMapping;
+import de.olivergeisel.materialgenerator.finalization.material_assign.MaterialAssigner;
+import de.olivergeisel.materialgenerator.generation.material.Material;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -16,16 +17,22 @@ import java.util.UUID;
 public abstract class MaterialOrderCollection extends MaterialOrderPart {
 
 	@ElementCollection
-	private final Set<String> alias = new HashSet<>(); // KnowledgeObject ids
+	private final Set<String> alias = new HashSet<>(); // KnowledgeObject (Structure) ids
 
 	@ManyToOne
 	private Topic topic;
+
+	protected MaterialOrderCollection() {
+		super();
+	}
 
 	public abstract Relevance updateRelevance();
 
 	public abstract int materialCount();
 
-	public abstract boolean assignMaterial(Set<MaterialAndMapping> materials);
+	public abstract boolean assignMaterial(Set<Material> materials);
+
+	public abstract boolean assignMaterial(MaterialAssigner assigner);
 
 	public boolean addAlias(String alternative) {
 		if (alternative == null || alternative.isBlank())

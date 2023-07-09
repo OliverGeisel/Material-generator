@@ -3,8 +3,8 @@ package de.olivergeisel.materialgenerator.finalization.parts;
 import de.olivergeisel.materialgenerator.core.course.MaterialOrderPart;
 import de.olivergeisel.materialgenerator.core.courseplan.CoursePlan;
 import de.olivergeisel.materialgenerator.finalization.Goal;
+import de.olivergeisel.materialgenerator.finalization.material_assign.BasicMaterialAssigner;
 import de.olivergeisel.materialgenerator.generation.material.Material;
-import de.olivergeisel.materialgenerator.generation.material.MaterialAndMapping;
 
 import javax.persistence.*;
 import java.util.*;
@@ -62,8 +62,10 @@ public class CourseOrder {
 	 * @param materials Materials to assign
 	 * @return True if all chapters, groups and parts could assign to the materials. False otherwise
 	 */
-	public boolean assignMaterial(Set<MaterialAndMapping> materials) {
-		chapterOrder.forEach(c -> c.assignMaterial(materials));
+	public boolean assignMaterial(Set<Material> materials) {
+		var materialAssigner =
+				new BasicMaterialAssigner(materials);
+		chapterOrder.forEach(c -> c.assignMaterial(materialAssigner));
 		return true;
 	}
 

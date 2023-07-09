@@ -6,8 +6,8 @@ import de.olivergeisel.materialgenerator.core.courseplan.structure.StructureElem
 import de.olivergeisel.materialgenerator.core.courseplan.structure.StructureGroup;
 import de.olivergeisel.materialgenerator.core.courseplan.structure.StructureTask;
 import de.olivergeisel.materialgenerator.finalization.Goal;
+import de.olivergeisel.materialgenerator.finalization.material_assign.MaterialAssigner;
 import de.olivergeisel.materialgenerator.generation.material.Material;
-import de.olivergeisel.materialgenerator.generation.material.MaterialAndMapping;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -28,8 +28,9 @@ public class GroupOrder extends MaterialOrderCollection {
 	 */
 	public GroupOrder(StructureElementPart part, Set<Goal> goals) throws IllegalArgumentException {
 		if (part == null) throw new IllegalArgumentException("group must not be null");
-		if (!(part instanceof StructureGroup group))
+		if (!(part instanceof StructureGroup group)) {
 			throw new IllegalArgumentException("part must be a StructureGroup");
+		}
 		for (var task : group.getParts()) {
 			if (task instanceof StructureTask sTask) {
 				taskOrder.add(new TaskOrder(sTask, goals));
@@ -93,8 +94,20 @@ public class GroupOrder extends MaterialOrderCollection {
 	}
 
 	@Override
-	public boolean assignMaterial(Set<MaterialAndMapping> materials) {
+	public boolean assignMaterial(Set<Material> materials) {
 		taskOrder.forEach(t -> t.assignMaterial(materials));
+		return true;
+	}
+
+	/**
+	 * Assigns materials to this part.
+	 *
+	 * @param assigner the assigner to use
+	 * @return true if materials were assigned
+	 */
+	@Override
+	public boolean assignMaterial(MaterialAssigner assigner) {
+		taskOrder.forEach(t -> t.assignMaterial(assigner));
 		return true;
 	}
 
