@@ -7,7 +7,7 @@ import java.util.*;
 public class KnowledgeFragment extends KnowledgeObject {
 
 	private final List<KnowledgeObject> children = new ArrayList<>();
-	private String name;
+	private       String                name;
 
 	public KnowledgeFragment(String name) {
 		this(name, null);

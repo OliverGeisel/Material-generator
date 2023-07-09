@@ -7,7 +7,7 @@ import de.olivergeisel.materialgenerator.generation.material.MaterialMappingEntr
 import java.util.*;
 
 public class GeneratorOutput {
-	private final List<Material> allMaterial = new LinkedList<>();
+	private final List<Material>             allMaterial = new LinkedList<>();
 	private final List<MaterialMappingEntry> allMappings = new LinkedList<>();
 
 	public void add(MaterialAndMapping materialAndMapping) {
@@ -65,7 +65,9 @@ public class GeneratorOutput {
 	public Set<MaterialAndMapping> getMaterialAndMapping() {
 		Set<MaterialAndMapping> result = new HashSet<>();
 		for (var material : allMaterial) {
-			result.add(new MaterialAndMapping(material, allMappings.stream().filter(m -> m.getMaterial() == material).findFirst().orElseThrow()));
+			result.add(new MaterialAndMapping(material,
+											  allMappings.stream().filter(m -> m.getMaterial() == material).findFirst()
+														 .orElseThrow()));
 		}
 		return result;
 	}

@@ -22,6 +22,7 @@ public class TextTemplate extends BasicTemplate {
 
 	private String text;
 	private String headline;
+
 	public TextTemplate() {
 		super(TemplateType.TEXT);
 	}

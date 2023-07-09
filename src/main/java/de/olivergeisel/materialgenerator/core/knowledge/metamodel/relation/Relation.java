@@ -4,12 +4,12 @@ import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.Knowle
 
 public abstract class Relation {
 
-	private final RelationType type;
-	private final String name;
-	private String fromId;
-	private String toId;
-	private KnowledgeElement from;
-	private KnowledgeElement to;
+	private final RelationType     type;
+	private final String           name;
+	private       String           fromId;
+	private       String           toId;
+	private       KnowledgeElement from;
+	private       KnowledgeElement to;
 
 	protected Relation(String name, String fromId, String toId, RelationType type) {
 		if (fromId == null || toId == null || type == null || name == null) {
@@ -21,7 +21,7 @@ public abstract class Relation {
 		this.name = name;
 	}
 
-//region getter / setter
+	//region setter/getter
 	public String getFromId() {
 		return fromId;
 	}
@@ -43,7 +43,6 @@ public abstract class Relation {
 		return name;
 	}
 
-//region setter/getter
 	/**
 	 * Get the target of the relation
 	 *
@@ -70,20 +69,11 @@ public abstract class Relation {
 		this.to = to;
 		toId = to.getId();
 	}
-//endregion
 
 	public RelationType getType() {
 		return type;
 	}
 //endregion
-
-	@Override
-	public int hashCode() {
-		int result = name.hashCode();
-		result = 31 * result + fromId.hashCode();
-		result = 31 * result + toId.hashCode();
-		return result;
-	}
 
 	@Override
 	public boolean equals(Object o) {
@@ -93,6 +83,14 @@ public abstract class Relation {
 		if (!name.equals(relation.name)) return false;
 		if (!fromId.equals(relation.fromId)) return false;
 		return toId.equals(relation.toId);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = name.hashCode();
+		result = 31 * result + fromId.hashCode();
+		result = 31 * result + toId.hashCode();
+		return result;
 	}
 
 	@Override

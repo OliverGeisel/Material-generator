@@ -14,10 +14,12 @@ import java.util.Set;
 @Component
 public class TemplateSetInitializer implements CommandLineRunner {
 
-	private static final Set<String> ignoredFiles = Set.of("exclude", "include", "INCLUDE", "ignore", "help", "COURSE", "MATERIAL", "CHAPTER", "GROUP");
-	private static final String TEMPLATE_PATH = "templateSets";
-	private final TemplateSetRepository repository;
-	private final TemplateInfoRepository templateInfoRepository;
+	private static final Set<String>            ignoredFiles  = Set.of("exclude", "include", "INCLUDE", "ignore",
+																	   "help", "COURSE", "MATERIAL", "CHAPTER",
+																	   "GROUP");
+	private static final String                 TEMPLATE_PATH = "templateSets";
+	private final        TemplateSetRepository  repository;
+	private final        TemplateInfoRepository templateInfoRepository;
 
 	public TemplateSetInitializer(TemplateSetRepository repository, TemplateInfoRepository templateInfoRepository) {
 		this.repository = repository;

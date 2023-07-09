@@ -23,12 +23,6 @@ public class TemplateController {
 		this.templateService = templateService;
 	}
 
-
-	@GetMapping({"/", ""})
-	public String getTemplate() {
-		return PATH + "index";
-	}
-
 	@GetMapping("detail/{id}")
 	public String getTemplateDetail(@PathVariable("id") String id, Model model) {
 		model.addAttribute("template", templateService.getTemplateSet(id));
@@ -39,4 +33,11 @@ public class TemplateController {
 	public String uploadTemplate() {
 		return PATH + "upload";
 	}
+
+	//region setter/getter
+	@GetMapping({"/", ""})
+	public String getTemplate() {
+		return PATH + "index";
+	}
+//endregion
 }

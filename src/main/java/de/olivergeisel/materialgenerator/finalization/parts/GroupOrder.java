@@ -109,6 +109,7 @@ public class GroupOrder extends MaterialOrderCollection {
 	}
 
 	//region setter/getter
+
 	/**
 	 * Get the relevance of this part.
 	 *

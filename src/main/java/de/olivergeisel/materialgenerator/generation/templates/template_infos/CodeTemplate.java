@@ -34,7 +34,7 @@ public class CodeTemplate extends BasicTemplate {
 		super(TemplateType.CODE);
 	}
 
-//region setter/getter
+	//region setter/getter
 	public String getLanguage() {
 		return language;
 	}

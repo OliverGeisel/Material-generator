@@ -15,7 +15,9 @@ public class CustomRelation extends Relation {
 		customType = type;
 	}
 
-	public RelationType getType() {
-		return customType;
-	}
+//region setter/getter
+public RelationType getType() {
+	return customType;
+}
+//endregion
 }

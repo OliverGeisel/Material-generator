@@ -17,8 +17,8 @@ public class Topic {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", nullable = false)
-	private UUID id;
-	private UUID goalId;
+	private UUID   id;
+	private UUID   goalId;
 
 	public Topic(ContentTarget contentTarget, Goal goal) {
 		if (contentTarget == null) {

@@ -22,7 +22,7 @@ public class CourseGroup extends CourseChapterCollectionPart {
 		if (part instanceof CourseChapterCollectionPart collection && collection != this) {
 			for (var subPart : collection.parts) {
 				if (part == subPart ||
-						subPart instanceof CourseChapterCollectionPart subCollection && subCollection.contains(part)) {
+					subPart instanceof CourseChapterCollectionPart subCollection && subCollection.contains(part)) {
 					return true;
 				}
 			}

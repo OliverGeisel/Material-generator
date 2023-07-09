@@ -9,17 +9,18 @@ import java.util.List;
  * The Goal has an expression that is a level of complexity based on Bloom-Taxonomie. </br>
  * Every Goal has a Master-Keyword which link the goal with the structure from the knowledgemodel.
  * Normally you define an educational goal as complete sentence.
- * In the complete Sentence are more than one keyword from the knowledgemodel. So the relevant keywords are in the specific Words
+ * In the complete Sentence are more than one keyword from the knowledgemodel. So the relevant keywords are in the
+ * specific Words
  * Example:
  */
 public class ContentGoal {
 
 	private final ContentGoalExpression expression;
-	private final String masterKeyword;
-	private final List<ContentTarget> content;
+	private final String                masterKeyword;
+	private final List<ContentTarget>   content;
 	//private final List<String> specificWords;
-	private final String completeSentence;
-	private String name;
+	private final String                completeSentence;
+	private       String                name;
 
 	protected ContentGoal() {
 		this.expression = ContentGoalExpression.FIRST_LOOK;
@@ -29,11 +30,13 @@ public class ContentGoal {
 		this.name = "";
 	}
 
-	public ContentGoal(ContentGoalExpression expression, String masterKeyword, List<ContentTarget> content, String completeSentence) {
+	public ContentGoal(ContentGoalExpression expression, String masterKeyword, List<ContentTarget> content,
+					   String completeSentence) {
 		this(expression, masterKeyword, content, completeSentence, "");
 	}
 
-	public ContentGoal(ContentGoalExpression expression, String masterKeyword, List<ContentTarget> content, String completeSentence, String name) {
+	public ContentGoal(ContentGoalExpression expression, String masterKeyword, List<ContentTarget> content,
+					   String completeSentence, String name) {
 		this.expression = expression;
 		this.masterKeyword = masterKeyword;
 		//this.specificWords = specificWords;
@@ -54,8 +57,7 @@ public class ContentGoal {
 		return content.remove(target);
 	}
 
-	//region getter / setter
-	//
+	//region setter/getter
 	public String getCompleteSentence() {
 		return completeSentence;
 	}

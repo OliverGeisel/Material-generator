@@ -26,17 +26,17 @@ import java.util.Set;
 
 public class KnowledgeParser {
 
-	public static final String TYPE = "type";
-	public static final String ID = "id";
-	public static final String STRUCTURE = "structure";
-	public static final String CONTENT = "content";
-	public static final String RELATIONS = "relations";
+	public static final String TYPE          = "type";
+	public static final String ID            = "id";
+	public static final String STRUCTURE     = "structure";
+	public static final String CONTENT       = "content";
+	public static final String RELATIONS     = "relations";
 	public static final String RELATION_TYPE = "relation_type";
-	public static final String RELATION_ID = "relation_id";
+	public static final String RELATION_ID   = "relation_id";
 	// Source fields
-	public static final String NAME = "name";
+	public static final String NAME          = "name";
 	// Structure fields
-	public static final String CHILDREN = "children";
+	public static final String CHILDREN      = "children";
 
 	Logger logger = LoggerFactory.getLogger(KnowledgeParser.class);
 
@@ -51,7 +51,8 @@ public class KnowledgeParser {
 	private Set<Relation> createRelation(List<Map<String, String>> relationsJSON, KnowledgeElement fromElement) {
 		var back = new HashSet<Relation>();
 		for (var relation : relationsJSON) {
-			var newRelation = RelationGenerator.create(relation.get(RELATION_TYPE), fromElement.getId(), relation.get(RELATION_ID));
+			var newRelation = RelationGenerator.create(relation.get(RELATION_TYPE), fromElement.getId(),
+													   relation.get(RELATION_ID));
 			back.add(newRelation);
 		}
 		return back;

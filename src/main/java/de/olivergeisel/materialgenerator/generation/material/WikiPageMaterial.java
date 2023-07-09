@@ -9,15 +9,15 @@ import java.util.List;
 public class WikiPageMaterial extends ComplexMaterial {
 
 	@ManyToOne
-	private Material definition;
+	private Material       definition;
 	@ManyToOne
-	private Material synonym;
+	private Material       synonym;
 	@ManyToOne
-	private Material acronym;
+	private Material       acronym;
 	@ManyToMany
 	private List<Material> texts;
 	@ManyToOne
-	private Material example;
+	private Material       example;
 
 	public WikiPageMaterial(List<Material> parts) {
 		super(MaterialType.WIKI, parts);

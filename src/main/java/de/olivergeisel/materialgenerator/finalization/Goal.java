@@ -11,17 +11,17 @@ import java.util.UUID;
 @Entity
 public class Goal {
 	private final ContentGoalExpression expression;
-	private final String masterKeyword;
+	private final String                masterKeyword;
 	@OneToMany(mappedBy = "goalId", cascade = CascadeType.ALL, orphanRemoval = true)
-	private final List<Topic> topics = new LinkedList<>();
+	private final List<Topic>           topics = new LinkedList<>();
 	//private final List<String> specificWords;
 	@Column(length = 2_000)
-	private final String      completeSentence;
+	private final String                completeSentence;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", nullable = false)
-	private UUID id;
-	private String name;
+	private       UUID                  id;
+	private       String                name;
 
 	public Goal() {
 		this.expression = ContentGoalExpression.FIRST_LOOK;
@@ -43,7 +43,9 @@ public class Goal {
 	}
 
 	boolean isSame(ContentGoal contentGoal) {
-		return expression == contentGoal.getExpression() && masterKeyword.equals(contentGoal.getMasterKeyword()) && completeSentence.equals(contentGoal.getCompleteSentence()) && topics.size() == contentGoal.getContent().size();
+		return expression == contentGoal.getExpression() && masterKeyword.equals(contentGoal.getMasterKeyword())
+			   && completeSentence.equals(contentGoal.getCompleteSentence())
+			   && topics.size() == contentGoal.getContent().size();
 	}
 
 	//region setter/getter

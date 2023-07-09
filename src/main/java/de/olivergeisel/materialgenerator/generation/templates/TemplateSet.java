@@ -10,14 +10,14 @@ import java.util.UUID;
 @Entity
 public class TemplateSet {
 	@Transient
-	private final BasicTemplates basicTemplates = new BasicTemplates();
+	private final BasicTemplates     basicTemplates = new BasicTemplates();
 	@OneToMany
 	private final Set<ExtraTemplate> extraTemplates = new HashSet<>();
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", nullable = false)
-	private UUID id;
-	private String name;
+	private       UUID               id;
+	private       String             name;
 
 	public TemplateSet() {
 	}

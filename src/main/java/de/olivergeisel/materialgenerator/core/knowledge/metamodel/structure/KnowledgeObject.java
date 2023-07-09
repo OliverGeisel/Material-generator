@@ -9,7 +9,7 @@ import java.util.Set;
 
 public abstract class KnowledgeObject {
 	private final Set<KnowledgeElement> linkedElements;
-	private final String id;
+	private final String                id;
 
 	protected KnowledgeObject(String id) {
 		this.id = id;
@@ -19,6 +19,16 @@ public abstract class KnowledgeObject {
 	public boolean linkElement(KnowledgeElement element) {
 		return linkedElements.add(element);
 	}
+
+	//region setter/getter
+	public String getId() {
+		return id;
+	}
+
+	public Set<KnowledgeElement> getLinkedElements() {
+		return Collections.unmodifiableSet(linkedElements);
+	}
+//endregion
 
 	@Override
 	public boolean equals(Object o) {
@@ -32,17 +42,6 @@ public abstract class KnowledgeObject {
 	public int hashCode() {
 		return id.hashCode();
 	}
-
-
-	public String getId() {
-		return id;
-	}
-
-	//region setter/getter
-	public Set<KnowledgeElement> getLinkedElements() {
-		return Collections.unmodifiableSet(linkedElements);
-	}
-//endregion
 
 
 }

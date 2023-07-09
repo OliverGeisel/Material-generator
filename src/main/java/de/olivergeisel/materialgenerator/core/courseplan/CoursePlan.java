@@ -10,16 +10,19 @@ import java.util.*;
 public class CoursePlan {
 
 	private final UUID id = UUID.randomUUID();
+
 	//-----------METATDATA---------------------
 	private final CourseMetadata metadata;
 
 	//-----------CONTENT-----------------------
-	private final Set<ContentGoal> goals;
+	private final Set<ContentGoal>    goals;
 	private final List<ContentTarget> targets;
+
 	//-----------STRUCTURE---------------------
 	private final CourseStructure structure;
 
-	public CoursePlan(CourseMetadata metadata, Collection<ContentGoal> goals, CourseStructure structure, Collection<ContentTarget> targets) {
+	public CoursePlan(CourseMetadata metadata, Collection<ContentGoal> goals, CourseStructure structure,
+					  Collection<ContentTarget> targets) {
 		this.metadata = metadata;
 		this.goals = new HashSet<>();
 		this.goals.addAll(goals);
@@ -29,10 +32,10 @@ public class CoursePlan {
 
 	}
 
-//
-public Set<ContentGoal> getGoals() {
-	return goals;
-}
+	//region setter/getter
+	public Set<ContentGoal> getGoals() {
+		return goals;
+	}
 
 	public CourseMetadata getMetadata() {
 		return metadata;
@@ -46,12 +49,8 @@ public Set<ContentGoal> getGoals() {
 		return targets;
 	}
 
-//region getter / setter
 	public UUID getId() {
 		return id;
 	}
 //endregion
-//
-
-
 }

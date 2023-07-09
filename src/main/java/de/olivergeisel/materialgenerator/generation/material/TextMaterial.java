@@ -20,7 +20,7 @@ public class TextMaterial extends Material {
 		super(MaterialType.WIKI);
 	}
 
-//region setter/getter
+	//region setter/getter
 	public String getHeadline() {
 		return headline;
 	}

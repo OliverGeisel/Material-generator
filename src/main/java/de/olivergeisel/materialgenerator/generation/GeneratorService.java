@@ -25,15 +25,18 @@ import static de.olivergeisel.materialgenerator.generation.TemplateService.PLAIN
 @Transactional
 public class GeneratorService {
 
-	private final KnowledgeManagement knowledgeManagement;
-	private final FinalizationService finalizationService;
-	private final TemplateSetRepository templateSetRepository;
-	private final MaterialRepository materialRepository;
-	private final MappingRepository mappingRepository;
-	private final TemplateInfoRepository templateInfoRepository;
+	private final KnowledgeManagement     knowledgeManagement;
+	private final FinalizationService     finalizationService;
+	private final TemplateSetRepository   templateSetRepository;
+	private final MaterialRepository      materialRepository;
+	private final MappingRepository       mappingRepository;
+	private final TemplateInfoRepository  templateInfoRepository;
 	private final BasicTemplateRepository basicTemplateRepository;
 
-	public GeneratorService(KnowledgeManagement knowledgeManagement, FinalizationService finalizationService, TemplateSetRepository templateSetRepository, MaterialRepository materialRepository, MappingRepository mappingRepository, TemplateInfoRepository templateInfoRepository, BasicTemplateRepository basicTemplateRepository) {
+	public GeneratorService(KnowledgeManagement knowledgeManagement, FinalizationService finalizationService,
+							TemplateSetRepository templateSetRepository, MaterialRepository materialRepository,
+							MappingRepository mappingRepository, TemplateInfoRepository templateInfoRepository,
+							BasicTemplateRepository basicTemplateRepository) {
 		this.knowledgeManagement = knowledgeManagement;
 		this.finalizationService = finalizationService;
 		this.templateSetRepository = templateSetRepository;

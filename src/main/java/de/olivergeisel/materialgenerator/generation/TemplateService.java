@@ -16,12 +16,12 @@ import java.util.*;
 @Service
 public class TemplateService {
 
-	public static final String PLAIN = "blank";
-	public static final String ILLUSTRATED = "color";
-	public static final List<String> OPTIONS = List.of(PLAIN, ILLUSTRATED);
-	public static final String TEMPLATE_SET_FROM_TEMPLATES_FOLDER = "../templateSets/";
-	private static final String TEMPLATE_SET_PATH = "src/main/resources/templateSets/";
-	private static final String HTML = ".html";
+	public static final  String       PLAIN                              = "blank";
+	public static final  String       ILLUSTRATED                        = "color";
+	public static final  List<String> OPTIONS                            = List.of(PLAIN, ILLUSTRATED);
+	public static final  String       TEMPLATE_SET_FROM_TEMPLATES_FOLDER = "../templateSets/";
+	private static final String       TEMPLATE_SET_PATH                  = "src/main/resources/templateSets/";
+	private static final String       HTML                               = ".html";
 
 	private final TemplateSetRepository repository;
 
@@ -64,7 +64,9 @@ public class TemplateService {
 		TemplateSet templateSet = new TemplateSet();
 		templateSet.setName(dir.getName());
 		//setBasicTemplates(templateSet, dir);
-		var extraTemplates = Arrays.stream(Objects.requireNonNull(dir.listFiles())).filter(file -> !BasicTemplates.TEMPLATES.contains(file.getName().replace(HTML, "").toUpperCase())).toList();
+		var extraTemplates = Arrays.stream(Objects.requireNonNull(dir.listFiles()))
+								   .filter(file -> !BasicTemplates.TEMPLATES.contains(
+										   file.getName().replace(HTML, "").toUpperCase())).toList();
 		for (File file : extraTemplates) {
 			if (file.isDirectory()) {
 				templateSet.addAllTemplates(loadExtraTemplates(file).toArray(new TemplateInfo[0]));
@@ -77,7 +79,8 @@ public class TemplateService {
 
 	@Deprecated
 	private void setBasicTemplates(TemplateSet templateSet, File dir) {
-	 /*	var containingTemplates = Arrays.stream(dir.listFiles()).map(it -> it.getName().replace(HTML, "").toUpperCase()).toList();
+	 /*	var containingTemplates = Arrays.stream(dir.listFiles()).map(it -> it.getName().replace(HTML, "").toUpperCase
+	 ()).toList();
 		if (containingTemplates.contains("DEFINITION")) {
 			templateSet.setDefinitionTemplate(new DefinitionTemplate(new File(dir, "DEFINITION" + HTML)));
 		}

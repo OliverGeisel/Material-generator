@@ -2,8 +2,8 @@ package de.olivergeisel.materialgenerator.core.courseplan.content;
 
 public class Curriculum {
 
-	private String name;
-	private String description;
+	private String       name;
+	private String       description;
 	private MainFocusSet focusSet;
 
 	public Curriculum(String name, String description, MainFocusSet focusSet) {
@@ -12,7 +12,8 @@ public class Curriculum {
 		this.focusSet = focusSet;
 	}
 
-	//
+//region setter/getter
+
 	public String getDescription() {
 		return description;
 	}
@@ -36,5 +37,6 @@ public class Curriculum {
 	public void setName(String name) {
 		this.name = name;
 	}
-//
+//endregion
+
 }

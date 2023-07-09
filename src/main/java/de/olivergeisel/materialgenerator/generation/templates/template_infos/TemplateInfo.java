@@ -27,7 +27,7 @@ public abstract class TemplateInfo {
 	/**
 	 * The name of the main term. the material is related to.
 	 */
-	private UUID mainTermId;
+	private             UUID         mainTermId;
 
 	protected TemplateInfo(TemplateType templateType, UUID mainTermId) {
 		this.templateType = templateType;

@@ -8,7 +8,7 @@ public class MainController {
 
 
 	@GetMapping({"", "/", "index.html", "index"})
-	String landing(){
+	String landing() {
 		return "index";
 	}
 

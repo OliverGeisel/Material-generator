@@ -9,7 +9,7 @@ public class ContentTarget {
 
 	public static final ContentTarget EMPTY = new ContentTarget("NO_TARGET");
 
-	private String value;
+	private String      value;
 	private ContentGoal relatedGoal;
 
 	protected ContentTarget() {
@@ -20,8 +20,7 @@ public class ContentTarget {
 		this.value = value;
 	}
 
-//region getter / setter
-
+	//region setter/getter
 	public String getValue() {
 		return value;
 	}
@@ -44,18 +43,18 @@ public class ContentTarget {
 //endregion
 
 	@Override
-	public int hashCode() {
-		int result = value != null ? value.hashCode() : 0;
-		result = 31 * result + (relatedGoal != null ? relatedGoal.hashCode() : 0);
-		return result;
-	}
-
-	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof ContentTarget that)) return false;
 
 		if (!Objects.equals(value, that.value)) return false;
 		return Objects.equals(relatedGoal, that.relatedGoal);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = value != null ? value.hashCode() : 0;
+		result = 31 * result + (relatedGoal != null ? relatedGoal.hashCode() : 0);
+		return result;
 	}
 }

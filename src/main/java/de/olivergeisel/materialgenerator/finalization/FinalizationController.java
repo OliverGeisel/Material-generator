@@ -23,14 +23,15 @@ public class FinalizationController {
 
 	private static final String TEMPLATE_SET_FROM_TEMPLATES_FOLDER = "../templateSets/";
 
-	private static final String PATH = "finalization/";
-	private static final String REDIRECT_EDIT = "redirect:/edit/";
-	private final RawCourseRepository repository;
+	private static final String              PATH          = "finalization/";
+	private static final String              REDIRECT_EDIT = "redirect:/edit/";
+	private final        RawCourseRepository repository;
 
 	private final FinalizationService service;
-	private final MaterialRepository materialRepository;
+	private final MaterialRepository  materialRepository;
 
-	public FinalizationController(RawCourseRepository repository, FinalizationService service, MaterialRepository materialRepository) {
+	public FinalizationController(RawCourseRepository repository, FinalizationService service,
+								  MaterialRepository materialRepository) {
 		this.repository = repository;
 		this.service = service;
 		this.materialRepository = materialRepository;
@@ -47,7 +48,8 @@ public class FinalizationController {
 	public String editCourse(@PathVariable UUID id, Model model) {
 		return repository.findById(id).map(course -> {
 			model.addAttribute("course", course);
-			model.addAttribute("RELEVANCE", Arrays.stream(Relevance.values()).filter(it -> it != Relevance.TO_SET).toList());
+			model.addAttribute("RELEVANCE",
+							   Arrays.stream(Relevance.values()).filter(it -> it != Relevance.TO_SET).toList());
 			return PATH + "edit-course";
 		}).orElse(REDIRECT_EDIT);
 	}
@@ -99,7 +101,8 @@ public class FinalizationController {
 
 
 	@GetMapping("view")
-	public String viewOverview(@RequestParam("materialId") UUID materialId, @RequestParam("templateSet") String templateSet, Model model) {
+	public String viewOverview(@RequestParam("materialId") UUID materialId,
+							   @RequestParam("templateSet") String templateSet, Model model) {
 		AtomicReference<String> materialType = new AtomicReference<>();
 		materialRepository.findById(materialId).ifPresent(material -> {
 			TemplateInfo info;

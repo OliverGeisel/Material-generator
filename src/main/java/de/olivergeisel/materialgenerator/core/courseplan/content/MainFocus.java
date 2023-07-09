@@ -3,9 +3,9 @@ package de.olivergeisel.materialgenerator.core.courseplan.content;
 public class MainFocus {
 	// Deutsch Schwerpunkt
 
-	private Comment comment;
+	private Comment     comment;
 	private ContentGoal goals;
-	private FocusType type;
+	private FocusType   type;
 
 	public MainFocus(Comment comment, ContentGoal goals, FocusType type) {
 		this.comment = comment;
@@ -13,11 +13,11 @@ public class MainFocus {
 		this.type = type;
 	}
 
-	//
-//
+	//region setter/getter
 	public ContentGoal getGoals() {
 		return goals;
 	}
+//endregion
 
 	private enum FocusType {
 

@@ -23,14 +23,15 @@ import static de.olivergeisel.materialgenerator.generation.TemplateService.*;
 @RequestMapping("/generator")
 public class GeneratorController {
 
-	private static final String UPLOAD = "UPLOAD";
-	private static final String PATH = "generation/";
-	private final GeneratorService service;
-	private final StorageService storageService;
-	private final TemplateSetRepository templateSetRepository;
-	private final MaterialRepository materialRepository;
+	private static final String                UPLOAD = "UPLOAD";
+	private static final String                PATH   = "generation/";
+	private final        GeneratorService      service;
+	private final        StorageService        storageService;
+	private final        TemplateSetRepository templateSetRepository;
+	private final        MaterialRepository    materialRepository;
 
-	public GeneratorController(GeneratorService service, StorageService storageService, TemplateSetRepository templateSetRepository, MaterialRepository materialRepository) {
+	public GeneratorController(GeneratorService service, StorageService storageService,
+							   TemplateSetRepository templateSetRepository, MaterialRepository materialRepository) {
 		this.service = service;
 		this.storageService = storageService;
 		this.templateSetRepository = templateSetRepository;
@@ -91,7 +92,9 @@ public class GeneratorController {
 	}
 
 	@PostMapping("overview")
-	public String overviewGeneration(@RequestParam MultipartFile plan, @RequestParam String curriculum, @RequestParam String template, Model model) throws IOException {
+	public String overviewGeneration(@RequestParam MultipartFile plan, @RequestParam String curriculum,
+									 @RequestParam String template, Model model)
+	throws IOException {
 		String planName;
 		if (curriculum.isBlank() || curriculum.equals(UPLOAD)) {
 			CoursePlanParser parser = new CoursePlanParser();
@@ -99,7 +102,8 @@ public class GeneratorController {
 				throw new IllegalArgumentException("No plan uploaded");
 			}
 			if (plan.getContentType() == null || !plan.getContentType().equals("application/json")) {
-				throw new WrongFileTypeException(String.format("Wrong file type. Must be application/json. But was %s", plan.getContentType()));
+				throw new WrongFileTypeException(
+						String.format("Wrong file type. Must be application/json. But was %s", plan.getContentType()));
 			}
 			try {
 				parser.parseFromFile(plan.getInputStream());

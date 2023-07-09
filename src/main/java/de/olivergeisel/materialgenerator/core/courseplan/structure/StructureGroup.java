@@ -19,25 +19,11 @@ public class StructureGroup extends StructureElementPart {
 		parts = new ArrayList<>();
 	}
 
-	public List<StructureElementPart> getParts() {
-		return parts;
-	}
-
-	@Override
-	public String toString() {
-		return "StructureGroup{" +
-				"name=" + getName() +
-				", parts=" + parts +
-				", relevance=" + relevance +
-				'}';
-	}
-
 	@Override
 	public Relevance updateRelevance() {
 		relevance = parts.stream().map(StructureElement::getRelevance).max(Enum::compareTo).orElseThrow();
 		return relevance;
 	}
-
 
 	public boolean add(StructureElementPart element) throws IllegalArgumentException {
 		if (element == this || contains(element)) {
@@ -69,5 +55,20 @@ public class StructureGroup extends StructureElementPart {
 			}
 		}
 		return back;
+	}
+
+	//region setter/getter
+	public List<StructureElementPart> getParts() {
+		return parts;
+	}
+//endregion
+
+	@Override
+	public String toString() {
+		return "StructureGroup{" +
+			   "name=" + getName() +
+			   ", parts=" + parts +
+			   ", relevance=" + relevance +
+			   '}';
 	}
 }

@@ -5,12 +5,11 @@ import de.olivergeisel.materialgenerator.core.knowledge.metamodel.KnowledgeModel
 import de.olivergeisel.materialgenerator.generation.templates.TemplateSet;
 
 public class GeneratorInput {
-	private TemplateSet templates;
+	private TemplateSet    templates;
 	private KnowledgeModel model;
-	private CoursePlan plan;
+	private CoursePlan     plan;
 
 	//region setter/getter
-	//region Getter and Setter
 	public CoursePlan getPlan() {
 		return plan;
 	}

@@ -9,10 +9,10 @@ import java.util.Set;
 public abstract class StructureElement {
 
 	private final Set<String> alias = new HashSet<>(); // KnowledgeObject ids
-	protected Relevance relevance;
+	protected     Relevance   relevance;
 
 	private ContentTarget topic;
-	private String name;
+	private String        name;
 
 	protected StructureElement() {
 
@@ -35,8 +35,8 @@ public abstract class StructureElement {
 
 	public abstract Relevance updateRelevance();
 
-	//region getter / setter
 
+	//region setter/getter
 	public Set<String> getAlternatives() {
 		return alias;
 	}
@@ -62,14 +62,6 @@ public abstract class StructureElement {
 	}
 //endregion
 
-	@Override
-	public int hashCode() {
-		int result = alias.hashCode();
-		result = 31 * result + (relevance != null ? relevance.hashCode() : 0);
-		result = 31 * result + (topic != null ? topic.hashCode() : 0);
-		result = 31 * result + (name != null ? name.hashCode() : 0);
-		return result;
-	}
 
 	@Override
 	public boolean equals(Object o) {
@@ -83,13 +75,22 @@ public abstract class StructureElement {
 	}
 
 	@Override
+	public int hashCode() {
+		int result = alias.hashCode();
+		result = 31 * result + (relevance != null ? relevance.hashCode() : 0);
+		result = 31 * result + (topic != null ? topic.hashCode() : 0);
+		result = 31 * result + (name != null ? name.hashCode() : 0);
+		return result;
+	}
+
+	@Override
 	public String toString() {
 		return "StructureElement{" +
-				"name='" + name +
-				", alias=" + alias +
-				", relevance=" + relevance +
-				", topic=" + topic + '\'' +
-				'}';
+			   "name='" + name +
+			   ", alias=" + alias +
+			   ", relevance=" + relevance +
+			   ", topic=" + topic + '\'' +
+			   '}';
 	}
 
 }

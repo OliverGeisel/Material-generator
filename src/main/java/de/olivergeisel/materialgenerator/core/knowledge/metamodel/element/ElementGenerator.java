@@ -7,19 +7,19 @@ import java.util.List;
 
 public class ElementGenerator {
 
+	public static final String TERM        = "TERM";
+	public static final String DEFINITION  = "DEFINITION";
+	public static final String FACT        = "FACT";
+	public static final String PROOF       = "PROOF";
+	public static final String EXERCISE    = "EXERCISE";
+	public static final String EXAMPLE     = "EXAMPLE";
+	public static final String EXPLANATION = "EXPLANATION";
+	public static final String NODE        = "NODE";
+	public static final String CODE        = "CODE";
+	public static final String STATEMENT   = "STATEMENT";
+
 	private ElementGenerator() {
 	}
-
-	public static final String TERM = "TERM";
-	public static final String DEFINITION = "DEFINITION";
-	public static final String FACT = "FACT";
-	public static final String PROOF = "PROOF";
-	public static final String EXERCISE = "EXERCISE";
-	public static final String EXAMPLE = "EXAMPLE";
-	public static final String EXPLANATION = "EXPLANATION";
-	public static final String NODE = "NODE";
-	public static final String CODE = "CODE";
-	public static final String STATEMENT = "STATEMENT";
 
 	/**
 	 * Creates a new KnowledgeElement of the given type.

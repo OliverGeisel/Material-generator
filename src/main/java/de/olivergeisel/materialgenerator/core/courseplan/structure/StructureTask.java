@@ -16,18 +16,18 @@ public class StructureTask extends StructureElementPart {
 	}
 
 	@Override
-	public String toString() {
-		return "StructureTask{" +
-				"name=" + getName() +
-				", topic=" + getTopic() +
-				", relevance=" + relevance +
-				'}';
-	}
-
-	@Override
 	public Relevance updateRelevance() {
 		// Nothing to do!
 		return relevance;
+	}
+
+	@Override
+	public String toString() {
+		return "StructureTask{" +
+			   "name=" + getName() +
+			   ", topic=" + getTopic() +
+			   ", relevance=" + relevance +
+			   '}';
 	}
 
 

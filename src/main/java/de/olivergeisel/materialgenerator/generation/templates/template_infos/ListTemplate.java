@@ -21,7 +21,7 @@ public class ListTemplate extends BasicTemplate {
 
 	@ElementCollection
 	private final List<String> entries = new LinkedList<>();
-	private String headline;
+	private       String       headline;
 
 	public ListTemplate() {
 		super(TemplateType.LIST);

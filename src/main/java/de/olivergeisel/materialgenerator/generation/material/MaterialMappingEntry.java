@@ -12,9 +12,9 @@ public class MaterialMappingEntry {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", nullable = false)
-	private UUID id = UUID.randomUUID();
+	private       UUID        id              = UUID.randomUUID();
 	@OneToOne(cascade = CascadeType.ALL)
-	private Material material;
+	private       Material    material;
 
 	public MaterialMappingEntry(Material material, KnowledgeElement... elements) {
 		this.material = material;
@@ -83,8 +83,8 @@ public class MaterialMappingEntry {
 	@Override
 	public String toString() {
 		return "MaterialMappingEntry{" +
-				"relatedElements=" + relatedElements +
-				", material=" + material +
-				'}';
+			   "relatedElements=" + relatedElements +
+			   ", material=" + material +
+			   '}';
 	}
 }

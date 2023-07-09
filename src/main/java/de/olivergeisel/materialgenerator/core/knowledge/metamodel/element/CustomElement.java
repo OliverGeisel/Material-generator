@@ -17,7 +17,9 @@ public class CustomElement extends KnowledgeElement {
 		this.name = name;
 	}
 
-	public String getName() {
-		return name;
-	}
+//region setter/getter
+public String getName() {
+	return name;
+}
+//endregion
 }

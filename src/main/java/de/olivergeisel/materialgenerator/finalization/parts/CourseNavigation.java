@@ -5,30 +5,31 @@ import de.olivergeisel.materialgenerator.generation.material.Material;
 import java.nio.file.Paths;
 
 public class CourseNavigation {
-	private final int size;
-	private final int prevSize;
-	private final int nextSize;
-	private final int previousCount;
-	private final int nextCount;
-	private boolean hasPrevious;
-	private boolean hasNext;
-	private int count;
-	private String nextChapter;
-	private String previousChapter;
-	private String overview;
-	private String nextTask;
-	private String previousTask;
-	private String nextGroup;
-	private String previousGroup;
-	private String nextMaterial;
-	private String previousMaterial;
-	private MaterialLevel level;
+	private final int           size;
+	private final int           prevSize;
+	private final int           nextSize;
+	private final int           previousCount;
+	private final int           nextCount;
+	private       boolean       hasPrevious;
+	private       boolean       hasNext;
+	private       int           count;
+	private       String        nextChapter;
+	private       String        previousChapter;
+	private       String        overview;
+	private       String        nextTask;
+	private       String        previousTask;
+	private       String        nextGroup;
+	private       String        previousGroup;
+	private       String        nextMaterial;
+	private       String        previousMaterial;
+	private       MaterialLevel level;
 
 	public CourseNavigation(MaterialLevel level) {
 		this(level, new MaterialHierarchy(), new MaterialHierarchy(), 0, 0);
 	}
 
-	public CourseNavigation(MaterialLevel level, MaterialHierarchy previous, MaterialHierarchy next, int number, int size) {
+	public CourseNavigation(MaterialLevel level, MaterialHierarchy previous, MaterialHierarchy next, int number,
+							int size) {
 		hasPrevious = number > 0;
 		hasNext = number < size - 1;
 		this.size = size;
@@ -52,7 +53,8 @@ public class CourseNavigation {
 		this.count = courseNavigation.count;
 		this.hasNext = courseNavigation.hasNext;
 		this.hasPrevious = courseNavigation.hasPrevious;
-		this.level = new MaterialLevel(courseNavigation.level.chapter, courseNavigation.level.group, courseNavigation.level.task, courseNavigation.level.material);
+		this.level = new MaterialLevel(courseNavigation.level.chapter, courseNavigation.level.group,
+									   courseNavigation.level.task, courseNavigation.level.material);
 		this.nextChapter = courseNavigation.nextChapter;
 		this.nextGroup = courseNavigation.nextGroup;
 		this.nextTask = courseNavigation.nextTask;
@@ -197,7 +199,8 @@ public class CourseNavigation {
 	}
 
 	public MaterialHierarchy getPreviousMaterialHierarchy() {
-		return new MaterialHierarchy(previousChapter, previousGroup, previousTask, previousMaterial, prevSize, previousCount);
+		return new MaterialHierarchy(previousChapter, previousGroup, previousTask, previousMaterial, prevSize,
+									 previousCount);
 	}
 
 	public MaterialHierarchy getNextMaterialHierarchy() {
@@ -270,7 +273,7 @@ public class CourseNavigation {
 		private String group;
 		private String task;
 		private String material;
-		private Level level;
+		private Level  level;
 
 		public MaterialLevel() {
 			this("", "", "", "");
@@ -332,7 +335,11 @@ public class CourseNavigation {
 //endregion
 
 		private enum Level {
-			CHAPTER, GROUP, TASK, MATERIAL, UNKNOWN
+			CHAPTER,
+			GROUP,
+			TASK,
+			MATERIAL,
+			UNKNOWN
 		}
 	}
 }

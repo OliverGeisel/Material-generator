@@ -82,18 +82,14 @@ public class KnowledgeManagement {
 		return parseFromFile(file);
 	}
 
-	//region getter / setter
-
-//region setter/getter
-	public KnowledgeModel getKnowledge() {
-		return knowledge;
-	}
-//endregion
-
 	public Set<KnowledgeElement> findRelatedData(String elementId) {
 		return getKnowledge().findAll(elementId);
 	}
 
+	//region setter/getter
+	public KnowledgeModel getKnowledge() {
+		return knowledge;
+	}
 //endregion
 
 }

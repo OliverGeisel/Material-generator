@@ -38,6 +38,6 @@ public class RelationGenerator {
 		}
 		var name = type != RelationType.CUSTOM ? idFromName(type.name(), fromId, toId) : UNKNOWN;
 		return type != RelationType.CUSTOM ?
-				new BasicRelation(type, fromId, toId) : new CustomRelation(name, fromId, toId, type);
+			   new BasicRelation(type, fromId, toId) : new CustomRelation(name, fromId, toId, type);
 	}
 }

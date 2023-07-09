@@ -14,8 +14,8 @@ public class ListMaterial extends Material {
 
 	@ElementCollection
 	private List<String> entries = new LinkedList<>();
-	private String headline;
-	private boolean numerated;
+	private String       headline;
+	private boolean      numerated;
 
 	public ListMaterial() {
 		super(MaterialType.WIKI);

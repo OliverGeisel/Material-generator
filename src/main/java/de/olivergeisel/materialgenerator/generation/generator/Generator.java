@@ -46,7 +46,8 @@ public interface Generator {
 //region setter/getter
 
 	/**
-	 * Method to check if the generator is ready to start the generation process. This method should be called after the input method and before the update method.
+	 * Method to check if the generator is ready to start the generation process. This method should be called after
+	 * the input method and before the update method.
 	 *
 	 * @return True if all inputs are valid and not null, false if not.
 	 */

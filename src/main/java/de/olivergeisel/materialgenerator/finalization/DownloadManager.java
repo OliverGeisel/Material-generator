@@ -25,9 +25,9 @@ import java.util.zip.ZipOutputStream;
 @Service
 public class DownloadManager {
 
-	private final Logger logger = org.slf4j.LoggerFactory.getLogger(DownloadManager.class);
-	private final ServletContext servletContext;
-	private Map<String, String> overallInfos = new HashMap<>();
+	private final Logger              logger       = org.slf4j.LoggerFactory.getLogger(DownloadManager.class);
+	private final ServletContext      servletContext;
+	private       Map<String, String> overallInfos = new HashMap<>();
 
 	public DownloadManager(ServletContext servletContext) {
 		this.servletContext = servletContext;
@@ -60,7 +60,8 @@ public class DownloadManager {
 		return Files.createTempDirectory("materialgenerator").toFile();
 	}
 
-	public void createZip(String name, String template, RawCourse plan, HttpServletRequest request, HttpServletResponse response) {
+	public void createZip(String name, String template, RawCourse plan, HttpServletRequest request,
+						  HttpServletResponse response) {
 		File tempDir = null;
 		File zipFile = null;
 		try {
@@ -143,7 +144,9 @@ public class DownloadManager {
 		}
 	}
 
-	private void exportCourse(RawCourse plan, String templateSet, File outputDir, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private void exportCourse(RawCourse plan, String templateSet, File outputDir, HttpServletRequest request,
+							  HttpServletResponse response)
+	throws IOException {
 		var templateEngine = createTemplateEngine(templateSet);
 		WebContext context = new WebContext(request, response, servletContext);
 		CourseNavigation.MaterialLevel level = new CourseNavigation.MaterialLevel();
@@ -170,7 +173,9 @@ public class DownloadManager {
 		saveIncludes(outputDir, templateSet);
 	}
 
-	private void exportChapter(ChapterOrder chapter, CourseNavigation.MaterialLevel level, CourseNavigation navigation, WebContext context, File outputDir, TemplateEngine templateEngine) throws IOException {
+	private void exportChapter(ChapterOrder chapter, CourseNavigation.MaterialLevel level, CourseNavigation navigation
+			, WebContext context, File outputDir, TemplateEngine templateEngine)
+	throws IOException {
 		context.setVariable("chapter", chapter);
 		var chapterOverview = templateEngine.process("CHAPTER", context);
 		saveTemplateToFile(chapterOverview, outputDir, "overview.html");
@@ -184,14 +189,18 @@ public class DownloadManager {
 			nextGroup = (i < groups.size() - 1) ? groups.get(i + 1) : null;
 			MaterialHierarchy next;
 			if (nextGroup == null) {
-				next = new MaterialHierarchy(navigation.getNextChapter(), null, null, null, navigation.getCount() + 1, navigation.getSize());
+				next = new MaterialHierarchy(navigation.getNextChapter(), null, null, null, navigation.getCount() + 1,
+											 navigation.getSize());
 			} else {
 				next = new MaterialHierarchy(level.getChapter(), level.getGroup(), null, null, i + 1, groups.size());
 			}
-			CourseNavigation newCourseNavigation = new CourseNavigation(newLevel, navigation.getCurrentMaterialHierarchy(), next, i, groups.size());
+			CourseNavigation newCourseNavigation = new CourseNavigation(newLevel,
+																		navigation.getCurrentMaterialHierarchy(), next,
+																		i, groups.size());
 
 			if (group instanceof GroupOrder group1) {
-				String groupName = group1.getName() == null || group.getName().isBlank() ? "Gruppe " + (chapter.getGroupOrder().indexOf(group) + 1) : group.getName();
+				String groupName = group1.getName() == null || group.getName().isBlank() ?
+								   "Gruppe " + (chapter.getGroupOrder().indexOf(group) + 1) : group.getName();
 				var subDir = new File(outputDir, groupName);
 				Files.createDirectory(subDir.toPath());
 				exportGroup(group1, newLevel, navigation, context, subDir, templateEngine);
@@ -199,13 +208,16 @@ public class DownloadManager {
 				var subDir = new File(outputDir, task.getName());
 				exportTask(task, context, subDir);
 			} */ else {
-				throw new IllegalArgumentException("Unknown substructure component! Must be either group or task inside a chapter.");
+				throw new IllegalArgumentException(
+						"Unknown substructure component! Must be either group or task inside a chapter.");
 			}
 			previousNavigation = newCourseNavigation;
 		}
 	}
 
-	private void exportGroup(GroupOrder group, CourseNavigation.MaterialLevel level, CourseNavigation navigation, WebContext context, File outputDir, TemplateEngine templateEngine) throws IOException {
+	private void exportGroup(GroupOrder group, CourseNavigation.MaterialLevel level, CourseNavigation navigation,
+							 WebContext context, File outputDir, TemplateEngine templateEngine)
+	throws IOException {
 		context.setVariable("group", group);
 		var chapterOverview = templateEngine.process("GROUP", context);
 		saveTemplateToFile(chapterOverview, outputDir, "overview.html");
@@ -215,34 +227,42 @@ public class DownloadManager {
 		CourseNavigation previousNavigation = navigation;
 		for (int i = 0; i < tasks.size(); i++) {
 			var task = tasks.get(i);
-			var newTaskLevel = new CourseNavigation.MaterialLevel(level.getChapter(), level.getGroup(), task.getName());
+			var newTaskLevel = new CourseNavigation.MaterialLevel(level.getChapter(), level.getGroup(),
+																  task.getName());
 			nextTask = (i < tasks.size() - 1) ? tasks.get(i + 1) : null;
 			MaterialHierarchy next;
 			if (nextTask == null) {
-				next = new MaterialHierarchy(level.getChapter(), navigation.getNextGroup(), null, null, navigation.getCount() + 1, navigation.getSize());
+				next = new MaterialHierarchy(level.getChapter(), navigation.getNextGroup(), null, null,
+											 navigation.getCount() + 1, navigation.getSize());
 			} else {
-				next = new MaterialHierarchy(level.getChapter(), level.getGroup(), nextTask.getName(), null, i + 1, tasks.size());
+				next = new MaterialHierarchy(level.getChapter(), level.getGroup(), nextTask.getName(), null, i + 1,
+											 tasks.size());
 			}
-			CourseNavigation newCourseNavigation = new CourseNavigation(newTaskLevel, navigation.getCurrentMaterialHierarchy(), next, i, tasks.size());
+			CourseNavigation newCourseNavigation = new CourseNavigation(newTaskLevel,
+																		navigation.getCurrentMaterialHierarchy(), next,
+																		i, tasks.size());
 			/*if (subChapter instanceof GroupOrder subGroup) {
 				var subDir = new File(outputDir, subGroup.getName());
 				Files.createDirectory(subDir.toPath());
 				exportGroup(subGroup, context, subDir);
 			} else */
 			if (task instanceof TaskOrder task1) {
-				String taskName = task1.getName() == null || task1.getName().isBlank() ? "Task " + (group.getTaskOrder().indexOf(task1) + 1) : task1.getName();
+				String taskName = task1.getName() == null || task1.getName().isBlank() ?
+								  "Task " + (group.getTaskOrder().indexOf(task1) + 1) : task1.getName();
 				var subDir = new File(outputDir, taskName);
 				Files.createDirectory(subDir.toPath());
 				exportTask(task1, newTaskLevel, newCourseNavigation, context, subDir, templateEngine);
 			} else {
-				throw new IllegalArgumentException("Unknown substructure component! Must be either group or task inside a group.");
+				throw new IllegalArgumentException(
+						"Unknown substructure component! Must be either group or task inside a group.");
 			}
 			previousTask = task;
 			previousNavigation = newCourseNavigation;
 		}
 	}
 
-	private void exportTask(TaskOrder task, CourseNavigation.MaterialLevel level, CourseNavigation navigation, WebContext context, File outputDir, TemplateEngine templateEngine) {
+	private void exportTask(TaskOrder task, CourseNavigation.MaterialLevel level, CourseNavigation navigation,
+							WebContext context, File outputDir, TemplateEngine templateEngine) {
 		final int taskSize = task.getMaterialOrder().size();
 		var materials = task.getMaterialOrder();
 		Material previousMaterial = null;
@@ -255,19 +275,28 @@ public class DownloadManager {
 			nextMaterial = (i < materials.size() - 1) ? materials.get(i + 1) : null;
 			MaterialHierarchy next;
 			if (nextMaterial == null) {
-				next = new MaterialHierarchy(level.getChapter(), level.getGroup(), navigation.getNextTask(), null, navigation.getCount() + 1, navigation.getSize());
+				next = new MaterialHierarchy(level.getChapter(), level.getGroup(), navigation.getNextTask(), null,
+											 navigation.getCount() + 1, navigation.getSize());
 			} else {
-				next = new MaterialHierarchy(level.getChapter(), level.getGroup(), level.getTask(), "MATERIAL_" + (i + 1), i + 1, materials.size());
+				next = new MaterialHierarchy(level.getChapter(), level.getGroup(), level.getTask(),
+											 "MATERIAL_" + (i + 1), i + 1, materials.size());
 			}
-			CourseNavigation.MaterialLevel materialLevel = new CourseNavigation.MaterialLevel(level.getChapter(), level.getGroup(), task.getName(), "MATERIAL_" + i);
-			CourseNavigation newNavigation = new CourseNavigation(materialLevel, previousNavigation.getCurrentMaterialHierarchy(), next, i, taskSize);
+			CourseNavigation.MaterialLevel materialLevel = new CourseNavigation.MaterialLevel(level.getChapter(),
+																							  level.getGroup(),
+																							  task.getName(),
+																							  "MATERIAL_" + i);
+			CourseNavigation newNavigation = new CourseNavigation(materialLevel,
+																  previousNavigation.getCurrentMaterialHierarchy(),
+																  next, i, taskSize);
 			exportMaterial(context, outputDir, templateEngine, i, material, materialLevel, newNavigation);
 			previousMaterial = material;
 			previousNavigation = newNavigation;
 		}
 	}
 
-	private void exportMaterial(WebContext context, File outputDir, TemplateEngine templateEngine, int materialNumber, Material material, CourseNavigation.MaterialLevel materialLevel, CourseNavigation newNavigation) {
+	private void exportMaterial(WebContext context, File outputDir, TemplateEngine templateEngine, int materialNumber,
+								Material material, CourseNavigation.MaterialLevel materialLevel,
+								CourseNavigation newNavigation) {
 		setOverallInfos(context);
 		context.setVariable("material", material);
 		context.setVariable("navigation", newNavigation);
@@ -276,14 +305,6 @@ public class DownloadManager {
 		String processedHtml = templateEngine.process("MATERIAL", context);
 		saveTemplateToFile(processedHtml, outputDir, String.format("Material_%s.html", materialNumber));
 	}
-
-//region setter/getter
-	private void setOverallInfos(WebContext context) {
-		for (var entry : overallInfos.entrySet()) {
-			context.setVariable(entry.getKey(), entry.getValue());
-		}
-	}
-//endregion
 
 	private void saveTemplateToFile(String templateContent, File outputDir, String fileName) {
 		try (Writer writer = new BufferedWriter(new FileWriter(new File(outputDir, fileName)))) {
@@ -325,4 +346,12 @@ public class DownloadManager {
 			}
 		}
 	}
+
+	//region setter/getter
+	private void setOverallInfos(WebContext context) {
+		for (var entry : overallInfos.entrySet()) {
+			context.setVariable(entry.getKey(), entry.getValue());
+		}
+	}
+//endregion
 }

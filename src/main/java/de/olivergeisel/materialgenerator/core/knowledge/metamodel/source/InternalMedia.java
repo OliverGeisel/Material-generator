@@ -8,7 +8,7 @@ public class InternalMedia extends KnowledgeSource {
 		super(id, name);
 	}
 
-//
+//region setter/getter
 	public String getContent() {
 		return content;
 	}
@@ -16,5 +16,5 @@ public class InternalMedia extends KnowledgeSource {
 	public void setContent(String content) {
 		this.content = content;
 	}
-//
+//endregion
 }

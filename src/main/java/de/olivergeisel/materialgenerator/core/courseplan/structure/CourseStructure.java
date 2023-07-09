@@ -11,7 +11,7 @@ public class CourseStructure {
 		return order.add(element);
 	}
 
-	//region getter / setter
+//region setter/getter
 	public List<StructureChapter> getOrder() {
 		return Collections.unmodifiableList(order);
 	}
@@ -20,8 +20,8 @@ public class CourseStructure {
 	@Override
 	public String toString() {
 		return "CourseStructure{" +
-				"chapters=" + order.size() +
-				'}';
+			   "chapters=" + order.size() +
+			   '}';
 	}
 
 }

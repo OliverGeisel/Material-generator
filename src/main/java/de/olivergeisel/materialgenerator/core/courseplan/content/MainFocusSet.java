@@ -7,9 +7,10 @@ public class MainFocusSet {
 	private List<MainFocus> focuses;
 
 
-	public List<MainFocus> getFocuses() {
-		return Collections.unmodifiableList(focuses);
-	}
+//region setter/getter
+public List<MainFocus> getFocuses() {
+	return Collections.unmodifiableList(focuses);
+}
 
 	//
 //
@@ -28,4 +29,5 @@ public class MainFocusSet {
 		}
 		return Collections.unmodifiableSet(back);
 	}
+//endregion
 }

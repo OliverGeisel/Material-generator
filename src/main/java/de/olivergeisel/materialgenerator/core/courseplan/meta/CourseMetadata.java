@@ -7,13 +7,14 @@ import java.util.Optional;
 
 public class CourseMetadata {
 	private final Map<String, String> otherInfos;
-	private Optional<String> name;
-	private Optional<String> year;
-	private Optional<String> level;
-	private Optional<String> type;
-	private Optional<String> description;
+	private       Optional<String>    name;
+	private       Optional<String>    year;
+	private       Optional<String>    level;
+	private       Optional<String>    type;
+	private       Optional<String>    description;
 
-	public CourseMetadata(String name, String year, String level, String type, String description, Map<String, String> rest) {
+	public CourseMetadata(String name, String year, String level, String type, String description,
+						  Map<String, String> rest) {
 		this.name = Optional.of(name != null ? name : "");
 		this.year = Optional.of(year != null ? year : "");
 		this.level = Optional.of(level != null ? level : "");
@@ -25,30 +26,6 @@ public class CourseMetadata {
 
 	public static CourseMetadata emptyMetadata() {
 		return new CourseMetadata("", "", "", "", "", Map.of());
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof CourseMetadata that)) return false;
-
-		if (!otherInfos.equals(that.otherInfos)) return false;
-		if (!Objects.equals(name, that.name)) return false;
-		if (!Objects.equals(year, that.year)) return false;
-		if (!Objects.equals(level, that.level)) return false;
-		if (!Objects.equals(type, that.type)) return false;
-		return Objects.equals(description, that.description);
-	}
-
-	@Override
-	public int hashCode() {
-		int result = otherInfos.hashCode();
-		result = 31 * result + (name != null ? name.hashCode() : 0);
-		result = 31 * result + (year != null ? year.hashCode() : 0);
-		result = 31 * result + (level != null ? level.hashCode() : 0);
-		result = 31 * result + (type != null ? type.hashCode() : 0);
-		result = 31 * result + (description != null ? description.hashCode() : 0);
-		return result;
 	}
 
 	public boolean addOtherInfo(String key, String value) {
@@ -65,8 +42,7 @@ public class CourseMetadata {
 		return otherInfos.remove(key) != null;
 	}
 
-	//
-//
+	//region setter/getter
 	public Optional<String> getDescription() {
 		return description;
 	}
@@ -124,5 +100,30 @@ public class CourseMetadata {
 			throw new IllegalArgumentException("Year must not be null");
 		}
 		this.year = Optional.of(year);
+	}
+//endregion
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof CourseMetadata that)) return false;
+
+		if (!otherInfos.equals(that.otherInfos)) return false;
+		if (!Objects.equals(name, that.name)) return false;
+		if (!Objects.equals(year, that.year)) return false;
+		if (!Objects.equals(level, that.level)) return false;
+		if (!Objects.equals(type, that.type)) return false;
+		return Objects.equals(description, that.description);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = otherInfos.hashCode();
+		result = 31 * result + (name != null ? name.hashCode() : 0);
+		result = 31 * result + (year != null ? year.hashCode() : 0);
+		result = 31 * result + (level != null ? level.hashCode() : 0);
+		result = 31 * result + (type != null ? type.hashCode() : 0);
+		result = 31 * result + (description != null ? description.hashCode() : 0);
+		return result;
 	}
 }

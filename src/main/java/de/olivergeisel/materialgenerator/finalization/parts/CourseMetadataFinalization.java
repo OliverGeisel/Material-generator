@@ -16,16 +16,17 @@ public class CourseMetadataFinalization {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", nullable = false)
-	private UUID id;
+	private UUID   id;
 	private String name;
 	private String year;
 	private String level;
 	private String type;
 	private String description;
-	private UUID courseId;
+	private UUID   courseId;
 
 	public CourseMetadataFinalization(CoursePlan plan) {
-		this(plan.getMetadata().getName(), plan.getMetadata().getYear(), plan.getMetadata().getLevel(), plan.getMetadata().getType(), plan.getMetadata().getDescription(), plan.getMetadata().getOtherInfos());
+		this(plan.getMetadata().getName(), plan.getMetadata().getYear(), plan.getMetadata().getLevel(),
+			 plan.getMetadata().getType(), plan.getMetadata().getDescription(), plan.getMetadata().getOtherInfos());
 		courseId = plan.getId();
 	}
 
@@ -33,14 +34,14 @@ public class CourseMetadataFinalization {
 		otherInfos = new HashMap<>();
 	}
 
-	//region setter/getter
-
-	public CourseMetadataFinalization(Optional<String> name, Optional<String> year, Optional<String> level, Optional<String> type, Optional<String> description, Map<String, String> rest) {
+	public CourseMetadataFinalization(Optional<String> name, Optional<String> year, Optional<String> level,
+									  Optional<String> type, Optional<String> description, Map<String, String> rest) {
 		this(name.orElse(""), year.orElse(""), level.orElse(""), type.orElse(""), description.orElse(""), rest);
 		otherInfos.putAll(rest);
 	}
 
-	public CourseMetadataFinalization(String name, String year, String level, String type, String description, Map<String, String> rest) {
+	public CourseMetadataFinalization(String name, String year, String level, String type, String description,
+									  Map<String, String> rest) {
 		this.name = name;
 		this.year = year;
 		this.level = level;
@@ -63,19 +64,22 @@ public class CourseMetadataFinalization {
 		}
 		return otherInfos.remove(key) != null;
 	}
+
+	//region setter/getter
 	public UUID getCourseId() {
 		return courseId;
 	}
+
+	public void setCourseId(UUID courseId) {
+		this.courseId = courseId;
+	}
+
 	public UUID getId() {
 		return id;
 	}
 
 	public Optional<String> getDescription() {
 		return Optional.ofNullable(description);
-	}
-
-	public void setCourseId(UUID courseId) {
-		this.courseId = courseId;
 	}
 
 	public void setDescription(String description) {

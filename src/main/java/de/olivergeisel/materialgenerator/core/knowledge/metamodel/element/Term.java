@@ -17,7 +17,7 @@ public class Term extends TermElement {
 		termName = content;
 	}
 
-//region setter/getter
+	//region setter/getter
 	public String getTermName() {
 		return termName;
 	}
