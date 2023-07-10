@@ -44,7 +44,7 @@ public class GroupOrder extends MaterialOrderCollection {
 		var topic = goals.stream().flatMap(goal -> goal.getTopics().stream().filter(t -> t.isSame(groupTopic)))
 						 .findFirst().orElse(null);
 		setTopic(topic);
-		part.getAlternatives().forEach(this::addAlias);
+		part.getAlternatives().forEach(this::appendAlias);
 	}
 
 	protected GroupOrder() {

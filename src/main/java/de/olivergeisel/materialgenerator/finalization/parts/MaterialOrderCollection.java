@@ -9,16 +9,13 @@ import de.olivergeisel.materialgenerator.generation.material.Material;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 public abstract class MaterialOrderCollection extends MaterialOrderPart {
 
 	@ElementCollection
-	private final Set<String> alias = new LinkedHashSet<>(); // KnowledgeObject (Structure) ids
+	private final List<String> alias = new ArrayList<>(); // KnowledgeObject (Structure) ids
 
 	@ManyToOne
 	private Topic topic;
@@ -44,7 +41,7 @@ public abstract class MaterialOrderCollection extends MaterialOrderPart {
 
 	public abstract boolean assignMaterial(MaterialAssigner assigner);
 
-	public boolean addAlias(String alternative) {
+	public boolean appendAlias(String alternative) {
 		if (alternative == null || alternative.isBlank())
 			return false;
 		return alias.add(alternative);
@@ -52,6 +49,42 @@ public abstract class MaterialOrderCollection extends MaterialOrderPart {
 
 	public boolean removeAlias(String alternative) {
 		return alias.remove(alternative);
+	}
+
+	public boolean moveUp(String alternative) {
+		int index = alias.indexOf(alternative);
+		if (index > 0) {
+			alias.remove(index);
+			alias.add(index - 1, alternative);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean moveDown(String alternative) {
+		int index = alias.indexOf(alternative);
+		if (index < alias.size() - 1) {
+			alias.remove(index);
+			alias.add(index + 1, alternative);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean move(String alternative, int newIndex) {
+		int index = alias.indexOf(alternative);
+		if (index < 0 || index >= alias.size() || newIndex < 0 || newIndex >= alias.size())
+			return false;
+		alias.remove(index);
+		alias.add(newIndex, alternative);
+		return true;
+	}
+
+	public boolean insert(String alternative, int newIndex) {
+		if (newIndex < 0 || newIndex >= alias.size())
+			return false;
+		alias.add(newIndex, alternative);
+		return true;
 	}
 
 	public abstract boolean remove(UUID partId);
@@ -76,7 +109,7 @@ public abstract class MaterialOrderCollection extends MaterialOrderPart {
 	 * @return set of aliases
 	 */
 	public Set<String> getAlias() {
-		return Collections.unmodifiableSet(alias);
+		return Collections.unmodifiableSet(new LinkedHashSet<>(alias));
 	}
 //endregion
 }

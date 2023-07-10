@@ -2,15 +2,12 @@ package de.olivergeisel.materialgenerator.core.courseplan.structure;
 
 import de.olivergeisel.materialgenerator.core.courseplan.content.ContentTarget;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public abstract class StructureElement {
 
-	private final Set<String> alias = new LinkedHashSet<>(); // KnowledgeObject ids
-	protected     Relevance   relevance;
+	private final List<String> alias = new ArrayList<>(); // KnowledgeObject ids
+	protected     Relevance    relevance;
 
 	private ContentTarget topic;
 	private String        name; // KnowledgeObject id most important alias
@@ -35,12 +32,54 @@ public abstract class StructureElement {
 		return alias.remove(alternative);
 	}
 
+	public boolean moveUpAlias(String alternative) {
+		int index = alias.indexOf(alternative);
+		if (index > 0) {
+			alias.remove(index);
+			alias.add(index - 1, alternative);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean moveDownAlias(String alternative) {
+		int index = alias.indexOf(alternative);
+		if (index < alias.size() - 1) {
+			alias.remove(index);
+			alias.add(index + 1, alternative);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean moveAlias(String alternative, int newIndex) {
+		int index = alias.indexOf(alternative);
+		if (index >= 0 && index < alias.size() && newIndex >= 0 && newIndex < alias.size()) {
+			alias.remove(index);
+			alias.add(newIndex, alternative);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean insertAlias(String alternative, int index) {
+		if (index >= 0 && index < alias.size()) {
+			alias.add(index, alternative);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean hasAlias(String alternative) {
+		return alias.contains(alternative);
+	}
+
 	public abstract Relevance updateRelevance();
 
 
 	//region setter/getter
 	public Set<String> getAlternatives() {
-		return alias;
+		return Collections.unmodifiableSet(new LinkedHashSet<>(alias));
 	}
 
 	public String getName() {

@@ -32,7 +32,7 @@ public class TaskOrder extends MaterialOrderCollection {
 						 .findFirst().orElse(null);
 		setTopic(topic);
 		relevance = relatedTask.getRelevance();
-		relatedTask.getAlternatives().forEach(this::addAlias);
+		relatedTask.getAlternatives().forEach(this::appendAlias);
 	}
 
 	public void moveUp(Material material) {

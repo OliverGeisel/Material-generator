@@ -37,7 +37,7 @@ public class ChapterOrder extends MaterialOrderCollection {
 		var topic = goals.stream().flatMap(goal -> goal.getTopics().stream().filter(t -> t.isSame(chapterTopic)))
 						 .findFirst().orElse(null);
 		setTopic(topic);
-		stChapter.getAlternatives().forEach(this::addAlias);
+		stChapter.getAlternatives().forEach(this::appendAlias);
 	}
 
 
