@@ -29,10 +29,10 @@ public class TemplateService {
 		this.repository = repository;
 	}
 
-	public TemplateSet createTemplateSet(String dir, TemplateSet templateSet) {
-		File newFolder = new File(TEMPLATE_SET_PATH + dir);
+	public TemplateSet createTemplateSet(String templateSetName) {
+		File newFolder = new File(TEMPLATE_SET_PATH + templateSetName);
 		if (newFolder.exists()) {
-			throw new IllegalArgumentException("TemplateSet with name " + dir + " already exists");
+			throw new IllegalArgumentException("TemplateSet with name " + templateSetName + " already exists");
 		}
 		newFolder.mkdir();
 		return null;
@@ -43,11 +43,11 @@ public class TemplateService {
 		if (dir.exists()) {
 			try {
 				Files.delete(dir.toPath());
-			} catch (IOException e) {
+			} catch (IOException ignored) {
 				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 
 	public TemplateSet getTemplateSet(String name) {
@@ -63,7 +63,6 @@ public class TemplateService {
 	private TemplateSet loadTemplateSet(File dir) {
 		TemplateSet templateSet = new TemplateSet();
 		templateSet.setName(dir.getName());
-		//setBasicTemplates(templateSet, dir);
 		var extraTemplates = Arrays.stream(Objects.requireNonNull(dir.listFiles()))
 								   .filter(file -> !BasicTemplates.TEMPLATES.contains(
 										   file.getName().replace(HTML, "").toUpperCase())).toList();
@@ -75,27 +74,6 @@ public class TemplateService {
 			}
 		}
 		return templateSet;
-	}
-
-	@Deprecated
-	private void setBasicTemplates(TemplateSet templateSet, File dir) {
-	 /*	var containingTemplates = Arrays.stream(dir.listFiles()).map(it -> it.getName().replace(HTML, "").toUpperCase
-	 ()).toList();
-		if (containingTemplates.contains("DEFINITION")) {
-			templateSet.setDefinitionTemplate(new DefinitionTemplate(new File(dir, "DEFINITION" + HTML)));
-		}
-		if (containingTemplates.contains("ACRONYM")) {
-			templateSet.setAcronymTemplate(new AcronymTemplate(new File(dir, "ACRONYM" + HTML)));
-		}
-		if (containingTemplates.contains("TEXT")) {
-			templateSet.setTextTemplate(new TextTemplate(new File(dir, "TEXT" + HTML)));
-		}
-		if (containingTemplates.contains("SYNONYM")) {
-			templateSet.setSynonymTemplate(new SynonymTemplate(new File(dir, "SYNONYM" + HTML)));
-		}
-		if (containingTemplates.contains("LIST")) {
-			templateSet.setListTemplate(new ListTemplate(new File(dir, "LIST" + HTML)));
-		}*/
 	}
 
 	private Set<? extends TemplateInfo> loadExtraTemplates(File dir) {

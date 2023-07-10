@@ -23,8 +23,9 @@ public class FinalizationController {
 
 	private static final String TEMPLATE_SET_FROM_TEMPLATES_FOLDER = "../templateSets/";
 
-	private static final String              PATH          = "finalization/";
-	private static final String              REDIRECT_EDIT = "redirect:/edit/";
+	private static final String              PATH           = "finalization/";
+	private static final String              REDIRECT_EDIT  = "redirect:/edit/";
+	private static final String              THEMEN_SECTION = "#Themen";
 	private final        RawCourseRepository repository;
 
 	private final FinalizationService service;
@@ -67,7 +68,7 @@ public class FinalizationController {
 			course.getCourseOrder().remove(partId);
 			repository.save(course);
 		});
-		return REDIRECT_EDIT + id + "#Themen";
+		return REDIRECT_EDIT + id + THEMEN_SECTION;
 	}
 
 	@PostMapping("edit/{id}/export")
@@ -79,7 +80,7 @@ public class FinalizationController {
 	public String exportCourse(@PathVariable UUID id, @RequestParam("task") UUID taskID,
 							   @RequestParam Relevance relevance) {
 		service.setRelevance(id, taskID, relevance);
-		return REDIRECT_EDIT + id + "#Themen";
+		return REDIRECT_EDIT + id + THEMEN_SECTION;
 	}
 
 	@PostMapping({"edit/{id}",})
@@ -95,7 +96,7 @@ public class FinalizationController {
 		}
 		return repository.findById(id).map(course -> {
 			model.addAttribute("course", course);
-			return REDIRECT_EDIT + course.getId() + "#Themen";
+			return REDIRECT_EDIT + course.getId() + THEMEN_SECTION;
 		}).orElse(REDIRECT_EDIT);
 	}
 
@@ -105,12 +106,8 @@ public class FinalizationController {
 							   @RequestParam("templateSet") String templateSet, Model model) {
 		AtomicReference<String> materialType = new AtomicReference<>();
 		materialRepository.findById(materialId).ifPresent(material -> {
-			TemplateInfo info;
-			if (material.getTemplateInfo() == null) { // todo fix templateInfo
-				info = new DefinitionTemplate();
-			} else {
-				info = material.getTemplateInfo();
-			}
+			TemplateInfo info = material.getTemplateInfo() == null ? new DefinitionTemplate() :
+								material.getTemplateInfo();
 			materialType.set(info.getTemplateType().getType());
 			model.addAttribute("material", material);
 		});

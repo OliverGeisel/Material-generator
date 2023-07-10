@@ -23,6 +23,8 @@ public class CoursePlanParser {
 	private static final String              TOPIC           = "topic";
 	private static final String[]            META_ATTRIBUTES = {"name", "year", "level", "type", "description"};
 	private static final String              TARGET          = "target";
+	private static final String              ALTERNATIVES    = "alternatives";
+	private static final String              GROUPS          = "groups";
 	private final        List<ContentTarget> targets         = new ArrayList<>();
 
 	private final Logger logger = LoggerFactory.getLogger(CoursePlanParser.class);
@@ -81,10 +83,10 @@ public class CoursePlanParser {
 	 * @throws IllegalArgumentException if the JSON is not valid. Like the name is null or empty
 	 */
 	private StructureChapter createChapter(Map<String, ?> chapterJSON) throws IllegalArgumentException {
-		List<Map<String, ?>> groups = (List<Map<String, ?>>) chapterJSON.get("groups");
+		List<Map<String, ?>> groups = (List<Map<String, ?>>) chapterJSON.get(GROUPS);
 		String name = chapterJSON.get("name").toString();
 		String weight = chapterJSON.get("weight").toString();
-		var alternatives = crateAlias(name, (List<String>) chapterJSON.get("alternatives"));
+		var alternatives = crateAlias(name, (List<String>) chapterJSON.get(ALTERNATIVES));
 		String topicName = chapterJSON.get(TOPIC) != null ? chapterJSON.get(TOPIC).toString() : "";
 		var target = findTopic(topicName);
 		var back = new StructureChapter(target, Relevance.TO_SET, name, Double.parseDouble(weight), alternatives);
@@ -113,7 +115,7 @@ public class CoursePlanParser {
 		String name = groupJSON.get("name").toString();
 		String topicName = groupJSON.get(TOPIC) != null ? groupJSON.get(TOPIC).toString() : "";
 		var topic = findTopic(topicName);
-		var alternatives = crateAlias(name, ((List<String>) groupJSON.get("alternatives")));
+		var alternatives = crateAlias(name, ((List<String>) groupJSON.get(ALTERNATIVES)));
 		var back = new StructureGroup(topic, Relevance.TO_SET, name, alternatives);
 		List<Map<String, ?>> tasks = (List<Map<String, ?>>) groupJSON.get("tasks");
 		for (var task : tasks) {
@@ -132,7 +134,7 @@ public class CoursePlanParser {
 		String name = taskJSON.get("name").toString();
 		String topicName = taskJSON.get(TOPIC) != null ? taskJSON.get(TOPIC).toString() : "";
 		ContentTarget topic = findTopic(topicName);
-		var alternatives = crateAlias(name, (List<String>) taskJSON.get("alternatives"));
+		var alternatives = crateAlias(name, (List<String>) taskJSON.get(ALTERNATIVES));
 		return new StructureTask(topic, relevance, name, alternatives);
 	}
 
@@ -174,22 +176,23 @@ public class CoursePlanParser {
 		return back;
 	}
 
-	public CoursePlan parseFromFile(InputStream file) throws RuntimeException {
+	public CoursePlan parseFromFile(InputStream file) throws CoursePlanParserException {
 		CoursePlan back = null;
 		var parser = new JSONParser(file);
 		Object parsedObject;
 		try {
 			parsedObject = parser.parse();
 		} catch (ParseException e) {
-			throw new RuntimeException(e);
+			logger.error("Could not parse JSON", e);
+			throw new CoursePlanParserException("Could not parse JSON", e);
 		}
 		if (parsedObject instanceof HashMap<?, ?> parsedPlan) {
 			Map<String, ?> metaJSON;
 			Map<String, ?> contentJSON;
 			Map<String, Map<String, ?>> goalsJSON = new HashMap<>();
 			// META
-			metaJSON = parsedPlan.get("meta") instanceof HashMap<?, ?> metaJSON_Temp
-					   ? (Map<String, ?>) metaJSON_Temp : null;
+			metaJSON = parsedPlan.get("meta") instanceof HashMap<?, ?> metaJsonTemp
+					   ? (Map<String, ?>) metaJsonTemp : null;
 			var meta = parseMetadata(metaJSON);
 			// CONTENT
 			contentJSON = (Map<String, ?>) parsedPlan.get("content");
@@ -208,7 +211,7 @@ public class CoursePlanParser {
 
 	}
 
-	public CoursePlan parseFromFile(File file) throws FileNotFoundException {
+	public CoursePlan parseFromFile(File file) throws FileNotFoundException, CoursePlanParserException {
 		FileInputStream input = new FileInputStream(file);
 		return parseFromFile(input);
 	}

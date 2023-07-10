@@ -3,6 +3,7 @@ package de.olivergeisel.materialgenerator.core.knowledge.metamodel.element;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.Relation;
 
 import java.util.Collection;
+import java.util.Objects;
 
 public class Code extends SimpleElement {
 
@@ -53,4 +54,24 @@ public class Code extends SimpleElement {
 		this.codeLines = codeLines;
 	}
 //endregion
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof Code code)) return false;
+		if (!super.equals(o)) return false;
+
+		if (!Objects.equals(language, code.language)) return false;
+		if (!Objects.equals(caption, code.caption)) return false;
+		return Objects.equals(codeLines, code.codeLines);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = super.hashCode();
+		result = 31 * result + (language != null ? language.hashCode() : 0);
+		result = 31 * result + (caption != null ? caption.hashCode() : 0);
+		result = 31 * result + (codeLines != null ? codeLines.hashCode() : 0);
+		return result;
+	}
 }

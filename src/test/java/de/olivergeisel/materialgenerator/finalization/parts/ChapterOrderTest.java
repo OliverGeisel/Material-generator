@@ -19,11 +19,11 @@ import static org.mockito.Mockito.when;
 class ChapterOrderTest {
 
 
-	private ChapterOrder chapterOrder;
+	private ChapterOrder     chapterOrder;
 	@Mock
-	private Goal goal;
+	private Goal             goal;
 	@Mock
-	private GroupOrder groupOrder;
+	private GroupOrder       groupOrder;
 	@Mock
 	private StructureChapter structureChapter;
 
@@ -44,8 +44,9 @@ class ChapterOrderTest {
 
 	@Test
 	void createNullChapterTest() {
+		var goals = Set.of(goal);
 		assertThrows(IllegalArgumentException.class, () -> {
-			new ChapterOrder(null, Set.of(goal));
+			new ChapterOrder(null, goals);
 		}, "chapter must not be null");
 	}
 }

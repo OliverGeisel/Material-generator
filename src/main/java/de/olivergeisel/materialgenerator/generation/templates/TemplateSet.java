@@ -3,6 +3,7 @@ package de.olivergeisel.materialgenerator.generation.templates;
 import de.olivergeisel.materialgenerator.generation.templates.template_infos.*;
 
 import javax.persistence.*;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -47,13 +48,12 @@ public class TemplateSet {
 				e.printStackTrace();
 			}
 		}
-		return true; //extraTemplates.stream().anyMatch(it -> it.getTemplateType().equals(type));
+		return false; //todo extraTemplates.stream().anyMatch(it -> it.getTemplateType().equals(type));
 	}
 
 	//region setter/getter
-	//region getter / setter
 	public Set<ExtraTemplate> getExtraTemplates() {
-		return extraTemplates;// Collections.unmodifiableSet(extraTemplates);
+		return Collections.unmodifiableSet(extraTemplates);
 	}
 
 	public TextTemplate getTextTemplate() {
@@ -93,7 +93,7 @@ public class TemplateSet {
 	}
 
 	public void setListTemplate(ListTemplate listTemplate) {
-
+		basicTemplates.setListTemplate(listTemplate);
 	}
 
 	public void setSynonymTemplate(SynonymTemplate synonymTemplate) {
@@ -103,7 +103,6 @@ public class TemplateSet {
 	public void setAcronymTemplate(AcronymTemplate acronymTemplate) {
 		basicTemplates.setAcronymTemplate(acronymTemplate);
 	}
-//endregion
 //endregion
 
 }

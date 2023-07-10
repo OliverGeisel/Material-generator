@@ -119,11 +119,11 @@ public class CourseMetadata {
 	@Override
 	public int hashCode() {
 		int result = otherInfos.hashCode();
-		result = 31 * result + (name != null ? name.hashCode() : 0);
-		result = 31 * result + (year != null ? year.hashCode() : 0);
-		result = 31 * result + (level != null ? level.hashCode() : 0);
-		result = 31 * result + (type != null ? type.hashCode() : 0);
-		result = 31 * result + (description != null ? description.hashCode() : 0);
+		result = 31 * result + (name.isPresent() ? name.hashCode() : 0);
+		result = 31 * result + (year.isPresent() ? year.hashCode() : 0);
+		result = 31 * result + (level.isPresent() ? level.hashCode() : 0);
+		result = 31 * result + (type.isPresent() ? type.hashCode() : 0);
+		result = 31 * result + (description.isPresent() ? description.hashCode() : 0);
 		return result;
 	}
 }

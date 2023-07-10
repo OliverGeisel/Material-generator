@@ -9,10 +9,12 @@ public class InternalMedia extends KnowledgeSource {
 	}
 
 //region setter/getter
-	public String getContent() {
+@Override
+public String getContent() {
 		return content;
 	}
 
+	@Override
 	public void setContent(String content) {
 		this.content = content;
 	}

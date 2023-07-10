@@ -56,6 +56,6 @@ class GoalTest {
 
 	@Test
 	void getName() {
-
+		assertEquals("Das ist eine Testüberschrift.", goal.getName());
 	}
 }

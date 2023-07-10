@@ -26,6 +26,9 @@ import java.util.Set;
 
 public class KnowledgeParser {
 
+
+	public static final String KNOWLEDGE_STRUCTURE = "structure";
+
 	public static final String TYPE          = "type";
 	public static final String ID            = "id";
 	public static final String STRUCTURE     = "structure";
@@ -78,7 +81,7 @@ public class KnowledgeParser {
 			throw new RuntimeException(e);
 		}
 		if (parsedObject instanceof Map<?, ?> knowledgeModel) {
-			Map<String, ?> structure = (Map<String, ?>) knowledgeModel.get("structure");
+			Map<String, ?> structure = (Map<String, ?>) knowledgeModel.get(KNOWLEDGE_STRUCTURE);
 			List<Map<String, ?>> knowledge = (List<Map<String, ?>>) knowledgeModel.get("knowledge");
 			List<Map<String, ?>> source = (List<Map<String, ?>>) knowledgeModel.get("sources");
 			KnowledgeStructure parsedStructure;

@@ -2,6 +2,7 @@ package de.olivergeisel.materialgenerator.generation.generator;
 
 import de.olivergeisel.materialgenerator.core.courseplan.CoursePlan;
 import de.olivergeisel.materialgenerator.core.courseplan.CoursePlanParser;
+import de.olivergeisel.materialgenerator.core.courseplan.CoursePlanParserException;
 import de.olivergeisel.materialgenerator.core.knowledge.IncompleteJSONException;
 import de.olivergeisel.materialgenerator.generation.GeneratorService;
 import de.olivergeisel.materialgenerator.generation.StorageService;
@@ -80,7 +81,7 @@ public class GeneratorController {
 		try {
 			coursePlan = parser.parseFromFile(file.toFile());
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new CoursePlanParserException(e);
 		}
 		planName = file.getFileName().toString();
 
@@ -94,20 +95,21 @@ public class GeneratorController {
 	@PostMapping("overview")
 	public String overviewGeneration(@RequestParam MultipartFile plan, @RequestParam String curriculum,
 									 @RequestParam String template, Model model)
-	throws IOException {
+	throws FileNotFoundException, WrongFileTypeException, IncompleteJSONException {
 		String planName;
 		if (curriculum.isBlank() || curriculum.equals(UPLOAD)) {
 			CoursePlanParser parser = new CoursePlanParser();
 			if (plan == null || plan.isEmpty()) {
 				throw new IllegalArgumentException("No plan uploaded");
 			}
-			if (plan.getContentType() == null || !plan.getContentType().equals("application/json")) {
+			var planType = plan.getContentType();
+			if (planType == null || !planType.equals("application/json")) {
 				throw new WrongFileTypeException(
 						String.format("Wrong file type. Must be application/json. But was %s", plan.getContentType()));
 			}
 			try {
 				parser.parseFromFile(plan.getInputStream());
-			} catch (IOException e) {
+			} catch (IOException | CoursePlanParserException e) {
 				throw new IncompleteJSONException(e);
 			}
 			storageService.store(plan);

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Component
@@ -27,8 +27,7 @@ public class TemplateSetInitializer implements CommandLineRunner {
 	}
 
 	private ExtraTemplate[] getExtraTemplates(File templatePath) {
-		var back = new HashSet<ExtraTemplate>();
-		var extraTemplates = Arrays.stream(templatePath.listFiles()).filter(it -> {
+		var extraTemplates = Arrays.stream(Objects.requireNonNull(templatePath.listFiles())).filter(it -> {
 			var name = it.getName().replace(".html", "").toUpperCase();
 			return !ignoredFiles.contains(name) && !BasicTemplates.TEMPLATES.contains(name);
 		}).toList();

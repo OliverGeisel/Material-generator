@@ -18,7 +18,7 @@ public class ContentGoal {
 	private final ContentGoalExpression expression;
 	private final String                masterKeyword;
 	private final List<ContentTarget>   content;
-	//private final List<String> specificWords;
+	//todo private final List<String> specificWords;
 	private final String                completeSentence;
 	private       String                name;
 
@@ -39,7 +39,7 @@ public class ContentGoal {
 					   String completeSentence, String name) {
 		this.expression = expression;
 		this.masterKeyword = masterKeyword;
-		//this.specificWords = specificWords;
+		//todo this.specificWords = specificWords;
 		this.completeSentence = completeSentence;
 		this.content = new ArrayList<>();
 		this.content.addAll(content);
@@ -66,9 +66,6 @@ public class ContentGoal {
 		return content;
 	}
 
-	/*public List<String> getSpecificWords() {
-		return Collections.unmodifiableList(specificWords);
-	}*/
 	public ContentGoalExpression getExpression() {
 		return expression;
 	}
