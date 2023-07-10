@@ -36,7 +36,14 @@ public abstract class MaterialAssigner {
 		return materialMap.values().stream().anyMatch(it -> !it.isAssigned());
 	}
 
-	public boolean isAssigned(Material material) {
+	/**
+	 * Check if a material is assigned.
+	 *
+	 * @param material material to check
+	 * @return {@literal true} if assigned, otherwise {@literal false}
+	 * @throws IllegalArgumentException if material is not in the map
+	 */
+	public boolean isAssigned(Material material) throws IllegalArgumentException {
 		if (!materialMap.containsKey(material)) {
 			throw new IllegalArgumentException();
 		}
@@ -64,18 +71,49 @@ public abstract class MaterialAssigner {
 		return back;
 	}
 
+	/**
+	 * Try to assign the materials to the part.
+	 *
+	 * @param part part to assign
+	 * @return {@literal true} if a material is assigned, otherwise {@literal false}
+	 */
 	public abstract boolean assign(MaterialOrderCollection part);
 
+	/**
+	 * Try to assign a specific material to the part.
+	 * <p>
+	 * The material must be in the assigner. If not, it will return false. If the material is already assigned, it
+	 * will return false.
+	 *
+	 * @param material material to assign to the part (must be in the assigner and not null)
+	 * @param part     part to assign
+	 * @return {@literal true} if material is assigned, otherwise {@literal false}
+	 */
 	public abstract boolean assign(Material material, MaterialOrderCollection part);
 
 	//region setter/getter
+
+	/**
+	 * Get all materials that are not assigned.
+	 *
+	 * @return set of materials that are not assigned
+	 */
 	public Set<Material> getUnassignedMaterials() {
 		return materialMap.entrySet().stream().filter(entry -> !entry.getValue().isAssigned()).map(Map.Entry::getKey)
 						  .collect(Collectors.toSet());
 	}
 
+	/**
+	 * Mark a material as assigned.
+	 * if the material is not in the map, it will do nothing.
+	 *
+	 * @param material material to mark as assigned
+	 */
 	protected void setAssigned(Material material) {
-		materialMap.get(material).assigned = true;
+		materialMap.computeIfPresent(material, (key, value) -> {
+			value.assigned = true;
+			return value;
+		});
 	}
 	//endregion
 

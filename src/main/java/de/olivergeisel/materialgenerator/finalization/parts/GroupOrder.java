@@ -107,12 +107,12 @@ public class GroupOrder extends MaterialOrderCollection {
 	}
 
 	/**
-	 * @param materials
+	 * @param material
 	 * @return
 	 * @throws UnsupportedOperationException
 	 */
 	@Override
-	public boolean assign(Material materials) throws UnsupportedOperationException {
+	public boolean assign(Material material) throws UnsupportedOperationException {
 		throw new UnsupportedOperationException("not supportet yet");
 	}
 

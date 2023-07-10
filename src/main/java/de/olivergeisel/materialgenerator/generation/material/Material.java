@@ -16,6 +16,11 @@ import java.util.UUID;
  * TemplateInfo for more information.
  * <p>
  * The MaterialType is a general type of the material. It is only a classification from MDTea.
+ *
+ * @author Oliver Geisel
+ * @version 1.0
+ * @see de.olivergeisel.materialgenerator.core.course.MaterialOrderPart
+ * @since 0.2.0
  */
 @Entity
 public class Material extends MaterialOrderPart {

@@ -54,6 +54,32 @@ public class StrictMaterialAssigner extends MaterialAssigner {
 	 */
 	@Override
 	public boolean assign(Material material, MaterialOrderCollection part) {
+		if (isAssigned(material))
+			return false;
+		if (part instanceof ChapterOrder chapter) {
+			for (var group : chapter.getGroupOrder()) {
+				if (assign(material, group)) {
+					return true;
+				}
+			}
+		} else if (part instanceof GroupOrder group) {
+			for (var task : group.getTaskOrder()) {
+				if (assign(material, task)) {
+					return true;
+				}
+			}
+		} else {
+			if (part.getAlias().isEmpty())
+				return false;
+			var aliase = part.getAlias().stream().limit(maxAlias);
+			for (var alias : aliase.toList()) {
+				if (material.getStructureId().contains(alias)) {
+					part.assign(material);
+					setAssigned(material);
+					return true;
+				}
+			}
+		}
 		return false;
 	}
 

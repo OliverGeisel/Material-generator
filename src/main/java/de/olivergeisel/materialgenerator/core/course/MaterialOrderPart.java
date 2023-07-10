@@ -3,6 +3,15 @@ package de.olivergeisel.materialgenerator.core.course;
 import javax.persistence.*;
 import java.util.UUID;
 
+/**
+ * A part of a material order. A material order can be a complete course or a single material.
+ *
+ * @author Oliver Geisel
+ * @version 1.0
+ * @see de.olivergeisel.materialgenerator.generation.material.Material
+ * @see de.olivergeisel.materialgenerator.finalization.parts.MaterialOrderCollection
+ * @since 0.2.0
+ */
 @Entity
 public abstract class MaterialOrderPart {
 

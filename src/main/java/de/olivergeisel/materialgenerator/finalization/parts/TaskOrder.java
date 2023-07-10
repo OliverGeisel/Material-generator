@@ -59,11 +59,13 @@ public class TaskOrder extends MaterialOrderCollection {
 		return materialOrder.remove(material);
 	}
 
+	@Override
 	public MaterialOrderPart find(UUID id) {
 		if (this.getId().equals(id)) return this;
 		return materialOrder.stream().filter(m -> m.getId().equals(id)).findFirst().orElse(null);
 	}
 
+	@Override
 	public Material findMaterial(UUID materialId) {
 		return materialOrder.stream().filter(m -> m.getId().equals(materialId)).findFirst().orElse(null);
 	}
@@ -99,13 +101,13 @@ public class TaskOrder extends MaterialOrderCollection {
 	/**
 	 * Assigns the material to the part.
 	 *
-	 * @param materials the material to assign
+	 * @param material the material to assign
 	 * @return true if a material was assigned, false if not
 	 */
 	@Override
-	public boolean assign(Material materials) {
-		if (materialOrder.contains(materials)) return false;
-		return materialOrder.add(materials);
+	public boolean assign(Material material) {
+		if (materialOrder.contains(material)) return false;
+		return materialOrder.add(material);
 	}
 
 	/**
@@ -120,11 +122,8 @@ public class TaskOrder extends MaterialOrderCollection {
 	}
 
 	private boolean isAssignable(Material material) {
-		return getAlias().stream().anyMatch(alias -> alias.contains(material.getStructureId())) || getAlias().stream()
-																											 .anyMatch(
-																													 alias -> alias.contains(
-																															 material.getStructureId()
-																																	 .split("-")[0].trim()));
+		return getAlias().stream().anyMatch(alias -> alias.contains(material.getStructureId()))
+			   || getAlias().stream().anyMatch(alias -> alias.contains(material.getStructureId().split("-")[0].trim()));
 	}
 
 

@@ -110,14 +110,10 @@ public class ChapterOrder extends MaterialOrderCollection {
 	}
 
 	/**
-	 * Assigns a materials to a part.
-	 *
-	 * @param materials the materials to be assigned
-	 * @return Exception
-	 * @throws UnsupportedOperationException ChapterOrder does not support assign(Material)
+	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean assign(Material materials) throws UnsupportedOperationException {
+	public boolean assign(Material material) throws UnsupportedOperationException {
 		throw new UnsupportedOperationException("ChapterOrder does not support assign(Material)");
 	}
 
