@@ -2,23 +2,25 @@ package de.olivergeisel.materialgenerator.core.courseplan.structure;
 
 import de.olivergeisel.materialgenerator.core.courseplan.content.ContentTarget;
 
-import java.util.HashSet;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
 public abstract class StructureElement {
 
-	private final Set<String> alias = new HashSet<>(); // KnowledgeObject ids
+	private final Set<String> alias = new LinkedHashSet<>(); // KnowledgeObject ids
 	protected     Relevance   relevance;
 
 	private ContentTarget topic;
-	private String        name;
+	private String        name; // KnowledgeObject id most important alias
 
 	protected StructureElement() {
 
 	}
 
-	protected StructureElement(ContentTarget topic, Relevance relevance, String name, Set<String> alternatives) {
+	protected StructureElement(ContentTarget topic, Relevance relevance, String name,
+							   Collection<String> alternatives) {
 		this.relevance = relevance;
 		this.name = name;
 		this.topic = topic;

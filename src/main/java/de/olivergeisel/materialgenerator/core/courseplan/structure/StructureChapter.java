@@ -3,8 +3,8 @@ package de.olivergeisel.materialgenerator.core.courseplan.structure;
 import de.olivergeisel.materialgenerator.core.courseplan.content.ContentTarget;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 
 public class StructureChapter extends StructureElement {
@@ -22,7 +22,7 @@ public class StructureChapter extends StructureElement {
 	 * @param alternatives List of alternatives for the chapter
 	 */
 	public StructureChapter(ContentTarget target, Relevance relevance, String name, double weight,
-							Set<String> alternatives) {
+							Collection<String> alternatives) {
 		super(target, relevance, name, alternatives);
 		this.weight = weight;
 	}

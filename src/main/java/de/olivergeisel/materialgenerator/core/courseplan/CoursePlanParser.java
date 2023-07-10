@@ -59,10 +59,18 @@ public class CoursePlanParser {
 		return back;
 	}
 
+	/**
+	 * Creates an ordered set of aliases from a normal name and a list of alternatives.
+	 *
+	 * @param normalName       most important alias
+	 * @param alternativesJSON list of alternatives
+	 * @return ordered set of aliases
+	 * @throws IllegalArgumentException if the normal name is null or empty
+	 */
 	private Set<String> crateAlias(String normalName, List<String> alternativesJSON) throws IllegalArgumentException {
-		var back = new HashSet<String>();
-		if (normalName == null || normalName.isEmpty()) {
-			throw new IllegalArgumentException("Normal name must not be null or empty");
+		var back = new LinkedHashSet<String>();
+		if (normalName == null || normalName.isBlank()) {
+			throw new IllegalArgumentException("Normal name must not be null or blank");
 		}
 		back.add(normalName);
 		if (alternativesJSON != null) {

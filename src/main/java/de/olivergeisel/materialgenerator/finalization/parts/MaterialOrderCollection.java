@@ -9,7 +9,8 @@ import de.olivergeisel.materialgenerator.generation.material.Material;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -17,7 +18,7 @@ import java.util.UUID;
 public abstract class MaterialOrderCollection extends MaterialOrderPart {
 
 	@ElementCollection
-	private final Set<String> alias = new HashSet<>(); // KnowledgeObject (Structure) ids
+	private final Set<String> alias = new LinkedHashSet<>(); // KnowledgeObject (Structure) ids
 
 	@ManyToOne
 	private Topic topic;
@@ -67,8 +68,15 @@ public abstract class MaterialOrderCollection extends MaterialOrderPart {
 		this.topic = topic;
 	}
 
+	/**
+	 * Returns a list of all aliases of this part. The order of the list say what is the most important alias
+	 * aliases in the course
+	 * The list is unmodifiable.
+	 *
+	 * @return set of aliases
+	 */
 	public Set<String> getAlias() {
-		return alias;
+		return Collections.unmodifiableSet(alias);
 	}
 //endregion
 }

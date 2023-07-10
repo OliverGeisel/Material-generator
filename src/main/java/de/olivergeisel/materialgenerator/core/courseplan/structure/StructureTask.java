@@ -2,12 +2,12 @@ package de.olivergeisel.materialgenerator.core.courseplan.structure;
 
 import de.olivergeisel.materialgenerator.core.courseplan.content.ContentTarget;
 
-import java.util.Set;
+import java.util.Collection;
 
 
 public class StructureTask extends StructureElementPart {
 
-	public StructureTask(ContentTarget topic, Relevance relevance, String name, Set<String> alternatives) {
+	public StructureTask(ContentTarget topic, Relevance relevance, String name, Collection<String> alternatives) {
 		super(topic, relevance, name, alternatives);
 
 	}

@@ -3,14 +3,14 @@ package de.olivergeisel.materialgenerator.core.courseplan.structure;
 import de.olivergeisel.materialgenerator.core.courseplan.content.ContentTarget;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public class StructureGroup extends StructureElementPart {
 
 	private final List<StructureElementPart> parts;
 
-	public StructureGroup(ContentTarget topic, Relevance relevance, String name, Set<String> alternatives) {
+	public StructureGroup(ContentTarget topic, Relevance relevance, String name, Collection<String> alternatives) {
 		super(topic, relevance, name, alternatives);
 		parts = new ArrayList<>();
 	}
