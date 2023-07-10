@@ -34,7 +34,6 @@ public class BasicMaterialAssigner extends MaterialAssigner {
 	 */
 	@Override
 	public boolean assign(MaterialOrderCollection part) {
-		part.assignMaterial(materialMap.keySet());
 		return switch (part) {
 			case ChapterOrder chapterOrder -> false;
 			case GroupOrder groupOrder -> false;

@@ -468,12 +468,15 @@ public class TranslateGenerator implements Generator {
 	private List<MaterialAndMapping> createCode(Set<KnowledgeNode> knowledgeNode) throws NoTemplateInfoException,
 			NoSuchElementException {
 		var templateInfo = getBasicTemplateInfo(CodeTemplate.class);
-		var mainKnowledge = knowledgeNode.stream()
-										 .filter(it -> it.getMainElement().getType().equals(KnowledgeType.CODE))
-										 .findFirst().orElseThrow();
-		var codeElement = (Code) mainKnowledge.getMainElement();
 		List<MaterialAndMapping> back = new ArrayList<>();
-		try {
+		var codeKnowledgeNodes = knowledgeNode.stream()
+											  .filter(it -> it.getMainElement().getType().equals(KnowledgeType.CODE))
+											  .toList();
+		if (codeKnowledgeNodes.isEmpty()) {
+			throw new NoSuchElementException("No code found");
+		}
+		for (var knowledge : codeKnowledgeNodes) {
+			var codeElement = (Code) knowledge.getMainElement();
 			Material codeMaterial = new CodeMaterial(codeElement.getLanguage(), codeElement.getCodeLines(),
 													 codeElement.getCaption(),
 													 codeElement);
@@ -481,15 +484,14 @@ public class TranslateGenerator implements Generator {
 			MaterialMappingEntry mapping = new MaterialMappingEntry(codeMaterial);
 			mapping.add(codeElement);
 			back.add(new MaterialAndMapping(codeMaterial, mapping));
-		} catch (NoSuchElementException ignored) {
-			logger.warn("No code found for {}", codeElement.getContent());
 		}
 		return back;
 	}
 
 	private List<MaterialAndMapping> createExamples(Set<KnowledgeNode> knowledge) {
 		var templateInfo = getBasicTemplateInfo(ExampleTemplate.class);
-		var mainKnowledge = knowledge.stream().filter(it -> it.getMainElement().getType().equals(KnowledgeType.TERM))
+		var mainKnowledge = knowledge.stream()
+									 .filter(it -> it.getMainElement().getType().equals(KnowledgeType.TERM))
 									 .findFirst().orElseThrow();
 		List<MaterialAndMapping> back = new ArrayList<>();
 		var mainTerm = mainKnowledge.getMainElement();
@@ -513,7 +515,8 @@ public class TranslateGenerator implements Generator {
 
 	private List<MaterialAndMapping> createProofs(Set<KnowledgeNode> knowledge) {
 		var templateInfo = getBasicTemplateInfo(ProofTemplate.class);
-		var mainKnowledge = knowledge.stream().filter(it -> it.getMainElement().getType().equals(KnowledgeType.TERM))
+		var mainKnowledge = knowledge.stream()
+									 .filter(it -> it.getMainElement().getType().equals(KnowledgeType.TERM))
 									 .findFirst().orElseThrow();
 		List<MaterialAndMapping> back = new ArrayList<>();
 		var mainTerm = mainKnowledge.getMainElement();
@@ -542,7 +545,8 @@ public class TranslateGenerator implements Generator {
 	 * @return the templateInfo
 	 * @throws NoTemplateInfoException if no templateInfo is found
 	 */
-	private <T extends TemplateInfo> T getBasicTemplateInfo(Class<T> templateInfoClass) throws NoTemplateInfoException {
+	private <T extends TemplateInfo> T getBasicTemplateInfo(Class<T> templateInfoClass) throws
+			NoTemplateInfoException {
 		return (T) basicTemplateInfo.stream()
 									.filter(it -> templateInfoClass.equals(it.getClass()))
 									.findFirst().orElseThrow(() -> new NoTemplateInfoException(
