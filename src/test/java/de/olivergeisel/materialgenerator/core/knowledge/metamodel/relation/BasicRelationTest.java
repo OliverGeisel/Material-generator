@@ -24,7 +24,7 @@ class BasicRelationTest {
 	@Test
 	void idFromNameNullType() {
 		assertThrows(IllegalArgumentException.class, () -> {
-			BasicRelation.idFromName(null, "from", "to");
+			BasicRelation.idFromName((RelationType) null, "from", "to");
 		}, "type must not be null");
 	}
 

@@ -4,12 +4,12 @@ import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.Knowle
 
 public abstract class Relation {
 
-	private final RelationType     type;
-	private final String           name;
-	private       String           fromId;
-	private       String           toId;
-	private       KnowledgeElement from;
-	private       KnowledgeElement to;
+	private final RelationType type;
+	private final String name;
+	private String fromId;
+	private String toId;
+	private KnowledgeElement from;
+	private KnowledgeElement to;
 
 	protected Relation(String name, String fromId, String toId, RelationType type) {
 		if (fromId == null || toId == null || type == null || name == null) {
@@ -34,7 +34,19 @@ public abstract class Relation {
 		return from;
 	}
 
+	/**
+	 * Set the source of the relation
+	 *
+	 * @param from source of the relation (must not be null)
+	 * @throws IllegalArgumentException if from is null or from.id is null or does not match fromId
+	 */
 	public void setFrom(KnowledgeElement from) {
+		if (from == null) {
+			throw new IllegalArgumentException("from must not be null");
+		}
+		if (from.getId() == null || !from.getId().equals(fromId)) {
+			throw new IllegalArgumentException("from.id must not be null and must match fromId");
+		}
 		this.from = from;
 		fromId = from.getId();
 	}

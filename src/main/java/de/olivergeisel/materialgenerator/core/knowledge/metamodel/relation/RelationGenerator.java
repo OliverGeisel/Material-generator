@@ -36,8 +36,8 @@ public class RelationGenerator {
 		} catch (IllegalArgumentException iae) {
 			type = RelationType.CUSTOM;
 		}
-		var name = type != RelationType.CUSTOM ? idFromName(type.name(), fromId, toId) : UNKNOWN;
+		var name = type != RelationType.CUSTOM ? idFromName(type, fromId, toId) : typeName;
 		return type != RelationType.CUSTOM ?
-			   new BasicRelation(type, fromId, toId) : new CustomRelation(name, fromId, toId, type);
+				new BasicRelation(type, fromId, toId) : new CustomRelation(name, fromId, toId, type);
 	}
 }

@@ -20,6 +20,9 @@ class RelationTest {
 	@BeforeEach
 	void setUp() {
 		MockitoAnnotations.openMocks(this);
+		when(fromElement.getId()).thenReturn("from");
+		when(toElement.getId()).thenReturn("to");
+
 		relation = new Relation("TestRelation", "from", "to", RelationType.HAS) {
 		};
 

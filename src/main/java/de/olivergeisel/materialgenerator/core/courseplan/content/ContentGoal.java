@@ -6,12 +6,17 @@ import java.util.List;
 /**
  * A CurriculumGoal represents the educational goals of the Courseplan in MDTea.
  * <p>
- * The Goal has an expression that is a level of complexity based on Bloom-Taxonomie. </br>
+ * The Goal has an expression that is a level of complexity based on Bloom-Taxonomie.
+ * <br>
  * Every Goal has a Master-Keyword which link the goal with the structure from the knowledgemodel.
  * Normally you define an educational goal as complete sentence.
  * In the complete Sentence are more than one keyword from the knowledgemodel. So the relevant keywords are in the
- * specific Words
- * Example:
+ * specific Words.
+ * <br>
+ * Example: "Kennenlernen der Grundlagen der Programmierung mit Java"
+ * </p>
+ *
+ * @see ContentGoalExpression
  */
 public class ContentGoal {
 
