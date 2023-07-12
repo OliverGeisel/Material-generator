@@ -2,7 +2,16 @@ package de.olivergeisel.materialgenerator.core.course;
 
 import java.util.List;
 
-public class CourseChapter extends CousrseElement {
+/**
+ * A CourseChapter is a collection of {@link CourseChapterPart}s.
+ * <p>
+ * A CourseChapter can contain other CourseChapters.
+ * A CourseChapter can not contain itself.
+ *
+ * @see CourseChapterPart
+ * @see CourseElement
+ */
+public class CourseChapter extends CourseElement {
 
 	private List<CourseChapterPart> parts;
 

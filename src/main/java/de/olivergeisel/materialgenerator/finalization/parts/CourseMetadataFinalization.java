@@ -1,12 +1,25 @@
 package de.olivergeisel.materialgenerator.finalization.parts;
 
+import de.olivergeisel.materialgenerator.core.course.Meta;
 import de.olivergeisel.materialgenerator.core.courseplan.CoursePlan;
 
 import javax.persistence.*;
 import java.util.*;
 
+/**
+ * A CourseMetadataFinalization is a collection of metadata for a course.
+ * <p>
+ * It has a name, a year, a level, a type and a description.
+ * It can contain other metadata.
+ *
+ * @author Oliver Geisel
+ * @version 1.0.0
+ * @see Meta
+ * @see CoursePlan
+ * @since 0.2.0
+ */
 @Entity
-public class CourseMetadataFinalization {
+public class CourseMetadataFinalization extends Meta {
 	@ElementCollection
 	@CollectionTable(name = "metadata_finalization_entity_map", joinColumns = @JoinColumn(name = "entity_id"))
 	@MapKeyColumn(name = "key_column")
@@ -26,7 +39,7 @@ public class CourseMetadataFinalization {
 
 	public CourseMetadataFinalization(CoursePlan plan) {
 		this(plan.getMetadata().getName(), plan.getMetadata().getYear(), plan.getMetadata().getLevel(),
-			 plan.getMetadata().getType(), plan.getMetadata().getDescription(), plan.getMetadata().getOtherInfos());
+				plan.getMetadata().getType(), plan.getMetadata().getDescription(), plan.getMetadata().getOtherInfos());
 		courseId = plan.getId();
 	}
 
@@ -35,13 +48,13 @@ public class CourseMetadataFinalization {
 	}
 
 	public CourseMetadataFinalization(Optional<String> name, Optional<String> year, Optional<String> level,
-									  Optional<String> type, Optional<String> description, Map<String, String> rest) {
+			Optional<String> type, Optional<String> description, Map<String, String> rest) {
 		this(name.orElse(""), year.orElse(""), level.orElse(""), type.orElse(""), description.orElse(""), rest);
 		otherInfos.putAll(rest);
 	}
 
 	public CourseMetadataFinalization(String name, String year, String level, String type, String description,
-									  Map<String, String> rest) {
+			Map<String, String> rest) {
 		this.name = name;
 		this.year = year;
 		this.level = level;

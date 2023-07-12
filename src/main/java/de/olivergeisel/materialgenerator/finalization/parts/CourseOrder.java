@@ -14,7 +14,7 @@ import java.util.*;
  * This is the final order of the course. It is used to generate the final course. It's editable by the user.
  */
 @Entity
-public class CourseOrder {
+public class CourseOrder extends de.olivergeisel.materialgenerator.core.course.CourseOrder {
 	@OneToMany(cascade = CascadeType.ALL)
 	private final List<ChapterOrder> chapterOrder = new LinkedList<>();
 	@Id

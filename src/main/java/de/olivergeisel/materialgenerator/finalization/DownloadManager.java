@@ -239,8 +239,8 @@ public class DownloadManager {
 											 tasks.size());
 			}
 			CourseNavigation newCourseNavigation = new CourseNavigation(newTaskLevel,
-																		navigation.getCurrentMaterialHierarchy(), next,
-																		i, tasks.size());
+					previousNavigation.getCurrentMaterialHierarchy(),
+					next, i, tasks.size());
 			/*if (subChapter instanceof GroupOrder subGroup) {
 				var subDir = new File(outputDir, subGroup.getName());
 				Files.createDirectory(subDir.toPath());
@@ -265,7 +265,6 @@ public class DownloadManager {
 							WebContext context, File outputDir, TemplateEngine templateEngine) {
 		final int taskSize = task.getMaterialOrder().size();
 		var materials = task.getMaterialOrder();
-		Material previousMaterial = null;
 		Material nextMaterial;
 		CourseNavigation previousNavigation = navigation;
 		for (int i = 0; i < materials.size(); i++) {
@@ -289,7 +288,6 @@ public class DownloadManager {
 																  previousNavigation.getCurrentMaterialHierarchy(),
 																  next, i, taskSize);
 			exportMaterial(context, outputDir, templateEngine, i, material, materialLevel, newNavigation);
-			previousMaterial = material;
 			previousNavigation = newNavigation;
 		}
 	}

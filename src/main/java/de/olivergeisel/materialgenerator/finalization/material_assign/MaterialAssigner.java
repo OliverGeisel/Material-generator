@@ -64,8 +64,21 @@ public abstract class MaterialAssigner {
 		return back;
 	}
 
+	/**
+	 * Try to assign all materials to a {@link MaterialOrderCollection}.
+	 *
+	 * @param part the part to assign the materials to
+	 * @return {@literal true} if at least one material was assigned, otherwise false.
+	 */
 	public abstract boolean assign(MaterialOrderCollection part);
 
+	/**
+	 * Assign a specific material to a {@link MaterialOrderCollection}.
+	 *
+	 * @param material the material to assign. Must be in the material set of this assigner.
+	 * @param part     the part to assign the material to
+	 * @return {@literal true} if the material was assigned, otherwise false.
+	 */
 	public abstract boolean assign(Material material, MaterialOrderCollection part);
 
 	//region setter/getter

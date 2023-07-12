@@ -7,6 +7,9 @@ import java.util.Objects;
  */
 public class ContentTarget {
 
+	/**
+	 * An empty ContentTarget.
+	 */
 	public static final ContentTarget EMPTY = new ContentTarget("NO_TARGET");
 
 	private String      value;
@@ -16,6 +19,11 @@ public class ContentTarget {
 
 	}
 
+	/**
+	 * Create a new ContentTarget.
+	 *
+	 * @param value the value of the target.
+	 */
 	public ContentTarget(String value) {
 		this.value = value;
 	}

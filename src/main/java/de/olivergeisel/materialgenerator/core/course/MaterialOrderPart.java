@@ -3,6 +3,16 @@ package de.olivergeisel.materialgenerator.core.course;
 import javax.persistence.*;
 import java.util.UUID;
 
+/**
+ * A MaterialOrderPart is an element of a structured Collection that represents Materials for a course.
+ * <p>
+ * It can be a Collection, of other {@link MaterialOrderPart}s or a {@link de.olivergeisel.materialgenerator.generation.material.Material}.
+ *
+ * @author Oliver Geisel
+ * @version 1.0.0
+ * @see de.olivergeisel.materialgenerator.generation.material.Material
+ * @since 0.2.0
+ */
 @Entity
 public abstract class MaterialOrderPart {
 
