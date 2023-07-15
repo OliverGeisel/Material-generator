@@ -7,6 +7,19 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.UUID;
 
+/**
+ * A topic is a part of a {@link Goal}. It is the smallest unit that has to be mastered by the students.
+ * <p>
+ * Each topic is linked with at least one StructureElement of the Plan. In this case a chapter, group or task of
+ * the {@link de.olivergeisel.materialgenerator.finalization.parts.RawCourse}. Or more specific a {@link de.olivergeisel.materialgenerator.finalization.parts.MaterialOrderCollection}
+ *
+ * @author Oliver Geisel
+ * @version 1.0.0
+ * @see Goal
+ * @see de.olivergeisel.materialgenerator.finalization.parts.RawCourse
+ * @since 0.2.0
+ */
+
 @Getter
 @Setter
 @Entity
@@ -53,7 +66,6 @@ public class Topic {
 	}
 
 	//region setter/getter
-	//region getter / setter
 	public String getName() {
 		return name;
 	}
@@ -62,10 +74,14 @@ public class Topic {
 		return id;
 	}
 
+	/**
+	 * Get the ID of the {@link Goal} this Topic is linked to.
+	 *
+	 * @return The ID of the {@link Goal} this Topic is linked to.
+	 */
 	public UUID getGoalId() {
 		return goalId;
 	}
-//endregion
 //endregion
 
 	@Override

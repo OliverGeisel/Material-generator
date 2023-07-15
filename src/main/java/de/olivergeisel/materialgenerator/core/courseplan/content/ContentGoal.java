@@ -27,16 +27,15 @@ public class ContentGoal {
 
 	private final ContentGoalExpression expression;
 	private final String                masterKeyword;
-	private final List<ContentTarget>   content;
-	//todo private final List<String> specificWords;
+	private final List<ContentTarget>   content = new ArrayList<>();
+	private final String                name;
 	private final String                completeSentence;
-	private       String                name;
+	//todo private final List<String> specificWords;
 
 	protected ContentGoal() {
 		this.expression = ContentGoalExpression.FIRST_LOOK;
 		this.masterKeyword = "";
 		this.completeSentence = "";
-		this.content = new ArrayList<>();
 		this.name = "";
 	}
 
@@ -58,7 +57,8 @@ public class ContentGoal {
 	 *
 	 * @param expression       the expression of the goal.
 	 * @param masterKeyword    the master keyword of the goal.
-	 * @param content          the content of the goal.
+	 * @param content          the content of the goal. The content is a list of {@link ContentTarget}. Each target
+	 *                         will be linked with the goal.
 	 * @param completeSentence the complete sentence of the goal.
 	 * @param name             the name of the goal.
 	 */
@@ -68,21 +68,23 @@ public class ContentGoal {
 		this.masterKeyword = masterKeyword;
 		//todo this.specificWords = specificWords;
 		this.completeSentence = completeSentence;
-		this.content = new ArrayList<>();
 		this.content.addAll(content);
+		content.forEach(c -> c.setRelatedGoal(this));
 		this.name = name;
 	}
 
 	/**
-	 * Add a {@link ContentTarget} to the content of the goal.
+	 * Add a {@link ContentTarget} to the content of the goal. The target will only be added if it is not already in the
+	 * goal. Link the target with the goal.
 	 *
 	 * @param target the target to add.
-	 * @return {@literal true} if the target was added.
+	 * @return {@literal true} if the target was added. {@literal false} if the target is already in the content.
 	 */
 	public boolean add(ContentTarget target) {
 		if (content.contains(target)) {
 			return false;
 		}
+		target.setRelatedGoal(this);
 		return content.add(target);
 	}
 

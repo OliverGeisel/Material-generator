@@ -8,6 +8,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * A Goal is a learning goal that should be achieved by the students in a course.
+ * They are a persistent representation of the {@link ContentGoal} class.
+ * <p>
+ * A Goal contains a {@link ContentGoalExpression}, a master keyword, a complete sentence and a list of {@link Topic}s.
+ * Each Topic is a subpart that should be learned by the students.
+ *
+ * @author Oliver Geisel
+ * @version 1.0.0
+ * @see ContentGoal
+ * @see ContentGoalExpression
+ * @see Topic
+ * @since 0.2.0
+ */
 @Entity
 public class Goal {
 	private final ContentGoalExpression expression;
