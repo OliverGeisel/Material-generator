@@ -3,7 +3,19 @@ package de.olivergeisel.materialgenerator.core.courseplan.content;
 import java.util.Objects;
 
 /**
- * A Part of a ContentGoal. Target are small peaces, which fill a small part the goal.
+ * A Part of a ContentGoal. Target are small peaces, which fill a small part the {@link ContentGoal}.
+ * <p>
+ * Example: <br>Goal: "Learn the basics of Java"
+ * <br>Targets: "if-Statement", "for-Loop", "while-Loop", "switch-Statement"
+ * <p>
+ * The targets are the small peaces, which are needed to reach the goal.
+ * The goal is the big picture, the targets are the small peaces, which are needed to reach the goal.
+ *
+ * @author Oliver Geisel
+ * @version 1.0.0
+ * @see ContentGoal
+ * @see ContentGoalExpression
+ * @since 0.2.0
  */
 public class ContentTarget {
 

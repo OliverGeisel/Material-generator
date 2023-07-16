@@ -7,6 +7,29 @@ import de.olivergeisel.materialgenerator.core.courseplan.structure.CourseStructu
 
 import java.util.*;
 
+/**
+ * A CoursePlan is one of the most important objects of the application. It contains all information about the course.
+ * <p>
+ * A CoursePlan contains a {@link CourseMetadata}, a {@link CourseStructure}, a set of {@link ContentGoal}s and a
+ * list of {@link ContentTarget}s.
+ * <br>
+ * The {@link CourseMetadata} contains all information about the course like the name, the year, the level and so
+ * on.
+ * <br>
+ * The {@link CourseStructure} contains the structure of the course. The structure is a tree of
+ * {@link de.olivergeisel.materialgenerator.core.courseplan.structure.StructureChapter}s which contains groups,
+ * and they contain tasks.
+ * <br>
+ * The {@link ContentGoal}s are the educational goals of the course.
+ *
+ * @author Oliver Geisel
+ * @version 1.0.0
+ * @see CourseMetadata
+ * @see CourseStructure
+ * @see ContentGoal
+ * @see ContentTarget
+ * @since 0.2.0
+ */
 public class CoursePlan {
 
 	private final UUID id = UUID.randomUUID();
@@ -22,7 +45,7 @@ public class CoursePlan {
 	private final CourseStructure structure;
 
 	public CoursePlan(CourseMetadata metadata, Collection<ContentGoal> goals, CourseStructure structure,
-					  Collection<ContentTarget> targets) {
+			Collection<ContentTarget> targets) {
 		this.metadata = metadata;
 		this.goals = new HashSet<>();
 		this.goals.addAll(goals);

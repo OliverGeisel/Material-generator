@@ -53,12 +53,17 @@ public class RawCourse extends Course {
 	}
 
 	/**
-	 * @return
+	 * Get the number of materials that are assigned to this course.
+	 *
+	 * @return The number of materials
 	 */
 	public int materialCount() {
 		return courseOrder.materialCount();
 	}
 
+	/**
+	 * Change the plan. THis will also change the course order. Materials must be reassigned.
+	 */
 	public void changePlan(CoursePlan plan) {
 		setPlanId(plan.getId());
 	}
