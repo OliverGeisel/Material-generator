@@ -4,12 +4,13 @@ import javax.persistence.*;
 import java.util.UUID;
 
 /**
- * A part of a material order. A material order can be a complete course or a single material.
+ * A MaterialOrderPart is an element of a structured Collection that represents Materials for a course.
+ * <p>
+ * It can be a Collection, of other {@link MaterialOrderPart}s or a {@link de.olivergeisel.materialgenerator.generation.material.Material}.
  *
  * @author Oliver Geisel
- * @version 1.0
+ * @version 1.0.0
  * @see de.olivergeisel.materialgenerator.generation.material.Material
- * @see de.olivergeisel.materialgenerator.finalization.parts.MaterialOrderCollection
  * @since 0.2.0
  */
 @Entity

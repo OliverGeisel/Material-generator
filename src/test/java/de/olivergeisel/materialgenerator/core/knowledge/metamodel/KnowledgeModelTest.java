@@ -3,11 +3,13 @@ package de.olivergeisel.materialgenerator.core.knowledge.metamodel;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.RootStructureElement;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
+@Tag("UnitTest")
 class KnowledgeModelTest {
 
 	private KnowledgeModel knowledgeModel;

@@ -6,6 +6,14 @@ import de.olivergeisel.materialgenerator.generation.templates.template_infos.Tem
 import javax.persistence.Entity;
 import java.util.List;
 
+/**
+ * Material that contains a list of acronyms
+ *
+ * @author Oliver Geisel
+ * @version 1.0.0
+ * @see ListMaterial
+ * @since 0.2.0
+ */
 @Entity
 public class AcronymMaterial extends ListMaterial {
 
@@ -17,8 +25,16 @@ public class AcronymMaterial extends ListMaterial {
 		super(type, templateInfo);
 	}
 
+	/**
+	 * Create a new AcronymMaterial
+	 *
+	 * @param acronyms     List of acronyms
+	 * @param numerated    list is numerated or not
+	 * @param templateInfo TemplateInfo for the material
+	 * @param element      KnowledgeElement that is represented by the material
+	 */
 	public AcronymMaterial(List<String> acronyms, boolean numerated, TemplateInfo templateInfo,
-						   KnowledgeElement element) {
+			KnowledgeElement element) {
 		super(MaterialType.WIKI, templateInfo, "Abkürzung", acronyms, numerated, element);
 	}
 }

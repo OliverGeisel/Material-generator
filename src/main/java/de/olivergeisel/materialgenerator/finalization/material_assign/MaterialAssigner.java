@@ -72,22 +72,19 @@ public abstract class MaterialAssigner {
 	}
 
 	/**
-	 * Try to assign the materials to the part.
+	 * Try to assign all materials to a {@link MaterialOrderCollection}.
 	 *
-	 * @param part part to assign
-	 * @return {@literal true} if a material is assigned, otherwise {@literal false}
+	 * @param part the part to assign the materials to
+	 * @return {@literal true} if at least one material was assigned, otherwise false.
 	 */
 	public abstract boolean assign(MaterialOrderCollection part);
 
 	/**
-	 * Try to assign a specific material to the part.
-	 * <p>
-	 * The material must be in the assigner. If not, it will return false. If the material is already assigned, it
-	 * will return false.
+	 * Assign a specific material to a {@link MaterialOrderCollection}.
 	 *
-	 * @param material material to assign to the part (must be in the assigner and not null)
-	 * @param part     part to assign
-	 * @return {@literal true} if material is assigned, otherwise {@literal false}
+	 * @param material the material to assign. Must be in the material set of this assigner.
+	 * @param part     the part to assign the material to
+	 * @return {@literal true} if the material was assigned, otherwise false.
 	 */
 	public abstract boolean assign(Material material, MaterialOrderCollection part);
 

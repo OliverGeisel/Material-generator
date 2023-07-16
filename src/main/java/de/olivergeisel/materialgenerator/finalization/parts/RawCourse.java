@@ -1,7 +1,7 @@
 package de.olivergeisel.materialgenerator.finalization.parts;
 
-
 import de.olivergeisel.materialgenerator.core.course.Course;
+import de.olivergeisel.materialgenerator.core.course.Meta;
 import de.olivergeisel.materialgenerator.core.courseplan.CoursePlan;
 import de.olivergeisel.materialgenerator.finalization.Goal;
 import de.olivergeisel.materialgenerator.generation.material.MaterialAndMapping;
@@ -11,6 +11,19 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * A RawCourse is a {@link Course} that is not yet finalized.
+ * <p>
+ * A RawCourse contains a {@link CourseOrder} and a {@link CourseMetadataFinalization}.
+ * It can be edited.
+ *
+ * @author Oliver Geisel
+ * @version 1.0.0
+ * @see Course
+ * @see CourseOrder
+ * @see CourseMetadataFinalization
+ * @since 0.2.0
+ */
 @Entity
 public class RawCourse extends Course {
 	@Id
@@ -39,6 +52,9 @@ public class RawCourse extends Course {
 		courseOrder = new CourseOrder(plan, goals);
 	}
 
+	/**
+	 * @return
+	 */
 	public int materialCount() {
 		return courseOrder.materialCount();
 	}
@@ -97,6 +113,22 @@ public class RawCourse extends Course {
 
 	public void setMetadata(CourseMetadataFinalization metadata) {
 		this.metadata = metadata;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Meta getMeta() {
+		return metadata;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public CourseOrder getOrder() {
+		return courseOrder;
 	}
 //endregion
 }

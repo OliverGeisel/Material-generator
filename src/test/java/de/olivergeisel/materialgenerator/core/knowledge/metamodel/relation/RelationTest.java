@@ -2,6 +2,7 @@ package de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation;
 
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -9,9 +10,10 @@ import org.mockito.MockitoAnnotations;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+@Tag("UnitTest")
 class RelationTest {
 
-	private Relation relation;
+	private Relation         relation;
 	@Mock
 	private KnowledgeElement fromElement;
 	@Mock
@@ -20,6 +22,9 @@ class RelationTest {
 	@BeforeEach
 	void setUp() {
 		MockitoAnnotations.openMocks(this);
+		when(fromElement.getId()).thenReturn("from");
+		when(toElement.getId()).thenReturn("to");
+
 		relation = new Relation("TestRelation", "from", "to", RelationType.HAS) {
 		};
 

@@ -2,6 +2,18 @@ package de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation;
 
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement;
 
+/**
+ * A Relation is a connection between two {@link KnowledgeElement}s.
+ * <p>
+ * A Relation is always directed.
+ * A Relation has a name, a source and a target.
+ *
+ * @author Oliver Geisel
+ * @version 1.0.0
+ * @see KnowledgeElement
+ * @see RelationType
+ * @since 0.2.0
+ */
 public abstract class Relation {
 
 	private final RelationType     type;
@@ -34,11 +46,28 @@ public abstract class Relation {
 		return from;
 	}
 
+	/**
+	 * Set the source of the relation
+	 *
+	 * @param from source of the relation (must not be null)
+	 * @throws IllegalArgumentException if from is null or the id is null or does not match fromId
+	 */
 	public void setFrom(KnowledgeElement from) {
+		if (from == null) {
+			throw new IllegalArgumentException("from must not be null");
+		}
+		if (from.getId() == null || !from.getId().equals(fromId)) {
+			throw new IllegalArgumentException("from.id must not be null and must match fromId");
+		}
 		this.from = from;
 		fromId = from.getId();
 	}
 
+	/**
+	 * Get the name of the relation
+	 *
+	 * @return name of the relation
+	 */
 	public String getName() {
 		return name;
 	}
@@ -57,7 +86,9 @@ public abstract class Relation {
 	}
 
 	/**
-	 * @param to
+	 * Set the target of the relation
+	 *
+	 * @param to target of the relation (must not be null)
 	 */
 	public void setTo(KnowledgeElement to) {
 		if (to == null) {

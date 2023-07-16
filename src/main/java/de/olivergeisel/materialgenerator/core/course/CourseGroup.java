@@ -1,5 +1,12 @@
 package de.olivergeisel.materialgenerator.core.course;
 
+/**
+ * A CourseGroup is a collection of {@link CourseChapterPart}s.
+ * <p>
+ * A CourseGroup can contain other CourseGroups and {@link CourseChapterLeafPart}s.
+ * A CourseGroup can not contain itself.
+ * A CourseGroup can not contain a CourseChapterCollectionPart that contains this CourseGroup.
+ */
 public class CourseGroup extends CourseChapterCollectionPart {
 
 
