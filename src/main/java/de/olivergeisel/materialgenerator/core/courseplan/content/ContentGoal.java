@@ -140,8 +140,16 @@ public class ContentGoal {
 	 *
 	 * @return the name of the goal.
 	 */
-	public String getName() {
+	public String getName () {
 		return name;
+	}
+
+	@Override
+	public String toString () {
+		return "ContentGoal{" +
+			   "name='" + name + '\'' +
+			   ", completeSentence='" + completeSentence + '\'' +
+			   '}';
 	}
 //endregion
 }

@@ -13,6 +13,17 @@ import javax.persistence.OneToMany;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
+/**
+ * Represents a chapter in the final course plan.
+ * <p>
+ * Is the largest unit in the course plan. Contains a list of {@link GroupOrder}s.
+ *
+ * @author Oliver Geisel
+ * @version 1.0.0
+ * @see MaterialOrderPart
+ * @since 0.2.0
+ */
 @Entity
 public class ChapterOrder extends MaterialOrderCollection {
 
@@ -26,7 +37,7 @@ public class ChapterOrder extends MaterialOrderCollection {
 	 * @param goals     the goals of the course
 	 * @throws IllegalArgumentException if chapter is null
 	 */
-	public ChapterOrder(StructureChapter stChapter, Set<Goal> goals) throws IllegalArgumentException {
+	public ChapterOrder (StructureChapter stChapter, Set<Goal> goals) throws IllegalArgumentException {
 		groupOrder = new LinkedList<>();
 		if (stChapter == null) throw new IllegalArgumentException("chapter must not be null");
 		for (var group : stChapter.getParts()) {
@@ -41,11 +52,11 @@ public class ChapterOrder extends MaterialOrderCollection {
 	}
 
 
-	protected ChapterOrder() {
+	protected ChapterOrder () {
 		groupOrder = new LinkedList<>();
 	}
 
-	public void moveUp(GroupOrder group) {
+	public void moveUp (GroupOrder group) {
 		int index = groupOrder.indexOf(group);
 		if (index > 0) {
 			groupOrder.remove(index);
@@ -53,7 +64,7 @@ public class ChapterOrder extends MaterialOrderCollection {
 		}
 	}
 
-	public void moveDown(GroupOrder group) {
+	public void moveDown (GroupOrder group) {
 		int index = groupOrder.indexOf(group);
 		if (index < groupOrder.size() - 1) {
 			groupOrder.remove(index);
@@ -61,39 +72,40 @@ public class ChapterOrder extends MaterialOrderCollection {
 		}
 	}
 
-	public boolean append(GroupOrder group) {
+	public boolean append (GroupOrder group) {
 		return groupOrder.add(group);
 	}
 
-	public boolean remove(GroupOrder group) {
+	public boolean remove (GroupOrder group) {
 		return groupOrder.remove(group);
 	}
 
-	public MaterialOrderPart find(UUID id) {
+	public MaterialOrderPart find (UUID id) {
 		if (this.getId().equals(id)) return this;
 		return groupOrder.stream().map(g -> g.find(id)).filter(Objects::nonNull).findFirst().orElse(null);
 	}
 
-	public GroupOrder findGroup(UUID groupID) {
+	public GroupOrder findGroup (UUID groupID) {
 		return groupOrder.stream().filter(g -> g.getId().equals(groupID)).findFirst().orElse(null);
 	}
 
-	public TaskOrder findTask(UUID taskId) {
+	public TaskOrder findTask (UUID taskId) {
 		return groupOrder.stream().map(g -> g.findTask(taskId)).filter(Objects::nonNull).findFirst().orElse(null);
 	}
 
-	public Material findMaterial(UUID materialId) {
+	@Override
+	public Material findMaterial (UUID materialId) {
 		return groupOrder.stream().map(g -> g.findMaterial(materialId)).filter(Objects::nonNull).findFirst()
 						 .orElse(null);
 	}
 
 	@Override
-	public Relevance updateRelevance() {
+	public Relevance updateRelevance () {
 		return getRelevance();
 	}
 
 	@Override
-	public int materialCount() {
+	public int materialCount () {
 		return groupOrder.stream().mapToInt(GroupOrder::materialCount).sum();
 	}
 
@@ -104,7 +116,7 @@ public class ChapterOrder extends MaterialOrderCollection {
 	 * @return the set of materials that assigned to the chapter
 	 */
 	@Override
-	public Set<Material> assignMaterial(Set<Material> materials) {
+	public Set<Material> assignMaterial (Set<Material> materials) {
 		return groupOrder.stream().map(g -> g.assignMaterial(materials)).flatMap(Collection::stream)
 						 .collect(Collectors.toSet());
 	}
@@ -113,7 +125,7 @@ public class ChapterOrder extends MaterialOrderCollection {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean assign(Material material) throws UnsupportedOperationException {
+	public boolean assign (Material material) throws UnsupportedOperationException {
 		throw new UnsupportedOperationException("ChapterOrder does not support assign(Material)");
 	}
 
@@ -124,13 +136,13 @@ public class ChapterOrder extends MaterialOrderCollection {
 	 * @return true if the assignment was successful
 	 */
 	@Override
-	public boolean assignMaterial(MaterialAssigner assigner) {
+	public boolean assignMaterial (MaterialAssigner assigner) {
 		groupOrder.forEach(g -> g.assignMaterial(assigner));
 		return true;
 	}
 
 	@Override
-	public boolean remove(UUID partId) {
+	public boolean remove (UUID partId) {
 		return groupOrder.stream().anyMatch(g -> g.remove(partId));
 	}
 
@@ -142,7 +154,7 @@ public class ChapterOrder extends MaterialOrderCollection {
 	 * @return the relevance of the chapter. If no relevance is set, TO_SET is returned.
 	 */
 	@Override
-	public Relevance getRelevance() {
+	public Relevance getRelevance () {
 		return groupOrder.stream().map(GroupOrder::getRelevance).max(Comparator.comparingInt(Enum::ordinal))
 						 .orElse(Relevance.TO_SET);
 	}
@@ -153,12 +165,12 @@ public class ChapterOrder extends MaterialOrderCollection {
 	 * @return true if all parts are valid
 	 */
 	@Override
-	public boolean isValid() {
+	public boolean isValid () {
 		return groupOrder.stream().allMatch(GroupOrder::isValid)
 			   && groupOrder.stream().allMatch(group -> group.getRelevance().compareTo(getRelevance()) < 1);
 	}
 
-	public List<GroupOrder> getGroupOrder() {
+	public List<GroupOrder> getGroupOrder () {
 		return Collections.unmodifiableList(groupOrder);
 	}
 //endregion

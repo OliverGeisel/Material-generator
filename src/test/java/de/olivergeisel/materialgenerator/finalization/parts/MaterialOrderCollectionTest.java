@@ -25,12 +25,17 @@ class MaterialOrderCollectionTest {
 	void setUp() {
 		collection = new MaterialOrderCollection() {
 			@Override
-			public Relevance updateRelevance() {
+			public Material findMaterial (UUID materialId) {
 				return null;
 			}
 
 			@Override
-			public int materialCount() {
+			public Relevance updateRelevance () {
+				return null;
+			}
+
+			@Override
+			public int materialCount () {
 				return 0;
 			}
 

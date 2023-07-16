@@ -32,13 +32,15 @@ public abstract class MaterialOrderCollection extends MaterialOrderPart {
 	@ManyToOne
 	private Topic topic;
 
-	protected MaterialOrderCollection() {
+	protected MaterialOrderCollection () {
 		super();
 	}
 
-	public abstract Relevance updateRelevance();
+	public abstract Material findMaterial (UUID materialId);
 
-	public abstract int materialCount();
+	public abstract Relevance updateRelevance ();
+
+	public abstract int materialCount ();
 
 	/**
 	 * Assign a set of Materials to this part. Can throw {@link UnsupportedOperationException} when no MAterial can
