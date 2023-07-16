@@ -10,29 +10,47 @@ public abstract class StructureElement {
 	protected     Relevance    relevance;
 
 	private ContentTarget topic;
-	private String        name; // KnowledgeObject id most important alias
+	private String        name; // KnowledgeObject id; most important alias
 
-	protected StructureElement() {
+	protected StructureElement () {
 
 	}
 
-	protected StructureElement(ContentTarget topic, Relevance relevance, String name,
-							   Collection<String> alternatives) {
+	protected StructureElement (ContentTarget topic, Relevance relevance, String name,
+			Collection<String> alternatives) {
 		this.relevance = relevance;
 		this.name = name;
 		this.topic = topic;
 		alias.addAll(alternatives);
 	}
 
-	public boolean addAlias(String alternative) {
+	/**
+	 * Adds an alternative to the list of alternatives
+	 *
+	 * @param alternative alternative to add
+	 * @return @{@literal true} if the alternative was added, {@literal false} if it was already in the list
+	 */
+	public boolean addAlias (String alternative) {
 		return alias.add(alternative);
 	}
 
-	public boolean removeAlias(String alternative) {
+	/**
+	 * Removes an alternative from the list of alternatives
+	 *
+	 * @param alternative alternative to remove
+	 * @return @{@literal true} if the alternative was removed, {@literal false} if it was not in the list
+	 */
+	public boolean removeAlias (String alternative) {
 		return alias.remove(alternative);
 	}
 
-	public boolean moveUpAlias(String alternative) {
+	/**
+	 * Moves an alternative up in the list of alternatives
+	 *
+	 * @param alternative alternative to move
+	 * @return @{@literal true} if the alternative was moved, {@literal false} if it was not in the list or already at the top
+	 */
+	public boolean moveUpAlias (String alternative) {
 		int index = alias.indexOf(alternative);
 		if (index > 0) {
 			alias.remove(index);
@@ -42,7 +60,13 @@ public abstract class StructureElement {
 		return false;
 	}
 
-	public boolean moveDownAlias(String alternative) {
+	/**
+	 * Moves an alternative down in the list of alternatives
+	 *
+	 * @param alternative alternative to move
+	 * @return @{@literal true} if the alternative was moved, {@literal false} if it was not in the list or already at the bottom
+	 */
+	public boolean moveDownAlias (String alternative) {
 		int index = alias.indexOf(alternative);
 		if (index < alias.size() - 1) {
 			alias.remove(index);
@@ -52,7 +76,14 @@ public abstract class StructureElement {
 		return false;
 	}
 
-	public boolean moveAlias(String alternative, int newIndex) {
+	/**
+	 * Moves an alternative to a specific index in the list of alternatives
+	 *
+	 * @param alternative alternative to move
+	 * @param newIndex    index to move the alternative to
+	 * @return @{@literal true} if the alternative was moved, {@literal false} if it was not in the list or the index was out of bounds
+	 */
+	public boolean moveAlias (String alternative, int newIndex) {
 		int index = alias.indexOf(alternative);
 		if (index >= 0 && index < alias.size() && newIndex >= 0 && newIndex < alias.size()) {
 			alias.remove(index);
@@ -62,7 +93,14 @@ public abstract class StructureElement {
 		return false;
 	}
 
-	public boolean insertAlias(String alternative, int index) {
+	/**
+	 * Inserts an alternative at a specific index in the list of alternatives
+	 *
+	 * @param alternative alternative to insert
+	 * @param index       index to insert the alternative at
+	 * @return @{@literal true} if the alternative was inserted, {@literal false} if the index was out of bounds
+	 */
+	public boolean insertAlias (String alternative, int index) {
 		if (index >= 0 && index < alias.size()) {
 			alias.add(index, alternative);
 			return true;
@@ -70,42 +108,51 @@ public abstract class StructureElement {
 		return false;
 	}
 
-	public boolean hasAlias(String alternative) {
+	/**
+	 * Checks if an alternative is in the list of alternatives
+	 *
+	 * @param alternative alternative to check
+	 * @return @{@literal true} if the alternative is in the list, {@literal false} if it is not
+	 */
+	public boolean hasAlias (String alternative) {
 		return alias.contains(alternative);
 	}
 
-	public abstract Relevance updateRelevance();
+	/**
+	 * Updates the relevance of the structure element. This method should be called after the structure element was changed.
+	 */
+	public abstract Relevance updateRelevance ();
 
 
 	//region setter/getter
-	public Set<String> getAlternatives() {
+	public Set<String> getAlternatives () {
 		return Collections.unmodifiableSet(new LinkedHashSet<>(alias));
 	}
 
-	public String getName() {
+	public String getName () {
 		return name;
 	}
 
-	public Relevance getRelevance() {
+	public Relevance getRelevance () {
 		return relevance;
 	}
 
-	public ContentTarget getTopic() {
+	public ContentTarget getTopic () {
 		return topic;
 	}
 
-	public void setTopic(ContentTarget topic) {
+	public void setTopic (ContentTarget topic) {
 		this.topic = topic;
 	}
 
-	public boolean isValid() {
+	public boolean isValid () {
 		return relevance != Relevance.TO_SET;
 	}
 //endregion
 
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals (Object o) {
 		if (this == o) return true;
 		if (!(o instanceof StructureElement that)) return false;
 
@@ -116,7 +163,7 @@ public abstract class StructureElement {
 	}
 
 	@Override
-	public int hashCode() {
+	public int hashCode () {
 		int result = alias.hashCode();
 		result = 31 * result + (relevance != null ? relevance.hashCode() : 0);
 		result = 31 * result + (topic != null ? topic.hashCode() : 0);
@@ -125,7 +172,7 @@ public abstract class StructureElement {
 	}
 
 	@Override
-	public String toString() {
+	public String toString () {
 		return "StructureElement{" +
 			   "name='" + name +
 			   ", alias=" + alias +
