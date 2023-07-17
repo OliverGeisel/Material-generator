@@ -11,7 +11,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="Material generator" target="17" />
+      <module name="Material generator" target="19" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
