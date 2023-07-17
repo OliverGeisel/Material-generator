@@ -1,5 +1,13 @@
 upload-dir/
+target/
 
+.idea/discord.xml
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/uiDesigner.xml
+.idea/sonarlint
+.idea/libraries
+.idea/shelf
 # Compiled class file
 *.class
 
@@ -24,7 +32,4 @@ upload-dir/
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
-/src/main/java/de/olivergeisel/materialgenerator/test/
-.idea
-target/
-Material generator.iml
+
