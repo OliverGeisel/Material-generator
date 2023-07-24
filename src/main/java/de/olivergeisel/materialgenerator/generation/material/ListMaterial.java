@@ -43,16 +43,11 @@ public class ListMaterial extends Material {
 	}
 
 	public ListMaterial(String headline, Collection<String> entries) {
-		super(MaterialType.WIKI);
-		this.entries.addAll(entries);
-		this.headline = headline;
-		this.numerated = false;
+		this(headline, entries, false);
 	}
 
 	public ListMaterial(String headline) {
-		super(MaterialType.WIKI);
-		this.headline = headline;
-		this.numerated = false;
+		this(headline, List.of());
 	}
 
 	//region setter/getter

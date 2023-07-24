@@ -30,7 +30,7 @@ public class Material extends MaterialOrderPart {
 	@ElementCollection
 	@CollectionTable(name = "material_entity_map", joinColumns = @JoinColumn(name = "entity_id"))
 	@MapKeyColumn(name = "key_column")
-	@Column(name = "value_column")
+	@Column(name = "value_column", length = 2_000)
 	private final Map<String, String> values = new HashMap<>();
 	/**
 	 * The term name of the material, which is used in the template
@@ -54,7 +54,7 @@ public class Material extends MaterialOrderPart {
 	}
 
 	protected Material(MaterialType type) {
-		this.type = type;
+		this(type, (TemplateInfo) null);
 	}
 
 	protected Material(MaterialType type, TemplateInfo templateInfo) {
@@ -63,6 +63,11 @@ public class Material extends MaterialOrderPart {
 	}
 
 	public Material(MaterialType type, String term, String termId, String structureId) {
+		this("Material for %s".formatted(term), type, term, termId, structureId);
+	}
+
+	public Material(String name, MaterialType type, String term, String termId, String structureId) {
+		super(name);
 		this.type = type;
 		this.term = term;
 		this.termId = termId;
