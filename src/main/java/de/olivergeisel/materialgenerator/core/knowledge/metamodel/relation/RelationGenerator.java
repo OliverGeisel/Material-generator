@@ -1,5 +1,7 @@
 package de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation;
 
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement;
+
 import static de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.BasicRelation.idFromName;
 
 public class RelationGenerator {
@@ -21,15 +23,7 @@ public class RelationGenerator {
 	}
 
 	public static Relation create(String typeName, String fromId, String toId) {
-		if (typeName == null) {
-			throw new IllegalArgumentException("typeName must not be null");
-		}
-		if (typeName.isBlank()) {
-			throw new IllegalArgumentException("typeName must not be blank");
-		}
-		if (fromId == null || toId == null) {
-			throw new IllegalArgumentException("fromId and toId must not be null");
-		}
+		checkArguments(typeName, fromId == null, toId == null);
 		RelationType type;
 		try {
 			type = RelationType.valueOf(typeName.toUpperCase().replace("-", "_"));
@@ -39,5 +33,30 @@ public class RelationGenerator {
 		var name = type != RelationType.CUSTOM ? idFromName(type, fromId, toId) : typeName;
 		return type != RelationType.CUSTOM ?
 				new BasicRelation(type, fromId, toId) : new CustomRelation(name, fromId, toId, type);
+	}
+
+	public static Relation create(String typeName, KnowledgeElement from, KnowledgeElement to) {
+		checkArguments(typeName, from, to);
+		RelationType type;
+		try {
+			type = RelationType.valueOf(typeName.toUpperCase().replace("-", "_"));
+		} catch (IllegalArgumentException iae) {
+			type = RelationType.CUSTOM;
+		}
+		var name = type != RelationType.CUSTOM ? idFromName(type, from.getId(), to.getId()) : typeName;
+		return type != RelationType.CUSTOM ?
+				new BasicRelation(type, from, to) : new CustomRelation(name, from, to, type);
+	}
+
+	private static void checkArguments(String typeName, Object from, Object to) throws IllegalArgumentException {
+		if (typeName == null) {
+			throw new IllegalArgumentException("typeName must not be null");
+		}
+		if (typeName.isBlank()) {
+			throw new IllegalArgumentException("typeName must not be blank");
+		}
+		if (from == null || to == null) {
+			throw new IllegalArgumentException("from and to must not be null");
+		}
 	}
 }

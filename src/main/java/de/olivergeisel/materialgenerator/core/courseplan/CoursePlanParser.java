@@ -147,7 +147,7 @@ public class CoursePlanParser {
 	 * @throws CoursePlanParserException if the JSON is not valid. Like the name is null or empty
 	 * @throws IllegalStateException     if the parsed chapter is not valid
 	 */
-	private StructureChapter createChapter (Map<String, ?> chapterJSON)
+	private StructureChapter createChapter(Map<String, ?> chapterJSON)
 			throws CoursePlanParserException, IllegalStateException {
 		List<Map<String, ?>> groups = (List<Map<String, ?>>) chapterJSON.get(GROUPS);
 		String name = chapterJSON.get(STRUCTURE_NAME).toString();
@@ -173,7 +173,7 @@ public class CoursePlanParser {
 		return back;
 	}
 
-	private StructureElementPart createGroup (Map<String, ?> groupJSON) throws CoursePlanParserException {
+	private StructureElementPart createGroup(Map<String, ?> groupJSON) throws CoursePlanParserException {
 		String name = groupJSON.get(STRUCTURE_NAME).toString();
 		if (name.isBlank()) {
 			throw new CoursePlanParserException("Group name must not be null or blank");
@@ -198,7 +198,7 @@ public class CoursePlanParser {
 		return back;
 	}
 
-	private StructureTask createTask (Map<String, ?> taskJSON) throws CoursePlanParserException {
+	private StructureTask createTask(Map<String, ?> taskJSON) throws CoursePlanParserException {
 		Relevance relevance = Relevance.valueOf(taskJSON.get(STRUCTURE_RELEVANCE).toString());
 		String name = taskJSON.get(STRUCTURE_NAME).toString();
 		if (name.isBlank()) {
@@ -216,7 +216,7 @@ public class CoursePlanParser {
 		return new StructureTask(topic, relevance, name, alternatives);
 	}
 
-	private CourseStructure parseCourseStructure (List<Map<String, ?>> structure) {
+	private CourseStructure parseCourseStructure(List<Map<String, ?>> structure) {
 		CourseStructure back = new CourseStructure();
 		for (var chapterJson : structure) {
 			try {
@@ -236,8 +236,11 @@ public class CoursePlanParser {
 	 * @return the ContentTarget or an empty ContentTarget if no target was found
 	 */
 	private ContentTarget findTopic(String topic) {
-		return targets.stream().filter(goalElement -> goalElement.getTopic().equals(topic)).findFirst()
-					  .orElse(ContentTarget.EMPTY);
+		return targets.stream().filter(target -> target.getTopic().equals(topic)).findFirst()
+					  .orElseGet(() -> {
+						  logger.warn("Could not find topic %s. Assign empty Topic.".formatted(topic));
+						  return ContentTarget.EMPTY;
+					  });
 	}
 
 	/**

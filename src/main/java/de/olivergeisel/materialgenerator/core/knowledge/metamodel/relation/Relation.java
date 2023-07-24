@@ -33,6 +33,18 @@ public abstract class Relation {
 		this.name = name;
 	}
 
+	protected Relation(String name, KnowledgeElement from, KnowledgeElement to, RelationType type) {
+		if (from == null || to == null || type == null || name == null) {
+			throw new IllegalArgumentException("Arguments must not be null");
+		}
+		this.type = type;
+		this.from = from;
+		this.to = to;
+		this.fromId = from.getId();
+		this.toId = to.getId();
+		this.name = name;
+	}
+
 	//region setter/getter
 	public String getFromId() {
 		return fromId;
@@ -61,6 +73,19 @@ public abstract class Relation {
 		}
 		this.from = from;
 		fromId = from.getId();
+	}
+
+	/**
+	 * Check if the relation is incomplete
+	 *
+	 * @return true if the relation is incomplete
+	 */
+	public boolean isIncomplete() {
+		return from == null || to == null || fromId == null || toId == null;
+	}
+
+	public boolean isComplete() {
+		return !isIncomplete();
 	}
 
 	/**

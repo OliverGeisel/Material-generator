@@ -39,12 +39,8 @@ public interface Generator {
 	 */
 	GeneratorOutput output();
 
-//
-
-//region getter / setter
 
 //region setter/getter
-
 	/**
 	 * Method to check if the generator is ready to start the generation process. This method should be called after
 	 * the input method and before the update method.
@@ -53,8 +49,7 @@ public interface Generator {
 	 */
 	boolean isReady();
 //endregion
-//endregion
-//
+
 
 }
 

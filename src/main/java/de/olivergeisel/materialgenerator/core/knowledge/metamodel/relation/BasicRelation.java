@@ -1,10 +1,16 @@
 package de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation;
 
 
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement;
+
 public class BasicRelation extends Relation {
 
 	public BasicRelation(RelationType type, String from, String to) {
 		super(idFromName(type, from, to), from, to, type);
+	}
+
+	public BasicRelation(RelationType type, KnowledgeElement from, KnowledgeElement to) {
+		super(idFromName(type, from.getId(), to.getId()), from, to, type);
 	}
 
 	/**

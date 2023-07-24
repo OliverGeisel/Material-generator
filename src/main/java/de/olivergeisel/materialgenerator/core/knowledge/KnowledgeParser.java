@@ -56,6 +56,7 @@ public class KnowledgeParser {
 		for (var relation : relationsJSON) {
 			var newRelation = RelationGenerator.create(relation.get(RELATION_TYPE), fromElement.getId(),
 													   relation.get(RELATION_ID));
+			newRelation.setFrom(fromElement);
 			back.add(newRelation);
 		}
 		return back;

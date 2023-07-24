@@ -27,14 +27,11 @@ public class FinalizationService {
 	private final RawCourseRepository                  rawCourseRepository;
 	private final CourseMetadataFinalizationRepository metadataRepository;
 	private final GoalRepository                       goalRepository;
-	private final TopicRepository                      topicRepository;
 
 	public FinalizationService(DownloadManager downloadManager, CourseOrderRepository courseOrderRepository,
-							   ChapterOrderRepository chapterOrderRepository,
-							   GroupOrderRepository groupOrderRepository, TaskOrderRepository taskOrderRepository,
-							   RawCourseRepository rawCourseRepository,
-							   CourseMetadataFinalizationRepository metadataRepository, GoalRepository goalRepository,
-							   TopicRepository topicRepository) {
+			ChapterOrderRepository chapterOrderRepository, GroupOrderRepository groupOrderRepository,
+			TaskOrderRepository taskOrderRepository, RawCourseRepository rawCourseRepository,
+			CourseMetadataFinalizationRepository metadataRepository, GoalRepository goalRepository) {
 		this.downloadManager = downloadManager;
 		this.courseOrderRepository = courseOrderRepository;
 		this.chapterOrderRepository = chapterOrderRepository;
@@ -43,7 +40,6 @@ public class FinalizationService {
 		this.rawCourseRepository = rawCourseRepository;
 		this.metadataRepository = metadataRepository;
 		this.goalRepository = goalRepository;
-		this.topicRepository = topicRepository;
 	}
 
 	public RawCourse createRawCourse(CoursePlan coursePlan, String template, Set<MaterialAndMapping> materials) {
@@ -61,9 +57,6 @@ public class FinalizationService {
 		for (var contentGoal : goals) {
 			var goal = new Goal(contentGoal);
 			goal = goalRepository.save(goal);
-			Goal finalGoal = goal;
-			goal.getTopics().forEach(topic -> topic.updateGoal(finalGoal));
-			topicRepository.saveAll(goal.getTopics());
 			back.add(goal);
 		}
 		return back;
@@ -145,13 +138,13 @@ public class FinalizationService {
 	}
 
 	public void generateAndDownloadTemplates(@PathVariable("courseId") RawCourse plan, HttpServletRequest request,
-											 HttpServletResponse response) {
+			HttpServletResponse response) {
 		var zipName = plan.getMetadata().getName().orElse("course");
 		downloadManager.createZip(zipName, plan.getTemplateName(), plan, request, response);
 	}
 
 	public void setRelevance(UUID id, UUID taskId, Relevance relevance)
-	throws IllegalArgumentException, NoSuchElementException {
+			throws IllegalArgumentException, NoSuchElementException {
 		var course = rawCourseRepository.findById(id).orElseThrow();
 		var order = course.getCourseOrder();
 		var taskOrder = order.findTask(taskId);
