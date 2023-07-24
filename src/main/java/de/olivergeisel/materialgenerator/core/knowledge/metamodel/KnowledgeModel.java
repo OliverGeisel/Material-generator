@@ -2,6 +2,7 @@ package de.olivergeisel.materialgenerator.core.knowledge.metamodel;
 
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.Relation;
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.RelationGenerator;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.RelationType;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.source.KnowledgeSource;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeFragment;
@@ -104,6 +105,8 @@ public class KnowledgeModel {
 		if (!relation.getFromId().equals(elementFrom.getId()) || !relation.getToId().equals(elementTo.getId())) {
 			return false;
 		}
+		relation.setFrom(elementFrom);
+		relation.setTo(elementTo);
 		addKnowledge(elementFrom);
 		addKnowledge(elementTo);
 		var type = relation.getType();
@@ -123,7 +126,24 @@ public class KnowledgeModel {
 		relations.forEach(relation -> {
 			var toId = relation.getToId();
 			if (contains(toId)) {
-				link(element, get(toId), relation.getType());
+				var toElement = get(toId);
+				link(element, toElement, relation.getType());
+				try {
+					relation.getTo();
+				} catch (IllegalStateException e) {
+					relation.setTo(toElement);
+				}
+				try {
+					relation.getFrom();
+				} catch (IllegalStateException e) {
+					relation.setFrom(element);
+				}
+				// reverse relation
+				if (toElement.getRelations().stream().noneMatch(r -> r.getToId().equals(element.getId()))) {
+					var newReverseRelation = RelationGenerator.create(relation.getType().name(), toElement,
+							element);
+					link(toElement, element, relation.getType());
+				}
 			} else {
 				unfinishedRelations.put(relation, new RelationIdPair(element.getId(), toId));
 			}
@@ -136,7 +156,7 @@ public class KnowledgeModel {
 	 * If the element is already in the model, nothing happens.
 	 *
 	 * @param element the element to add
-	 * @return true if the element was added, false if not
+	 * @return true if the element was added, false if not (because it was already in the model)
 	 */
 	public boolean addKnowledge(KnowledgeElement element) {
 		if (element == null) {
@@ -245,7 +265,7 @@ public class KnowledgeModel {
 		if (element == null) {
 			throw new IllegalArgumentException("KnowledgeElement was null!");
 		}
-		return contains(element.getId());
+		return graph.containsVertex(element);
 	}
 
 
@@ -265,6 +285,13 @@ public class KnowledgeModel {
 		return Arrays.stream(getRelatedElements(element)).map(KnowledgeElement::getId).toList();
 	}
 
+	/**
+	 * Returns the element that connected with the given element in the model.
+	 *
+	 * @param id the id of the element
+	 * @return the element that is connected with the given element
+	 * @throws NoSuchElementException if no element with the given id was found
+	 */
 	public KnowledgeElement get(String id) throws NoSuchElementException {
 		return graph.vertexSet().stream().filter(it -> it.getId().equals(id)).findFirst()
 					.orElseThrow(() -> new NoSuchElementException("No element with id " + id + " found"));
@@ -338,11 +365,11 @@ public class KnowledgeModel {
 	 * @throws IllegalStateException if one of the elements is not in the model
 	 */
 	public RelationEdge link(KnowledgeElement from, KnowledgeElement to, RelationType type)
-	throws IllegalStateException {
-		var newEdge = new RelationEdge(type);
+			throws IllegalStateException {
 		if (!contains(from) || !contains(to)) {
-			throw new IllegalStateException();
+			throw new IllegalStateException("One of the elements is not in the model!");
 		}
+		var newEdge = new RelationEdge(type);
 		if (!graph.addEdge(from, to, newEdge)) {
 			logger.info("Edge was already linked from {} to {}.", from.getId(), to.getId());
 		}
@@ -367,12 +394,50 @@ public class KnowledgeModel {
 	 * Tries to complete all relations that were not completed when the elements were added.
 	 */
 	public void tryCompleteLinking() {
+		var completed = new ArrayList<Relation>();
 		for (var entry : unfinishedRelations.entrySet()) {
 			var relation = entry.getKey();
 			var fromId = relation.getFromId();
 			var toId = relation.getToId();
 			if (contains(fromId) && contains(toId)) {
-				link(get(fromId), get(toId), relation.getType());
+				var from = get(fromId);
+				var to = get(toId);
+				completed.add(relation);
+				link(from, to, relation.getType());
+				// reverseRelation
+				if (to.getRelations().stream()
+					  .noneMatch(it -> it.getFromId().equals(toId) && it.getToId().equals(fromId))) {
+					to.addRelation(RelationGenerator.create(relation.getType().getInverted().toString(), to, from));
+					link(to, from, relation.getType().getInverted());
+				}
+				checkRelations(from);
+				checkRelations(to);
+			}
+		}
+		completed.forEach(unfinishedRelations.keySet()::remove);
+	}
+
+	/**
+	 * Try to complete incomplete relations for the given element.
+	 *
+	 * @param element the element to check
+	 */
+	private void checkRelations(KnowledgeElement element) {
+		for (var relation : element.getRelations()) {
+			if (relation.isIncomplete()) {
+				try {
+					relation.getFrom();
+				} catch (IllegalStateException ignored) {
+					relation.setFrom(element);
+				}
+				try {
+					relation.getTo();
+				} catch (IllegalStateException ignored) {
+					var toId = relation.getToId();
+					if (contains(toId)) {
+						relation.setTo(get(toId));
+					}
+				}
 			}
 		}
 	}
@@ -400,7 +465,7 @@ public class KnowledgeModel {
 	 * @return a set of all elements that are connected with the given structure object
 	 */
 	private Set<KnowledgeNode> getKnowledgeNodesFor(String structureId, boolean includeSimilar,
-													boolean similarWhenFound) {
+			boolean similarWhenFound) {
 		Set<KnowledgeNode> back = new HashSet<>();
 		var hasStructureObject = hasStructureObject(structureId);
 		if (hasStructureObject) {
