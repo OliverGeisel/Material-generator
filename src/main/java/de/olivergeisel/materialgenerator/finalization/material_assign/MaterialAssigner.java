@@ -2,6 +2,7 @@ package de.olivergeisel.materialgenerator.finalization.material_assign;
 
 import de.olivergeisel.materialgenerator.finalization.parts.MaterialOrderCollection;
 import de.olivergeisel.materialgenerator.generation.material.Material;
+import org.slf4j.Logger;
 
 import java.util.Map;
 import java.util.Set;
@@ -10,22 +11,37 @@ import java.util.stream.Collectors;
 /**
  * Assign materials to a MaterialOrderCollection.
  * <p>
- * Has internal states to hande assignment.
+ * Has internal states to hande assignment. The {@link CriteriaSelector} is used to check if a {@link Material} match
+ * the criteria of it. If it does it will be assigned to the {@link MaterialOrderCollection}. If not it will return
+ * false.
+ * the next material
+ * to
+ * assign.
  * </p>
  *
  * @author Oliver Geisel
  * @version 1.0
+ * @see CriteriaSelector
+ * @see MaterialOrderCollection
+ * @see Material
  * @since 0.2.0
  */
 public abstract class MaterialAssigner {
 
 	protected final Map<Material, MaterialState> materialMap;
+	protected final CriteriaSelector             selector;
+	protected final Logger                       logger = org.slf4j.LoggerFactory.getLogger(getClass());
 
-	protected MaterialAssigner(Set<Material> materials) {
+	protected MaterialAssigner(Set<Material> materials, CriteriaSelector selector) {
+		this.selector = selector;
 		materialMap = new java.util.HashMap<>();
 		for (Material material : materials) {
 			materialMap.put(material, new MaterialState());
 		}
+	}
+
+	protected MaterialAssigner(Set<Material> materials) {
+		this(materials, new BasicCriteriaSelector());
 	}
 
 	public boolean hasMaterial() {
@@ -72,7 +88,8 @@ public abstract class MaterialAssigner {
 	}
 
 	/**
-	 * Try to assign all materials to a {@link MaterialOrderCollection}.
+	 * Try to assign all materials to a {@link MaterialOrderCollection}. Use the {@link CriteriaSelector} to check if
+	 * they match the criteria.
 	 *
 	 * @param part the part to assign the materials to
 	 * @return {@literal true} if at least one material was assigned, otherwise false.
@@ -80,13 +97,33 @@ public abstract class MaterialAssigner {
 	public abstract boolean assign(MaterialOrderCollection part);
 
 	/**
-	 * Assign a specific material to a {@link MaterialOrderCollection}.
+	 * Try to assign a specific material to a {@link MaterialOrderCollection}. Use the {@link CriteriaSelector} to
+	 * check if it matches the criteria.
 	 *
 	 * @param material the material to assign. Must be in the material set of this assigner.
 	 * @param part     the part to assign the material to
-	 * @return {@literal true} if the material was assigned, otherwise false.
+	 * @return {@literal true} if the material was assigned, otherwise {@literal false}.
 	 */
 	public abstract boolean assign(Material material, MaterialOrderCollection part);
+
+	/**
+	 * Try to assign all materials to a {@link MaterialOrderCollection}. Does not use the {@link CriteriaSelector} to
+	 * the match. The Collection decide which material it will take.
+	 *
+	 * @param part the part to assign the materials to
+	 * @return {@literal true} if at least one material was assigned, otherwise false.
+	 */
+	public abstract boolean assignWithoutCriteria(MaterialOrderCollection part);
+
+	/**
+	 * Try to assign a specific material to a {@link MaterialOrderCollection}. Does not use the
+	 * {@link CriteriaSelector}. The Collection decide which material it will take.
+	 *
+	 * @param material the material to assign. Must be in the material set of this assigner.
+	 * @param part     the part to assign the material to
+	 * @return {@literal true} if the material was assigned, otherwise {@literal false}.
+	 */
+	public abstract boolean assignWithoutCriteria(Material material, MaterialOrderCollection part);
 
 	//region setter/getter
 

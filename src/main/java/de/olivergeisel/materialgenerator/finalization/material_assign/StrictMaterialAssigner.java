@@ -11,18 +11,37 @@ import java.util.Set;
  * Assign materials to a MaterialOrderCollection. This assigner is strict. It only assigns materials to a part if one
  * of the first n alias match the requirements. n is set by {@literal maxAlias}. If no alias is set, the part is not
  * assigned.
+ * <p>
+ * This assigner is useful if you want to assign materials to a part that has a lot of alias and you want to
+ * assign the material to the part that matches the requirements best.
+ *
+ * @author Oliver Geisel
+ * @version 1.0.0
+ * @see MaterialAssigner
+ * @see CriteriaSelector
+ * @see MaterialOrderCollection
+ * @see Material
+ * @since 0.2.0
  */
 public class StrictMaterialAssigner extends MaterialAssigner {
 
 	private int maxAlias;
 
 	public StrictMaterialAssigner(Set<Material> materials) {
-		super(materials);
-		maxAlias = 1;
+		this(materials, 1);
+	}
+
+	public StrictMaterialAssigner(Set<Material> materials, CriteriaSelector selector) {
+		this(materials, 1, selector);
 	}
 
 	public StrictMaterialAssigner(Set<Material> materials, int maxAlias) {
 		super(materials);
+		this.maxAlias = maxAlias;
+	}
+
+	public StrictMaterialAssigner(Set<Material> materials, int maxAlias, CriteriaSelector selector) {
+		super(materials, selector);
 		this.maxAlias = maxAlias;
 	}
 
@@ -31,6 +50,26 @@ public class StrictMaterialAssigner extends MaterialAssigner {
 	 */
 	@Override
 	public boolean assign(MaterialOrderCollection part) {
+		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean assign(Material material, MaterialOrderCollection part) {
+		return false;
+	}
+
+	/**
+	 * Try to assign all materials to a {@link MaterialOrderCollection}. Does not use the {@link CriteriaSelector} to
+	 * the match. The Collection decide which material it will take.
+	 *
+	 * @param part the part to assign the materials to
+	 * @return {@literal true} if at least one material was assigned, otherwise false.
+	 */
+	@Override
+	public boolean assignWithoutCriteria(MaterialOrderCollection part) {
 		if (part instanceof ChapterOrder || part instanceof GroupOrder)
 			return false;
 		if (part.getAlias().isEmpty())
@@ -50,10 +89,15 @@ public class StrictMaterialAssigner extends MaterialAssigner {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Try to assign a specific material to a {@link MaterialOrderCollection}. Does not use the
+	 * {@link CriteriaSelector}. The Collection decide which material it will take.
+	 *
+	 * @param material the material to assign. Must be in the material set of this assigner.
+	 * @param part     the part to assign the material to
+	 * @return {@literal true} if the material was assigned, otherwise {@literal false}.
 	 */
 	@Override
-	public boolean assign(Material material, MaterialOrderCollection part) {
+	public boolean assignWithoutCriteria(Material material, MaterialOrderCollection part) {
 		if (isAssigned(material))
 			return false;
 		if (part instanceof ChapterOrder chapter) {

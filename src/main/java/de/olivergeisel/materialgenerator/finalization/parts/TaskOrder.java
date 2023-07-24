@@ -125,7 +125,7 @@ public class TaskOrder extends MaterialOrderCollection {
 	}
 
 	/**
-	 * Assigns the material to the part.
+	 * Assigns the material from a {@link MaterialAssigner} to the part.
 	 *
 	 * @param assigner the assigner to use
 	 * @return true if a material was assigned, false if not

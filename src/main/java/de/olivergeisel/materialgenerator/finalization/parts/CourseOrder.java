@@ -85,6 +85,12 @@ public class CourseOrder extends de.olivergeisel.materialgenerator.core.course.C
 		}
 	}
 
+	/**
+	 * Append a new chapter to the course.
+	 *
+	 * @param chapter Chapter to append
+	 * @return {@literal true} if the chapter could be appended. {@literal false} otherwise.
+	 */
 	public boolean append(ChapterOrder chapter) {
 		return chapterOrder.add(chapter);
 	}

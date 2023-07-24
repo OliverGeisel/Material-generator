@@ -13,6 +13,10 @@ public abstract class MaterialAssignerDecorator extends MaterialAssigner {
 		super(materials);
 	}
 
+	protected MaterialAssignerDecorator(Set<Material> materials, CriteriaSelector selector) {
+		super(materials, selector);
+	}
+
 	/**
 	 * @param material the material to assign
 	 * @param part     the part to assign the material to

@@ -16,9 +16,13 @@ public class PriorityMaterialAssigner extends MaterialAssigner {
 		super(materials);
 	}
 
+	public PriorityMaterialAssigner(Set<Material> materials, CriteriaSelector selector) {
+		super(materials, selector);
+	}
+
 	/**
 	 * Assign materials to a MaterialOrderCollection. It compares the separate parts and assign the material to the
-	 * part wehre the latest alias matches to the material.
+	 * part wehre the first alias matches to the material.
 	 *
 	 * @param part the part that get the materials.
 	 * @return {@literal true} if at least one material is assigned, otherwise {@literal false}.
@@ -26,6 +30,24 @@ public class PriorityMaterialAssigner extends MaterialAssigner {
 	 */
 	@Override
 	public boolean assign(MaterialOrderCollection part) throws IllegalArgumentException {
+		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean assign(Material material, MaterialOrderCollection part) {
+		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @throws IllegalArgumentException if part is {@literal null}.
+	 */
+	@Override
+	public boolean assignWithoutCriteria(MaterialOrderCollection part) throws IllegalArgumentException {
 		if (part == null) {
 			throw new IllegalArgumentException("part must not be null");
 		}
@@ -104,12 +126,10 @@ public class PriorityMaterialAssigner extends MaterialAssigner {
 	}
 
 	/**
-	 * @param material
-	 * @param part
-	 * @return
+	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean assign(Material material, MaterialOrderCollection part) {
+	public boolean assignWithoutCriteria(Material material, MaterialOrderCollection part) {
 		return false;
 	}
 
