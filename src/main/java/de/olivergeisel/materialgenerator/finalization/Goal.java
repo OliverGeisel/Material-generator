@@ -26,9 +26,8 @@ import java.util.UUID;
 public class Goal {
 	private final ContentGoalExpression expression;
 	private final String                masterKeyword;
-	@OneToMany(mappedBy = "goalId", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "goal", cascade = CascadeType.ALL, orphanRemoval = true)
 	private final List<Topic>           topics = new LinkedList<>();
-	//private final List<String> specificWords;
 	@Column(length = 2_000)
 	private final String                completeSentence;
 	@Id
@@ -36,6 +35,8 @@ public class Goal {
 	@Column(name = "id", nullable = false)
 	private       UUID                  id;
 	private       String                name;
+	//private final List<String> specificWords;
+
 
 	public Goal() {
 		this.expression = ContentGoalExpression.FIRST_LOOK;
@@ -52,7 +53,10 @@ public class Goal {
 		this.completeSentence = contentGoal.getCompleteSentence();
 		this.name = contentGoal.getName();
 		for (var contentTarget : contentGoal.getContent()) {
-			topics.add(new Topic(contentTarget, this));
+			try {
+				topics.add(new Topic(contentTarget, this));
+			} catch (IllegalArgumentException ignored) {
+			}
 		}
 	}
 
@@ -87,4 +91,12 @@ public class Goal {
 		return name;
 	}
 //endregion
+
+	@Override
+	public String toString() {
+		return "Goal{" +
+			   "id=" + id + '\'' +
+			   ", completeSentence='" + completeSentence +
+			   '}';
+	}
 }
