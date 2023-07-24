@@ -22,6 +22,13 @@ public abstract class MaterialOrderPart {
 	private UUID   id;
 	private String name;
 
+	protected MaterialOrderPart() {
+	}
+
+	protected MaterialOrderPart(String name) {
+		this.name = name;
+	}
+
 	/**
 	 * Find a part by its id. Must return null if not found.
 	 *

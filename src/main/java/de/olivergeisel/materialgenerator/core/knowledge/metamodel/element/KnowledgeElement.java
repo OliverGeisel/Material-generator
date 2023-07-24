@@ -101,21 +101,12 @@ public abstract class KnowledgeElement {
 		if (this == o) return true;
 		if (!(o instanceof KnowledgeElement that)) return false;
 
-		if (!Objects.equals(id, that.id)) return false;
-		if (type != that.type) return false;
-		if (!relations.equals(that.relations)) return false;
-		if (!Objects.equals(structureId, that.structureId)) return false;
-		return Objects.equals(content, that.content);
+		return !Objects.equals(id, that.id);
 	}
 
 	@Override
 	public int hashCode() {
-		int result = id != null ? id.hashCode() : 0;
-		result = 31 * result + type.hashCode();
-		result = 31 * result + relations.hashCode();
-		result = 31 * result + (structureId != null ? structureId.hashCode() : 0);
-		result = 31 * result + (content != null ? content.hashCode() : 0);
-		return result;
+		return id != null ? id.hashCode() : 0;
 	}
 
 	@Override
