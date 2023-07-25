@@ -1,11 +1,11 @@
 package de.olivergeisel.materialgenerator.generation.generator;
 
+import de.olivergeisel.materialgenerator.FileSystemStorageService;
 import de.olivergeisel.materialgenerator.core.courseplan.CoursePlan;
 import de.olivergeisel.materialgenerator.core.courseplan.CoursePlanParser;
 import de.olivergeisel.materialgenerator.core.courseplan.CoursePlanParserException;
 import de.olivergeisel.materialgenerator.core.knowledge.IncompleteJSONException;
 import de.olivergeisel.materialgenerator.generation.GeneratorService;
-import de.olivergeisel.materialgenerator.generation.StorageService;
 import de.olivergeisel.materialgenerator.generation.material.MaterialRepository;
 import de.olivergeisel.materialgenerator.generation.templates.TemplateSetRepository;
 import org.springframework.stereotype.Controller;
@@ -24,15 +24,16 @@ import static de.olivergeisel.materialgenerator.generation.TemplateService.*;
 @RequestMapping("/generator")
 public class GeneratorController {
 
-	private static final String                UPLOAD = "UPLOAD";
-	private static final String                PATH   = "generation/";
-	private final        GeneratorService      service;
-	private final        StorageService        storageService;
-	private final        TemplateSetRepository templateSetRepository;
-	private final        MaterialRepository    materialRepository;
+	private static final String UPLOAD = "UPLOAD";
+	private static final String PATH   = "generation/";
 
-	public GeneratorController(GeneratorService service, StorageService storageService,
-							   TemplateSetRepository templateSetRepository, MaterialRepository materialRepository) {
+	private final GeneratorService         service;
+	private final FileSystemStorageService storageService;
+	private final TemplateSetRepository    templateSetRepository;
+	private final MaterialRepository       materialRepository;
+
+	public GeneratorController(GeneratorService service, FileSystemStorageService storageService,
+			TemplateSetRepository templateSetRepository, MaterialRepository materialRepository) {
 		this.service = service;
 		this.storageService = storageService;
 		this.templateSetRepository = templateSetRepository;
@@ -59,6 +60,7 @@ public class GeneratorController {
 		return PATH + "plan-selection";
 	}
 
+	@Deprecated
 	@GetMapping("/generator-manuel")
 	public String generatorManuel(Model model) {
 		model.addAttribute("templates", OPTIONS);
@@ -94,8 +96,8 @@ public class GeneratorController {
 
 	@PostMapping("overview")
 	public String overviewGeneration(@RequestParam MultipartFile plan, @RequestParam String curriculum,
-									 @RequestParam String template, Model model)
-	throws FileNotFoundException, WrongFileTypeException, IncompleteJSONException {
+			@RequestParam String template, Model model)
+			throws FileNotFoundException, WrongFileTypeException, IncompleteJSONException {
 		String planName;
 		if (curriculum.isBlank() || curriculum.equals(UPLOAD)) {
 			CoursePlanParser parser = new CoursePlanParser();
