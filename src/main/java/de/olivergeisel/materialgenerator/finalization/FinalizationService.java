@@ -8,7 +8,6 @@ import de.olivergeisel.materialgenerator.generation.material.Material;
 import de.olivergeisel.materialgenerator.generation.material.MaterialAndMapping;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -137,7 +136,7 @@ public class FinalizationService {
 		generateAndDownloadTemplates(rawCourseRepository.findById(id).orElseThrow(), request, response);
 	}
 
-	public void generateAndDownloadTemplates(@PathVariable("courseId") RawCourse plan, HttpServletRequest request,
+	public void generateAndDownloadTemplates(RawCourse plan, HttpServletRequest request,
 			HttpServletResponse response) {
 		var zipName = plan.getMetadata().getName().orElse("course");
 		downloadManager.createZip(zipName, plan.getTemplateName(), plan, request, response);

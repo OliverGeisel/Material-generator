@@ -4,6 +4,7 @@ import de.olivergeisel.materialgenerator.core.courseplan.content.ContentGoal;
 import de.olivergeisel.materialgenerator.core.courseplan.content.ContentTarget;
 import de.olivergeisel.materialgenerator.finalization.Goal;
 import de.olivergeisel.materialgenerator.finalization.Topic;
+import de.olivergeisel.materialgenerator.finalization.parts.MaterialOrderCollection;
 import de.olivergeisel.materialgenerator.generation.material.Material;
 
 
@@ -58,5 +59,15 @@ public interface CriteriaSelector {
 		if (target == null) throw new IllegalArgumentException("target must not be null");
 		return satisfies(material, target.getGoal());
 	}
+
+	/**
+	 * Checks if the material satisfies the target of the Collection or the alternatives.
+	 *
+	 * @param material   material to check
+	 * @param collection collection to check
+	 * @return {@literal true} if material satisfies the target, otherwise {@literal false}
+	 * @throws IllegalArgumentException if target is null
+	 */
+	boolean satisfies(Material material, MaterialOrderCollection collection) throws IllegalArgumentException;
 
 }

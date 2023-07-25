@@ -232,10 +232,13 @@ public class CoursePlanParser {
 	/**
 	 * Gets relevant ContentTarget from the name;
 	 *
-	 * @param topic the name of the topic
-	 * @return the ContentTarget or an empty ContentTarget if no target was found
+	 * @param topic the name of the topic to find
+	 * @return the ContentTarget or an empty ContentTarget if no target was found or the topic is blank
 	 */
 	private ContentTarget findTopic(String topic) {
+		if (topic.isBlank()) {
+			return ContentTarget.EMPTY;
+		}
 		return targets.stream().filter(target -> target.getTopic().equals(topic)).findFirst()
 					  .orElseGet(() -> {
 						  logger.warn("Could not find topic %s. Assign empty Topic.".formatted(topic));
