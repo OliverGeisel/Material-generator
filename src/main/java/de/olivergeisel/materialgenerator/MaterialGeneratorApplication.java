@@ -1,6 +1,6 @@
 package de.olivergeisel.materialgenerator;
 
-import de.olivergeisel.materialgenerator.generation.StorageService;
+import de.olivergeisel.materialgenerator.finalization.ImageService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,7 +16,12 @@ public class MaterialGeneratorApplication {
 	}
 
 	@Bean
-	CommandLineRunner init(StorageService storageService) {
+	CommandLineRunner initFiles(FileSystemStorageService storageService) {
+		return args -> storageService.init();
+	}
+
+	@Bean
+	CommandLineRunner initImages(ImageService storageService) {
 		return args -> storageService.init();
 	}
 }
