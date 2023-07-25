@@ -13,13 +13,10 @@ public class TemplateController {
 
 	private static final String PATH = "template_module/";
 
-	private final StorageService storageService;
-
 	private final TemplateService templateService;
 
 
-	public TemplateController(StorageService storageService, TemplateService templateService) {
-		this.storageService = storageService;
+	public TemplateController(TemplateService templateService) {
 		this.templateService = templateService;
 	}
 
