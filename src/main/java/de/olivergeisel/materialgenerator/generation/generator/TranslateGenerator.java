@@ -221,7 +221,7 @@ public class TranslateGenerator implements Generator {
 		try {
 			materials.addAll(createCode(knowledge));
 		} catch (NoTemplateInfoException | NoSuchElementException e) {
-			logger.info("No Code Template found for {}", masterKeyword);
+			logger.info("No Code found for {}", masterKeyword);
 		}
 		try {
 			materials.addAll(createTexts(knowledge));
@@ -519,12 +519,13 @@ public class TranslateGenerator implements Generator {
 		relations.forEach(it -> {
 			var mainId = it.getFromId();
 			try {
-				var elements = Arrays.stream(mainKnowledge.getRelatedElements())
-									 .filter(elem -> elem.getId().equals(mainId)).findFirst().orElseThrow();
-				String name = getUniqueMaterialName(back, "Definition " + mainTerm.getContent(), mainId);
-				var values = Map.of("term", mainTerm.getContent(), "example", elements.getContent());
-				var materialAndMapping = new MaterialCreator().createExampleMaterial(mainTerm, name, templateInfo,
-						values, elements);
+				var example = Arrays.stream(mainKnowledge.getRelatedElements())
+									.filter(elem -> elem.getId().equals(mainId)).findFirst().orElseThrow();
+				String name = getUniqueMaterialName(back, "Beispiel " + mainTerm.getContent(), mainId);
+				var values = Map.of("term", mainTerm.getContent(), "example", example.getContent());
+				var materialAndMapping = new MaterialCreator().createExampleMaterial(example, mainTerm, name,
+						templateInfo,
+						values, example);
 				back.add(materialAndMapping);
 			} catch (Exception ignored) {
 				logger.warn("No example found for {}", mainTerm.getContent());
@@ -542,14 +543,15 @@ public class TranslateGenerator implements Generator {
 		var mainTerm = mainKnowledge.getMainElement();
 		var relations = getWantedRelationsFromRelated(mainKnowledge, RelationType.PROOFS);
 		relations.forEach(it -> {
-			var targetId = it.getToId();
+			var proofId = it.getFromId();
 			try {
-				var element = Arrays.stream(mainKnowledge.getRelatedElements())
-									.filter(elem -> elem.getId().equals(targetId)).findFirst().orElseThrow();
-				var name = getUniqueMaterialName(back, "Beweis " + mainTerm.getContent(), targetId);
-				var values = Map.of("term", mainTerm.getContent(), "proof", element.getContent());
-				var materialAndMapping = new MaterialCreator().createExampleMaterial(mainTerm, name, templateInfo,
-						values, element);
+				var proofElement = Arrays.stream(mainKnowledge.getRelatedElements())
+										 .filter(elem -> elem.getId().equals(proofId)).findFirst().orElseThrow();
+				var name = getUniqueMaterialName(back, "Beweis " + mainTerm.getContent(), proofId);
+				var values = Map.of("term", mainTerm.getContent(), "proof", proofElement.getContent());
+				var materialAndMapping = new MaterialCreator().createProofMaterial(proofElement, mainTerm, name,
+						templateInfo,
+						values, proofElement);
 				back.add(materialAndMapping);
 			} catch (Exception ignored) {
 				logger.debug("No proof found for {}", mainTerm.getContent());

@@ -46,7 +46,7 @@
     {
       "type": "TERM",
       "id": "Algorithmus-TERM",
-      "structure": "Algorithmus-Bergriff",
+      "structure": "Algorithmus-Begriff",
       "content": "Algorithmus",
       "relations": [
         {
@@ -62,7 +62,7 @@
     {
       "type": "DEFINITION",
       "id": "Algorithmus-DEFINITION",
-      "structure": "Algorithmus-Bergriff",
+      "structure": "Algorithmus-Begriff",
       "content": "Ein Algorithmus ist eine eindeutige Handlungsvorschrift zur Lösung eines Problems oder einer Klasse von Problemen.",
       "relations": [
         {
@@ -72,9 +72,21 @@
       ]
     },
     {
+      "type": "EXAMPLE",
+      "id": "Algorithmus-EXAMPLE",
+      "structure": "Algorithmus-Begriff",
+      "content": "image:Courseplan-Color.png;title:Example",
+      "relations": [
+        {
+          "relation_id": "Algorithmus-TERM",
+          "relation_type": "EXAMPLE_FOR"
+        }
+      ]
+    },
+    {
       "type": "DEFINITION",
       "id": "Algorithmus-2-DEFINITION",
-      "structure": "Algorithmus-Bergriff",
+      "structure": "Algorithmus-Begriff",
       "content": "Ein Algorithmus ist eine eine geordnete Reihenfolge von Handlungsschritten, die ein Problem lösen. Er kennzeichnet sich durch Endlichkeit, Eindeutigkeit, Determiniertheit und Effektivität.",
       "relations": [
         {
@@ -107,7 +119,7 @@
     }
   ],
   "structure": {
-    "name": "Beispiel Bereich",
+    "name": "Informatik",
     "key": "_root",
     "children": [
       {
@@ -120,7 +132,7 @@
             "children": [
               {
                 "key": "_root/1/1/1",
-                "name": "Algorithmus-Bergriff",
+                "name": "Algorithmus-Begriff",
                 "children": []
               },
               {
