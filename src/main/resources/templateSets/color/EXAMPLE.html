@@ -6,7 +6,7 @@
     <th:block th:fragment="head">
         <link rel="stylesheet" th:href="${rootPath}+'/css/bootstrap.min.css'">
     </th:block>
-    <title th:text="'Definition für '+${material.term} "></title>
+    <title th:text="'Beispiel für '+${material.term} "></title>
 </head>
 <body>
 <main>
@@ -15,10 +15,12 @@
             <h1 class="text-center" style="color: var(--bs-red); " th:text="${material.term}"></h1>
         </header>
         <hr>
-        <p style="color: var(--bs-blue);font-style: italic;">Ein <span th:text="${material.term}">
-            </span> ist:<br>
-            <span th:text="${material.values.definition}"></span>
-        </p>
+        <div th:if="${material.imageExample}">
+            <img alt="Bild Fehlt" class="img-fluid" th:src="${material.imageName}">
+        </div>
+        <div th:unless="${material.imageExample}">
+            <p class="text-center" th:text="${material.values.text}"></p>
+        </div>
     </div>
 </main>
 <footer>

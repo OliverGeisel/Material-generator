@@ -189,6 +189,9 @@ public class DownloadManager {
 	private void exportChapter(ChapterOrder chapter, CourseNavigation.MaterialLevel level, CourseNavigation navigation,
 			WebContext context, File outputDir, TemplateEngine templateEngine)
 			throws IOException {
+		setOverallInfos(context);
+		context.setVariable("navigation", navigation);
+		context.setVariable("rootPath", level.getPathToRoot());
 		context.setVariable("chapter", chapter);
 		var chapterOverview = templateEngine.process("CHAPTER", context);
 		saveTemplateToFile(chapterOverview, outputDir, "overview.html");
@@ -231,7 +234,10 @@ public class DownloadManager {
 	private void exportGroup(GroupOrder group, CourseNavigation.MaterialLevel level, CourseNavigation navigation,
 			WebContext context, File outputDir, TemplateEngine templateEngine)
 			throws IOException {
+		setOverallInfos(context);
 		context.setVariable("group", group);
+		context.setVariable("navigation", navigation);
+		context.setVariable("rootPath", level.getPathToRoot());
 		var chapterOverview = templateEngine.process("GROUP", context);
 		saveTemplateToFile(chapterOverview, outputDir, "overview.html");
 		var tasks = group.getTaskOrder();
@@ -243,6 +249,9 @@ public class DownloadManager {
 			var newTaskLevel = new CourseNavigation.MaterialLevel(level.getChapter(), level.getGroup(),
 					task.getName());
 			nextTask = (i < tasks.size() - 1) ? tasks.get(i + 1) : null;
+			if (nextTask != null && nextTask.getMaterialOrder().isEmpty()) {
+				nextTask = null;
+			}
 			MaterialHierarchy next;
 			if (nextTask == null) {
 				next = new MaterialHierarchy(level.getChapter(), navigation.getNextGroup(), null, null,
@@ -262,6 +271,7 @@ public class DownloadManager {
 			if (task instanceof TaskOrder task1) {
 				String taskName = task1.getName() == null || task1.getName().isBlank() ?
 						"Task " + (group.getTaskOrder().indexOf(task1) + 1) : task1.getName();
+				taskName = taskName.replaceAll("[^a-zA-Z0-9\\s]", "_");
 				var subDir = new File(outputDir, taskName);
 				Files.createDirectory(subDir.toPath());
 				exportTask(task1, newTaskLevel, newCourseNavigation, context, subDir, templateEngine);

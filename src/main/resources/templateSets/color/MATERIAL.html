@@ -52,8 +52,17 @@
         <a th:href="${navigation.nextMaterial}+'.html'" th:if="${navigation.hasNext}">
             <button class="btn btn-success" type="submit">Weiter</button>
         </a>
-        <a th:href="@{'../'+${navigation.nextTask}+'/overview.html'}" th:unless="${navigation.hasNext}">
+        <a th:href="@{'../'+${navigation.nextTask}+'/Material_0.html'}"
+           th:if="${!navigation.hasNext && navigation.hasNextTask}">
             <button class="btn btn-info" type="submit">Nächste Aufgabe</button>
+        </a>
+        <a th:href="@{'../overview.html'}"
+           th:if="${ !navigation.hasNext && !navigation.hasNextTask}">
+            <button class="btn btn-info" type="submit">Zurück zur Übersicht</button>
+        </a>
+        <a th:href="@{'../'+${navigation.nextGroup}+'/overview.html'}"
+           th:if="${ !navigation.hasNext && navigation.hasNextTask}">
+            <button class="btn btn-info" type="submit">Nächste Gruppe</button>
         </a>
     </section>
 </main>

@@ -29,7 +29,7 @@ public class CourseNavigation {
 	}
 
 	public CourseNavigation(MaterialLevel level, MaterialHierarchy previous, MaterialHierarchy next, int number,
-							int size) {
+			int size) {
 		hasPrevious = number > 0;
 		hasNext = number < size - 1;
 		this.size = size;
@@ -54,7 +54,7 @@ public class CourseNavigation {
 		this.hasNext = courseNavigation.hasNext;
 		this.hasPrevious = courseNavigation.hasPrevious;
 		this.level = new MaterialLevel(courseNavigation.level.chapter, courseNavigation.level.group,
-									   courseNavigation.level.task, courseNavigation.level.material);
+				courseNavigation.level.task, courseNavigation.level.material);
 		this.nextChapter = courseNavigation.nextChapter;
 		this.nextGroup = courseNavigation.nextGroup;
 		this.nextTask = courseNavigation.nextTask;
@@ -200,7 +200,7 @@ public class CourseNavigation {
 
 	public MaterialHierarchy getPreviousMaterialHierarchy() {
 		return new MaterialHierarchy(previousChapter, previousGroup, previousTask, previousMaterial, prevSize,
-									 previousCount);
+				previousCount);
 	}
 
 	public MaterialHierarchy getNextMaterialHierarchy() {
@@ -312,7 +312,9 @@ public class CourseNavigation {
 
 		//region setter/getter
 		public String getPathToRoot() {
-			var path = Paths.get(chapter, group, task);
+			var path = Paths.get(chapter.replaceAll("[^a-zA-Z0-9,\\,\\s]", "_"),
+					group.replaceAll("[^a-zA-Z0-9,\\,\\s]", "_"),
+					task.replaceAll("[^a-zA-Z0-9,\\,\\s]", "_"));
 			var root = Paths.get("");
 			return path.relativize(root).toString().replace("\\", "/");
 		}
