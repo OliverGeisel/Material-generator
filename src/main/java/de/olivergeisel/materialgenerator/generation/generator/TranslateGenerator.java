@@ -379,7 +379,9 @@ public class TranslateGenerator implements Generator {
 		var mainId = mainTerm.getId();
 		var symRelations = getWantedRelationsFromRelated(mainKnowledge, RelationType.IS_SYNONYM_FOR);
 		collectElementsWithId(synonyms, symRelations, mainId, synonymsElements);
-
+		if (synonyms.isEmpty()) {
+			return null;
+		}
 		Material material = new SynonymMaterial(synonyms, false, templateInfo, mainTerm);
 		material.setName("Synonyme für " + mainTerm.getContent());
 		MaterialMappingEntry mapping = new MaterialMappingEntry(material);
@@ -430,6 +432,9 @@ public class TranslateGenerator implements Generator {
 		var mainId = mainTerm.getId();
 		var acryRelations = getWantedRelationsFromRelated(mainKnowledge, RelationType.IS_ACRONYM_FOR);
 		collectElementsWithId(acronyms, acryRelations, mainId, acronymsElements);
+		if (acronyms.isEmpty()) {
+			return null;
+		}
 		Material material = new AcronymMaterial(acronyms, false, templateInfo, mainTerm);
 		String name = "Akronyme für " + mainTerm.getContent();
 		material.setName(name);

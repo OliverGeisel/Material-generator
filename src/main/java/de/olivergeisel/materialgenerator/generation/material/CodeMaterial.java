@@ -16,14 +16,14 @@ public class CodeMaterial extends Material {
 	public CodeMaterial(String language, String code, KnowledgeElement element) {
 		super(MaterialType.WIKI, element.getId(), element.getId(), element.getStructureId());
 		this.language = language;
-		this.code = code;
+		this.code = code.replace("\n", "<br>").replace("\\\\t", "    ");
 	}
 
 	public CodeMaterial(String language, String code, String title, KnowledgeElement element) {
 		super(MaterialType.WIKI, title, element.getId(), element.getStructureId());
 		this.title = title;
 		this.language = language;
-		this.code = code;
+		this.code = code.replace("\n", "<br>").replace("\\\\t", "    ");
 	}
 
 	protected CodeMaterial() {
