@@ -12,11 +12,11 @@
 <main>
     <div class="container" th:fragment="content">
         <header>
-            <h1 class="text-center" style="color: var(--bs-red); " th:text="${material.title}"></h1>
+            <h1 class="text-center text-light" th:text="${material.title}"></h1>
         </header>
         <hr>
-        <h2> Sprache: <span th:text="${material.language}"></span></h2>
-        <code th:text="${material.code}">
+        <h2 class="text-light"> Sprache: <span th:text="${material.language}"></span></h2>
+        <code class="text-light" th:utext="${material.code}">
 
         </code>
     </div>

@@ -31,20 +31,23 @@
     </div>
 </nav>
 <main class="container">
+    <header>
+        <h1 th:text="'Gruppe - '+${group.name}"></h1>
+    </header>
     <section>
         <table>
             <thead>
             <tr>
                 <th>
-                    <h1>Gruppe - Struktur</h1>
+                    <h1 class="text-light">Gruppe - Struktur</h1>
                 </th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="task : ${group.taskOrder}">
                 <td>
-                    <a th:href="@{${task.name}+'/Material_0.html'}">
-                        <h3 th:text="${task.name}"></h3>
+                    <a th:href="@{${task.name}+'/Material_0.html'}" th:unless="${task.materialCount == 0}">
+                        <h3 class="link-light" th:text="${task.name}"></h3>
                     </a>
                 </td>
             </tr>
@@ -52,5 +55,18 @@
         </table>
     </section>
 </main>
+<footer class="text-center bg-dark">
+    <div class="container text-white py-4 py-lg-5">
+        <ul class="list-inline">
+            <li class="list-inline-item me-4"><a class="link-light" href="../../Course.html">Kurs</a></li>
+            <li class="list-inline-item me-4"><a class="link-light" href="../overview.html">Kapitel</a></li>
+        </ul>
+        <p class="text-muted mb-0">Copyright © 2023 MDTea-Gen</p>
+    </div>
+</footer>
+<script th:src="${rootPath}+'/bootstrap/js/bootstrap.min.js'"></script>
+<script th:src="${rootPath}+'/js/bs-init.js'"></script>
+<script th:src="${rootPath}+'/js/bold-and-dark.js'"></script>
+
 </body>
 </html>

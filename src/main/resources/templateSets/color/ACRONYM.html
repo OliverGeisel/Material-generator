@@ -12,11 +12,11 @@
 <main>
     <div class="container" th:fragment="content">
         <header>
-            <h1 class="text-center" style="color: var(--bs-red); " th:text="${material.headline}"></h1>
+            <h1 class="text-center text-light" style="color: var(--bs-red); " th:text="${material.headline}"></h1>
         </header>
         <hr>
         <ul>
-            <li th:each="entry:${material.entries}" th:text="${entry}"></li>
+            <li class="text-light" th:each="entry:${material.entries}" th:text="${entry}"></li>
         </ul>
     </div>
 </main>

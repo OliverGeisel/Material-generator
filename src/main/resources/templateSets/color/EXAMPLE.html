@@ -12,15 +12,21 @@
 <main>
     <div class="container" th:fragment="content">
         <header>
-            <h1 class="text-center" style="color: var(--bs-red); " th:text="${material.term}"></h1>
+            <h1 class="text-center text-light" th:text="${material.term}"></h1>
         </header>
         <hr>
-        <div th:if="${material.imageExample}">
-            <img alt="Bild Fehlt" class="img-fluid" th:src="${material.imageName}">
-        </div>
-        <div th:unless="${material.imageExample}">
-            <p class="text-center" th:text="${material.values.text}"></p>
-        </div>
+        <section>
+            <div th:if="${material.imageExample}">
+                <figure class="figure">
+                    <img alt="Bild Fehlt" class="img-fluid" th:src="${material.imageName}">
+                    <figcaption class="figure-caption" th:text="${material.values.TITLE}">Caption</figcaption>
+                </figure>
+                <p class="text-center" th:text="${material.values.text} == null ?: '' "></p>
+            </div>
+            <div th:unless="${material.imageExample}">
+                <p class="text-center" th:text="${material.values.text}"></p>
+            </div>
+        </section>
     </div>
 </main>
 <footer>
