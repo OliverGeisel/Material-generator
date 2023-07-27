@@ -8,6 +8,7 @@ import de.olivergeisel.materialgenerator.core.knowledge.metamodel.KnowledgeModel
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.Code;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeType;
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.Text;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.Relation;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.RelationType;
 import de.olivergeisel.materialgenerator.generation.KnowledgeNode;
@@ -461,15 +462,16 @@ public class TranslateGenerator implements Generator {
 										 .findFirst().orElseThrow();
 		var mainTerm = mainKnowledge.getMainElement();
 		List<MaterialAndMapping> back = new ArrayList<>();
-		var textRelations = Arrays.stream(mainKnowledge.getRelations())
-								  .filter(it -> it.getType().equals(RelationType.HAS));
+		var textRelations = getWantedRelationsFromMain(mainKnowledge, RelationType.RELATED);
 		textRelations.forEach(it -> {
-			var textId = it.getFromId();
+			var textId = it.getToId();
 			try {
-				var textElement = Arrays.stream(mainKnowledge.getRelatedElements())
-										.filter(elem -> elem.getId().equals(textId)).findFirst().orElseThrow();
-				Material textMaterial = new Material(MaterialType.WIKI, mainTerm);
+				Text textElement = (Text) Arrays.stream(mainKnowledge.getRelatedElements())
+												.filter(elem -> elem.getId().equals(textId)).findFirst().orElseThrow();
+				Material textMaterial =
+						new TextMaterial(textElement, templateInfo);
 				textMaterial.setName(mainTerm.getContent());
+				textMaterial.setTerm(mainTerm.getContent());
 				textMaterial.setTemplateInfo(templateInfo);
 				textMaterial.setValues(Map.of("term", mainTerm.getContent(), "content", textElement.getContent()));
 				MaterialMappingEntry mapping = new MaterialMappingEntry(textMaterial);

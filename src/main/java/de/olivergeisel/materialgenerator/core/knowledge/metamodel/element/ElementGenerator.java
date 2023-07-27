@@ -8,6 +8,7 @@ import java.util.List;
 public class ElementGenerator {
 
 	public static final String TERM        = "TERM";
+	public static final String TEXT        = "TEXT";
 	public static final String DEFINITION  = "DEFINITION";
 	public static final String FACT        = "FACT";
 	public static final String PROOF       = "PROOF";
@@ -44,6 +45,7 @@ public class ElementGenerator {
 			case EXAMPLE -> new Example(content, id, type, relations);
 			case STATEMENT -> new Statement(content, id, type, relations);
 			case NODE -> new NodeElement(content, id, type, relations);
+			case TEXT -> new Text(content, id, type, relations);
 			case CODE -> new Code(content, id, type, relations);
 			default -> new CustomElement(content, id, "CUSTOM", relations, type);
 		};

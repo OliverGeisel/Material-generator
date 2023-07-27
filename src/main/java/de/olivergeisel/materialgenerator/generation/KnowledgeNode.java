@@ -67,6 +67,7 @@ public class KnowledgeNode {
 	}
 
 	public KnowledgeElement[] getRelatedElements() {
+		// todo remove duplicates
 		return relatedElements;
 	}
 

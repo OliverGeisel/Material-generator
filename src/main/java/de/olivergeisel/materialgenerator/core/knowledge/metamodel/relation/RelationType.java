@@ -6,7 +6,7 @@ package de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation;
  *
  * @author Oliver Geisel
  * @version 1.1
- * @since 1.0
+ * @since 0.2.0
  */
 public enum RelationType {
 	/**

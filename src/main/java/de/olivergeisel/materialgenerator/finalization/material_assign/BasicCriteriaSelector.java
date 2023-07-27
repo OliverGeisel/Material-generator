@@ -33,7 +33,10 @@ public class BasicCriteriaSelector implements CriteriaSelector {
 	 */
 	@Override
 	public boolean satisfies(Material material, String criteria) {
+		if (criteria == null) return false;
 		var structure = material.getStructureId();
+		if (structure == null)
+			return false;
 		if (criteria.equals(structure)) {
 			return true;
 		}

@@ -96,6 +96,18 @@
       ]
     },
     {
+      "type": "TEXT",
+      "id": "Algorithmus-TEXT",
+      "structure": "Algorithmus-Begriff",
+      "content": "headline:Beispieltext;text:Algorithmen sind in der Informatik von zentraler Bedeutung. Sie sind die Grundlage für die Entwicklung von Programmen und Software. Sie sind heute in fast allen Bereichen des Lebens zu finden. Beispiele sind die Routenplanung, die Wettervorhersage, die Verschlüsselung von Daten, die Bildbearbeitung, die Spracherkennung und die Simulation von Prozessen.",
+      "relations": [
+        {
+          "relation_id": "Algorithmus-TERM",
+          "relation_type": "related"
+        }
+      ]
+    },
+    {
       "type": "CODE",
       "id": "Test-Code-CODE",
       "structure": "Java",
