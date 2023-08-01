@@ -22,7 +22,9 @@ public class MaterialCreator {
 		var data = new HashMap<String, String>();
 		Arrays.stream(example.getContent().split(";")).forEach(line -> {
 			var lineElements = line.split(":");
-			data.put(lineElements[0].toUpperCase().trim(), lineElements[1].trim());
+			if (lineElements.length == 2) {
+				data.put(lineElements[0].toUpperCase().trim(), lineElements[1].trim());
+			}
 		});
 		imagename = data.computeIfAbsent("IMAGE", k -> "NO_IMAGE");
 		Material newMaterial;

@@ -13,17 +13,39 @@ public class CodeMaterial extends Material {
 	private String code;
 	private String title;
 
-	public CodeMaterial(String language, String code, KnowledgeElement element) {
-		super(MaterialType.WIKI, element.getId(), element.getId(), element.getStructureId());
-		this.language = language;
-		this.code = code.replace("\n", "<br>").replace("\\\\t", "    ");
+
+	/**
+	 * Creates a new CodeMaterial.
+	 *
+	 * @param language programming language the code is written
+	 * @param code     complete sourcecode
+	 * @param element  the related {@link KnowledgeElement} for the code
+	 * @throws IllegalArgumentException if language or code is null
+	 */
+	public CodeMaterial(String language, String code, KnowledgeElement element) throws IllegalArgumentException {
+		this(language, code, "", element);
 	}
 
-	public CodeMaterial(String language, String code, String title, KnowledgeElement element) {
+	/**
+	 * @param language programming language the code is written
+	 * @param code     complete sourcecode
+	 * @param title    title of the code
+	 * @param element  the related {@link KnowledgeElement} for the code
+	 * @throws IllegalArgumentException if language or code is null
+	 * @throws NullPointerException     if element is null
+	 */
+	public CodeMaterial(String language, String code, String title, KnowledgeElement element)
+			throws IllegalArgumentException, NullPointerException{
 		super(MaterialType.WIKI, title, element.getId(), element.getStructureId());
-		this.title = title;
+		if (language == null) {
+			throw new IllegalArgumentException("language must not be null!");
+		}
+		if (code == null) {
+			throw new IllegalArgumentException("code must not be null!");
+		}
 		this.language = language;
-		this.code = code.replace("\n", "<br>").replace("\\\\t", "    ");
+		this.code = code.replace("\n", "<br>").replace("\\t","\t").replace("\\\\t", "\t");
+		this.title = title;
 	}
 
 	protected CodeMaterial() {
@@ -63,9 +85,10 @@ public class CodeMaterial extends Material {
 
 	@Override
 	public String toString() {
+		var length = Math.min(code.length(), 10);
 		return "CodeMaterial{" +
 			   "title='" + title + '\'' +
-			   ", code='" + code + '\'' +
+			   ", code='" + code.substring(0,10) + "...'" +
 			   ", language='" + language + '\'' +
 			   '}';
 	}
