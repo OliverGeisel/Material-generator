@@ -8,6 +8,7 @@ public class TemplateType {
 	public static final TemplateType EXERCISE   = new TemplateType("EXERCISE");
 	public static final TemplateType SOLUTION   = new TemplateType("SOLUTION");
 	public static final TemplateType TEXT       = new TemplateType("TEXT");
+	public static final TemplateType IMAGE      = new TemplateType("IMAGE");
 	public static final TemplateType CODE       = new TemplateType("CODE");
 	public static final TemplateType SYNONYM    = new TemplateType("SYNONYM");
 	public static final TemplateType ACRONYM    = new TemplateType("ACRONYM");

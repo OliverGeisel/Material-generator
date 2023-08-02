@@ -10,6 +10,7 @@ public enum KnowledgeType {
 	NODE,
 	CODE,
 	TEXT,
+	IMAGE,
 	EXAMPLE,
 	CUSTOM
 }

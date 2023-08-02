@@ -14,6 +14,7 @@ public interface TemplateInfoRepository extends CrudRepository<TemplateInfo, UUI
 	default Set<TemplateInfo> findAllBasicInfo() {
 		var list = new HashSet<>(Set.of(findByTemplateType(TemplateType.LIST)));
 		list.add(findByTemplateType(TemplateType.TEXT));
+		list.add(findByTemplateType(TemplateType.IMAGE));
 		list.add(findByTemplateType(TemplateType.DEFINITION));
 		list.add(findByTemplateType(TemplateType.EXAMPLE));
 		list.add(findByTemplateType(TemplateType.ACRONYM));

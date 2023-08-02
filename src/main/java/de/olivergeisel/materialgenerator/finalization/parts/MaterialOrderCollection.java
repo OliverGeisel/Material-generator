@@ -36,6 +36,17 @@ public abstract class MaterialOrderCollection extends MaterialOrderPart {
 		super();
 	}
 
+	protected MaterialOrderCollection(String name, Topic topic) {
+		super(name);
+		this.topic = topic;
+	}
+
+	protected MaterialOrderCollection(String name, Topic topic, Set<String> alias) {
+		super(name);
+		this.topic = topic;
+		this.alias.addAll(alias);
+	}
+
 	public abstract Material findMaterial (UUID materialId);
 
 	public abstract Relevance updateRelevance ();

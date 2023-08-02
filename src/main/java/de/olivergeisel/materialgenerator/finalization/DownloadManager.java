@@ -2,6 +2,7 @@ package de.olivergeisel.materialgenerator.finalization;
 
 import de.olivergeisel.materialgenerator.finalization.parts.*;
 import de.olivergeisel.materialgenerator.generation.material.ExampleMaterial;
+import de.olivergeisel.materialgenerator.generation.material.ImageMaterial;
 import de.olivergeisel.materialgenerator.generation.material.Material;
 import org.slf4j.Logger;
 import org.springframework.core.io.Resource;
@@ -331,6 +332,15 @@ public class DownloadManager {
 		context.setVariable("title", material.getName());
 		String processedHtml = templateEngine.process("MATERIAL", context);
 		saveTemplateToFile(processedHtml, outputDir, String.format("Material_%s.html", materialNumber));
+		if (material instanceof ImageMaterial image) {
+			try {
+				var imageFile = getImage(image.getImageName());
+				Files.copy(imageFile.getInputStream(), new File(outputDir, image.getImageName()).toPath(),
+						StandardCopyOption.REPLACE_EXISTING);
+			} catch (IOException e) {
+				logger.warn(e.toString());
+			}
+		}
 		if (material instanceof ExampleMaterial exampleMaterial && exampleMaterial.isImageExample()) {
 			try {
 				var image = getImage(exampleMaterial.getImageName());

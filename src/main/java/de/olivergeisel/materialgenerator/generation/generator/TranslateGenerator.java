@@ -5,10 +5,7 @@ import de.olivergeisel.materialgenerator.core.courseplan.content.ContentGoal;
 import de.olivergeisel.materialgenerator.core.courseplan.content.ContentGoalExpression;
 import de.olivergeisel.materialgenerator.core.courseplan.content.ContentTarget;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.KnowledgeModel;
-import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.Code;
-import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement;
-import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeType;
-import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.Text;
+import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.*;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.Relation;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.RelationType;
 import de.olivergeisel.materialgenerator.generation.KnowledgeNode;
@@ -218,6 +215,11 @@ public class TranslateGenerator implements Generator {
 			materials.addAll(createExamples(knowledge));
 		} catch (NoSuchElementException e) {
 			logger.info("No Example found for {}", masterKeyword);
+		}
+		try {
+			materials.addAll(createImages(knowledge));
+		} catch (NoSuchElementException e) {
+			logger.info("No Image found for {}", masterKeyword);
 		}
 		try {
 			materials.addAll(createCode(knowledge));
@@ -467,7 +469,9 @@ public class TranslateGenerator implements Generator {
 			var textId = it.getToId();
 			try {
 				Text textElement = (Text) Arrays.stream(mainKnowledge.getRelatedElements())
-												.filter(elem -> elem.getId().equals(textId)).findFirst().orElseThrow();
+												.filter(elem -> elem.getId().equals(textId)
+																&& elem.getType().equals(KnowledgeType.TEXT))
+												.findFirst().orElseThrow();
 				Material textMaterial =
 						new TextMaterial(textElement, templateInfo);
 				textMaterial.setName(mainTerm.getContent());
@@ -482,6 +486,39 @@ public class TranslateGenerator implements Generator {
 			}
 		});
 		return back;
+	}
+
+	private List<MaterialAndMapping> createImages(Set<KnowledgeNode> knowledgeNode) throws NoTemplateInfoException,
+			NoSuchElementException {
+		var templateInfo = getBasicTemplateInfo(ImageTemplate.class);
+		var mainKnowledge = knowledgeNode.stream()
+										 .filter(it -> it.getMainElement().getType().equals(KnowledgeType.IMAGE))
+										 .findFirst().orElseThrow();
+		var mainTerm = mainKnowledge.getMainElement();
+		List<MaterialAndMapping> back = new ArrayList<>();
+		var textRelations = getWantedRelationsFromMain(mainKnowledge, RelationType.RELATED);
+		textRelations.forEach(it -> {
+			var imageId = it.getToId();
+			try {
+				Image imageElement = (Image) Arrays.stream(mainKnowledge.getRelatedElements())
+												   .filter(elem -> elem.getId().equals(imageId)
+																   && elem.hasType(KnowledgeType.IMAGE))
+												   .findFirst().orElseThrow();
+				Material imageMaterial =
+						new ImageMaterial(imageElement, templateInfo);
+				imageMaterial.setName(mainTerm.getContent());
+				imageMaterial.setTerm(mainTerm.getContent());
+				imageMaterial.setTemplateInfo(templateInfo);
+				imageMaterial.setValues(Map.of("term", mainTerm.getContent(), "content", imageElement.getContent()));
+				MaterialMappingEntry mapping = new MaterialMappingEntry(imageMaterial);
+				mapping.add(mainTerm, imageElement);
+				back.add(new MaterialAndMapping(imageMaterial, mapping));
+			} catch (NoSuchElementException ignored) {
+				logger.warn("No images found for {}", mainTerm.getContent());
+			}
+		});
+		return back;
+
 	}
 
 	/**

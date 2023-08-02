@@ -48,6 +48,10 @@ public class BasicTemplates {
 	@JoinColumn(name = "code_template_id")
 	private CodeTemplate codeTemplate;
 
+	@ManyToOne
+	@JoinColumn(name = "image_template_id")
+	private ImageTemplate imageTemplate;
+
 
 	protected BasicTemplates() {
 		this.definitionTemplate = new DefinitionTemplate();
@@ -58,6 +62,7 @@ public class BasicTemplates {
 		this.synonymTemplate = new SynonymTemplate();
 		this.proofTemplate = new ProofTemplate();
 		this.codeTemplate = new CodeTemplate();
+		this.imageTemplate = new ImageTemplate();
 	}
 
 	//region setter/getter
@@ -82,7 +87,7 @@ public class BasicTemplates {
 
 	public TemplateInfo[] getTemplates() {
 		return new TemplateInfo[]{definitionTemplate, textTemplate, exampleTemplate, acronymTemplate, listTemplate,
-				synonymTemplate, proofTemplate, codeTemplate};
+				synonymTemplate, proofTemplate, codeTemplate, imageTemplate};
 	}
 
 	public DefinitionTemplate getDefinitionTemplate() {
