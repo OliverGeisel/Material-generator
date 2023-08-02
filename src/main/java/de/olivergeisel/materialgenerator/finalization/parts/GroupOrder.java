@@ -179,4 +179,12 @@ public class GroupOrder extends MaterialOrderCollection {
 	}
 //endregion
 
+	@Override
+	public String toString() {
+		return "GroupOrder{" +
+			   "name='" + getName() + '\'' +
+			   ", id=" + getId() +
+			   ", topic=" + getTopic() +
+			   '}';
+	}
 }

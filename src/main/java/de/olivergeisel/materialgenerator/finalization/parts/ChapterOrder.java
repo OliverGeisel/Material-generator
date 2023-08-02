@@ -175,4 +175,12 @@ public class ChapterOrder extends MaterialOrderCollection {
 	}
 //endregion
 
+	@Override
+	public String toString() {
+		return "ChapterOrder{" +
+			   "name='" + getName() + '\'' +
+			   ", id=" + getId() +
+			   ", topic=" + getTopic() +
+			   '}';
+	}
 }

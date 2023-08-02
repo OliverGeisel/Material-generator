@@ -64,6 +64,12 @@ public class Topic {
 
 	}
 
+	public static Topic empty() {
+		var back = new Topic();
+		back.name = "EMPTY TOPIC";
+		return back;
+	}
+
 	/**
 	 * Update the goal this topic is linked to.
 	 *

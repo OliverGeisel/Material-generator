@@ -4,6 +4,7 @@ import de.olivergeisel.materialgenerator.core.course.MaterialOrderPart;
 import de.olivergeisel.materialgenerator.core.courseplan.structure.Relevance;
 import de.olivergeisel.materialgenerator.core.courseplan.structure.StructureTask;
 import de.olivergeisel.materialgenerator.finalization.Goal;
+import de.olivergeisel.materialgenerator.finalization.Topic;
 import de.olivergeisel.materialgenerator.finalization.material_assign.MaterialAssigner;
 import de.olivergeisel.materialgenerator.generation.material.Material;
 
@@ -35,10 +36,10 @@ public class TaskOrder extends MaterialOrderCollection {
 	private final List<Material> materialOrder = new LinkedList<>();
 	private       Relevance      relevance     = Relevance.TO_SET;
 
-	protected TaskOrder () {
+	protected TaskOrder() {
 	}
 
-	public TaskOrder (StructureTask relatedTask, Set<Goal> goals) throws IllegalArgumentException {
+	public TaskOrder(StructureTask relatedTask, Set<Goal> goals) throws IllegalArgumentException {
 		if (relatedTask == null) throw new IllegalArgumentException("relatedTask must not be null");
 		setName(relatedTask.getName());
 		var taskTopic = relatedTask.getTopic();
@@ -49,7 +50,14 @@ public class TaskOrder extends MaterialOrderCollection {
 		relatedTask.getAlternatives().forEach(this::appendAlias);
 	}
 
-	public void moveUp (Material material) {
+	public TaskOrder(String name, Topic topic, Relevance relevance) {
+		setName(name);
+		setTopic(topic);
+		this.relevance = relevance;
+	}
+
+
+	public void moveUp(Material material) {
 		int index = materialOrder.indexOf(material);
 		if (index > 0) {
 			materialOrder.remove(index);
@@ -57,7 +65,7 @@ public class TaskOrder extends MaterialOrderCollection {
 		}
 	}
 
-	public void moveDown (Material material) {
+	public void moveDown(Material material) {
 		int index = materialOrder.indexOf(material);
 		if (index < materialOrder.size() - 1) {
 			materialOrder.remove(index);
@@ -65,32 +73,32 @@ public class TaskOrder extends MaterialOrderCollection {
 		}
 	}
 
-	public boolean append (Material material) {
+	public boolean append(Material material) {
 		return materialOrder.add(material);
 	}
 
-	public boolean remove (Material material) {
+	public boolean remove(Material material) {
 		return materialOrder.remove(material);
 	}
 
 	@Override
-	public MaterialOrderPart find (UUID id) {
+	public MaterialOrderPart find(UUID id) {
 		if (this.getId().equals(id)) return this;
 		return materialOrder.stream().filter(m -> m.getId().equals(id)).findFirst().orElse(null);
 	}
 
 	@Override
-	public Material findMaterial (UUID materialId) {
+	public Material findMaterial(UUID materialId) {
 		return materialOrder.stream().filter(m -> m.getId().equals(materialId)).findFirst().orElse(null);
 	}
 
 	@Override
-	public Relevance updateRelevance () {
+	public Relevance updateRelevance() {
 		return relevance;
 	}
 
 	@Override
-	public int materialCount () {
+	public int materialCount() {
 		return materialOrder.size();
 	}
 
@@ -101,7 +109,7 @@ public class TaskOrder extends MaterialOrderCollection {
 	 * @return the materials that were assigned
 	 */
 	@Override
-	public Set<Material> assignMaterial (Set<Material> materials) {
+	public Set<Material> assignMaterial(Set<Material> materials) {
 		Set<Material> back = new HashSet<>();
 		for (var material : materials) {
 			if (isAssignable(material)) {
@@ -119,7 +127,7 @@ public class TaskOrder extends MaterialOrderCollection {
 	 * @return true if a material was assigned, false if not
 	 */
 	@Override
-	public boolean assign (Material material) {
+	public boolean assign(Material material) {
 		if (materialOrder.contains(material)) return false;
 		return materialOrder.add(material);
 	}
@@ -131,27 +139,27 @@ public class TaskOrder extends MaterialOrderCollection {
 	 * @return true if a material was assigned, false if not
 	 */
 	@Override
-	public boolean assignMaterial (MaterialAssigner assigner) {
+	public boolean assignMaterial(MaterialAssigner assigner) {
 		return assigner.assign(this);
 	}
 
-	private boolean isAssignable (Material material) {
+	private boolean isAssignable(Material material) {
 		return getAlias().stream().anyMatch(alias -> alias.contains(material.getStructureId()))
 			   || getAlias().stream().anyMatch(alias -> alias.contains(material.getStructureId().split("-")[0].trim()));
 	}
 
 	@Override
-	public boolean remove (UUID partId) {
+	public boolean remove(UUID partId) {
 		return materialOrder.removeIf(m -> m.getId().equals(partId));
 	}
 
 	//region setter/getter
 	@Override
-	public Relevance getRelevance () {
+	public Relevance getRelevance() {
 		return relevance;
 	}
 
-	public void setRelevance (Relevance relevance) {
+	public void setRelevance(Relevance relevance) {
 		this.relevance = relevance;
 	}
 
@@ -161,7 +169,7 @@ public class TaskOrder extends MaterialOrderCollection {
 	 * @return true if all parts are valid
 	 */
 	@Override
-	public boolean isValid () {
+	public boolean isValid() {
 		return switch (relevance) {
 			case OPTIONAL, INFORMATIONAL, IMPORTANT -> true;
 			case MANDATORY -> !materialOrder.isEmpty();
@@ -170,9 +178,18 @@ public class TaskOrder extends MaterialOrderCollection {
 		};
 	}
 
-	public List<Material> getMaterialOrder () {
+	public List<Material> getMaterialOrder() {
 		return materialOrder;
 	}
 //endregion
+
+	@Override
+	public String toString() {
+		return "TaskOrder{" +
+			   "name='" + getName() +
+			   ", id=" + getId() + '\'' +
+			   ", topic=" + getTopic() +
+			   '}';
+	}
 
 }
