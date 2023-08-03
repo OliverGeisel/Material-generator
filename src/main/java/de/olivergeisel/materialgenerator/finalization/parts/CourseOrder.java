@@ -100,6 +100,10 @@ public class CourseOrder extends de.olivergeisel.materialgenerator.core.course.C
 	}
 
 	public boolean remove(UUID partId) {
+		if (chapterOrder.stream().anyMatch(it -> it.getId().equals(partId))) {
+			chapterOrder.removeIf(it -> it.getId().equals(partId));
+			return true;
+		}
 		return chapterOrder.stream().anyMatch(c -> c.remove(partId));
 	}
 

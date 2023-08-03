@@ -148,6 +148,10 @@ public class GroupOrder extends MaterialOrderCollection {
 
 	@Override
 	public boolean remove (UUID partId) {
+		if (taskOrder.stream().anyMatch(it -> it.getId().equals(partId))) {
+			taskOrder.removeIf(it -> it.getId().equals(partId));
+			return true;
+		}
 		return taskOrder.stream().anyMatch(t -> t.remove(partId));
 	}
 

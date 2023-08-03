@@ -143,6 +143,10 @@ public class ChapterOrder extends MaterialOrderCollection {
 
 	@Override
 	public boolean remove (UUID partId) {
+		if (groupOrder.stream().anyMatch(it -> it.getId().equals(partId))) {
+			groupOrder.removeIf(it -> it.getId().equals(partId));
+			return true;
+		}
 		return groupOrder.stream().anyMatch(g -> g.remove(partId));
 	}
 
