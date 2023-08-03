@@ -435,102 +435,6 @@
       ]
     },
     {
-      "key": "chapter-2",
-      "name": "Informatische Modelle",
-      "weight": 4.0,
-      "alternatives": [],
-      "topic": "",
-      "groups": [
-        {
-          "key": "group-2-1",
-          "name": "Modelle",
-          "alternatives": [],
-          "topic": "Modell",
-          "tasks": [
-            {
-              "key": "task-2-1-1",
-              "name": "Abbild von Realit\u00e4t und Vitrualit\u00e4t",
-              "topic": "",
-              "relevance": "MANDATORY",
-              "alternatives": []
-            },
-            {
-              "key": "task-2-1-2",
-              "name": "Ziel der Modellierung",
-              "topic": "",
-              "relevance": "MANDATORY",
-              "alternatives": []
-            },
-            {
-              "key": "task-2-1-3",
-              "name": "Anforderungen",
-              "topic": "",
-              "relevance": "MANDATORY",
-              "alternatives": []
-            },
-            {
-              "key": "task-2-1-4",
-              "name": "Grenzen",
-              "topic": "",
-              "relevance": "MANDATORY",
-              "alternatives": []
-            }
-          ]
-        },
-        {
-          "key": "group-2-2",
-          "name": "Klassifizierung von Modellen",
-          "alternatives": [],
-          "topic": "",
-          "tasks": [
-            {
-              "key": "task-2-2-1",
-              "name": "Abstraktionsgrad",
-              "topic": "",
-              "relevance": "MANDATORY",
-              "alternatives": []
-            },
-            {
-              "key": "task-2-2-2",
-              "name": "Darstellungsart",
-              "topic": "",
-              "relevance": "MANDATORY",
-              "alternatives": []
-            },
-            {
-              "key": "task-2-2-3",
-              "name": "Zielorientierung",
-              "topic": "",
-              "relevance": "MANDATORY",
-              "alternatives": []
-            }
-          ]
-        },
-        {
-          "key": "group-2-3",
-          "name": "Modelle in Problemstellungen",
-          "alternatives": [],
-          "topic": "",
-          "tasks": [
-            {
-              "key": "task-2-3-1",
-              "name": "Schrittfolge der Modellierung",
-              "topic": "",
-              "relevance": "MANDATORY",
-              "alternatives": []
-            },
-            {
-              "key": "task-2-3-2",
-              "name": "Modellierungswerkzeuge nutzen",
-              "topic": "",
-              "relevance": "MANDATORY",
-              "alternatives": []
-            }
-          ]
-        }
-      ]
-    },
-    {
       "key": "chapter-3",
       "name": "Sicherheit von Informationen",
       "weight": 12.0,
@@ -616,27 +520,6 @@
               "alternatives": []
             },
             {
-              "key": "task-3-3-3",
-              "name": "Enigma",
-              "topic": "Symmetrische Verfahren",
-              "relevance": "MANDATORY",
-              "alternatives": []
-            },
-            {
-              "key": "task-3-3-4",
-              "name": "DES",
-              "topic": "Symmetrische Verfahren",
-              "relevance": "MANDATORY",
-              "alternatives": []
-            },
-            {
-              "key": "task-3-3-5",
-              "name": "AES",
-              "topic": "Symmetrische Verfahren",
-              "relevance": "MANDATORY",
-              "alternatives": []
-            },
-            {
               "key": "task-3-3-6",
               "name": "SSL",
               "topic": "Symmetrische Verfahren",
@@ -662,13 +545,6 @@
                 "RSA-Algorithmus",
                 "Verschlüsselung"
               ]
-            },
-            {
-              "key": "task-3-4-2",
-              "name": "ElGamal",
-              "topic": "Asymmetrische Verfahren",
-              "relevance": "MANDATORY",
-              "alternatives": []
             }
           ]
         },
@@ -682,40 +558,6 @@
               "key": "task-3-5-1",
               "name": "Steganographie",
               "topic": "nicht kryptographische Verfahren",
-              "relevance": "MANDATORY",
-              "alternatives": []
-            }
-          ]
-        },
-        {
-          "key": "group-3-6",
-          "name": "Integrit\u00e4t",
-          "alternatives": [],
-          "topic": "Verfahren der Integrität",
-          "tasks": [
-            {
-              "key": "task-3-6-1",
-              "name": "One-Way-Hash Funktion",
-              "topic": "One-Way-Hash Funktion",
-              "relevance": "MANDATORY",
-              "alternatives": [
-                "One-Way-Hash Function",
-                "Einweg Hashfunktion",
-                "Hashfunktion"
-              ]
-            }
-          ]
-        },
-        {
-          "key": "group-3-7",
-          "name": "Authentizit\u00e4t",
-          "alternatives": [],
-          "topic": "Authentizität",
-          "tasks": [
-            {
-              "key": "task-3-7-1",
-              "name": "elektronische Unterschrift",
-              "topic": "Authentizität",
               "relevance": "MANDATORY",
               "alternatives": []
             }
@@ -744,20 +586,6 @@
             {
               "key": "task-3-8-3",
               "name": "Datenmissbrauch",
-              "topic": "",
-              "relevance": "MANDATORY",
-              "alternatives": []
-            },
-            {
-              "key": "task-3-8-4",
-              "name": "Werkzeuge",
-              "topic": "",
-              "relevance": "MANDATORY",
-              "alternatives": []
-            },
-            {
-              "key": "task-3-8-5",
-              "name": "Einsatz in Programmierumgebungen",
               "topic": "",
               "relevance": "MANDATORY",
               "alternatives": []
