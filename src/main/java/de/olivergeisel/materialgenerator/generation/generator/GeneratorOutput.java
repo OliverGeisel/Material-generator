@@ -4,7 +4,9 @@ import de.olivergeisel.materialgenerator.generation.material.Material;
 import de.olivergeisel.materialgenerator.generation.material.MaterialAndMapping;
 import de.olivergeisel.materialgenerator.generation.material.MaterialMappingEntry;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 public class GeneratorOutput {
 	private final List<Material>             allMaterial = new LinkedList<>();
@@ -62,8 +64,8 @@ public class GeneratorOutput {
 	}
 
 	//region setter/getter
-	public Set<MaterialAndMapping> getMaterialAndMapping() {
-		Set<MaterialAndMapping> result = new HashSet<>();
+	public List<MaterialAndMapping> getMaterialAndMapping() {
+		List<MaterialAndMapping> result = new LinkedList<>();
 		for (var material : allMaterial) {
 			result.add(new MaterialAndMapping(material,
 											  allMappings.stream().filter(m -> m.getMaterial() == material).findFirst()

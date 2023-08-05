@@ -129,6 +129,17 @@ public class Material extends MaterialOrderPart {
 		return getName();
 	}
 
+	public boolean isIdentical(Material material) {
+		if (material == null) {
+			throw new IllegalArgumentException("material must not be null");
+		}
+		if (this == material) return true;
+		return type.equals(material.getType())
+			   && values.equals(material.getValues())
+			   && term.equals(material.getTerm())
+			   && structureId.equals(material.getStructureId());
+	}
+
 	//region setter/getter
 
 	/**

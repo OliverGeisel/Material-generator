@@ -7,6 +7,7 @@ import de.olivergeisel.materialgenerator.finalization.Goal;
 import de.olivergeisel.materialgenerator.generation.material.MaterialAndMapping;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -68,7 +69,7 @@ public class RawCourse extends Course {
 		setPlanId(plan.getId());
 	}
 
-	public boolean assignMaterial(Set<MaterialAndMapping> materials) {
+	public boolean assignMaterial(Collection<MaterialAndMapping> materials) {
 		return courseOrder.assignMaterial(materials.stream().map(MaterialAndMapping::material).collect(
 				Collectors.toSet()));
 	}
