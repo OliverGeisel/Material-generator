@@ -49,7 +49,22 @@ public class BasicCriteriaSelector implements CriteriaSelector {
 				return true;
 			}
 		}
-		return false;
+		// check if alias satisfies criteria
+
+		var term = material.getTerm();
+		if (term == null) return false;
+		if (criteria.equals(term)) {
+			return true;
+		}
+		if (criteria.contains(term)) {
+			return true;
+		}
+		var materialName = material.getName();
+		if (materialName == null) return false;
+		if (criteria.equals(materialName)) {
+			return true;
+		}
+		return criteria.contains(materialName);
 	}
 
 	/**

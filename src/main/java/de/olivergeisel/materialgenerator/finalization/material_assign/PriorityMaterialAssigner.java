@@ -30,7 +30,31 @@ public class PriorityMaterialAssigner extends MaterialAssigner {
 	 */
 	@Override
 	public boolean assign(MaterialOrderCollection part) throws IllegalArgumentException {
-		return false;
+		if (part == null) {
+			throw new IllegalArgumentException("part must not be null");
+		}
+		var unassignedMaterials = getUnassignedMaterials();
+		if (unassignedMaterials.isEmpty()) {
+			return false;
+		}
+		var back = false;
+		if (part instanceof TaskOrder task) {
+			var materialsStructures = materialMap.keySet().stream().map(Material::getStructureId)
+												 .collect(Collectors.toSet());
+			var matchingAlias = task.getMatchingAlias(materialsStructures);
+			if (matchingAlias.isEmpty()) {
+				return false;
+			}
+			for (var material : unassignedMaterials) {
+				if (selector.satisfies(material, part) && (part.assign(material))) {
+					setAssigned(material);
+					back = true;
+				}
+			}
+		} else {
+			handeleComplexPart(part, unassignedMaterials);
+		}
+		return back;
 	}
 
 	/**

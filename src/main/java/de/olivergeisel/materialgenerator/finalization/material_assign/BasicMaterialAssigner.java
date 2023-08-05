@@ -45,11 +45,9 @@ public class BasicMaterialAssigner extends MaterialAssigner {
 					yield false;
 				}
 				for (var material : getUnassignedMaterials()) {
-					if (selector.satisfies(material, part)) {
-						if (part.assign(material)) {
+					if (selector.satisfies(material, part) && (part.assign(material))) {
 							setAssigned(material);
 							result = true;
-						}
 					}
 				}
 				yield result;

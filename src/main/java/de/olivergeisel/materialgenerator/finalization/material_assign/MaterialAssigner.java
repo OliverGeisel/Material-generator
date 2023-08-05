@@ -125,6 +125,13 @@ public abstract class MaterialAssigner {
 	 */
 	public abstract boolean assignWithoutCriteria(Material material, MaterialOrderCollection part);
 
+	public void reinit(Set<Material> materials) {
+		materialMap.clear();
+		for (Material material : materials) {
+			materialMap.put(material, new MaterialState());
+		}
+	}
+
 	//region setter/getter
 
 	/**
