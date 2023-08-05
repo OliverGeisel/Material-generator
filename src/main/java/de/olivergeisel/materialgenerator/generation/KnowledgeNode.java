@@ -97,4 +97,13 @@ public class KnowledgeNode {
 		return result;
 	}
 
+	@Override
+	public String toString() {
+		return "KnowledgeNode{" +
+			   "structurePoint=" + structurePoint +
+			   ", mainElement=" + mainElement +
+			   ", relatedElements size=" + relatedElements.length +
+			   ", relations size=" + relations.length +
+			   '}';
+	}
 }

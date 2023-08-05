@@ -25,6 +25,10 @@ public abstract class KnowledgeObject {
 		return id;
 	}
 
+	public String getIdUnified() {
+		return id.toUpperCase().trim().replace('_', ' ').replace('-', ' ');
+	}
+
 	public Set<KnowledgeElement> getLinkedElements() {
 		return Collections.unmodifiableSet(linkedElements);
 	}
@@ -44,4 +48,11 @@ public abstract class KnowledgeObject {
 	}
 
 
+	@Override
+	public String toString() {
+		return "KnowledgeObject{" +
+			   "id='" + id + '\'' +
+			   ", linkedElements size=" + linkedElements.size() +
+			   '}';
+	}
 }

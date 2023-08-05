@@ -6,4 +6,11 @@ public class KnowledgeLeaf extends KnowledgeObject {
 		super(id);
 	}
 
+	@Override
+	public String toString() {
+		return "KnowledgeLeaf{" +
+			   "linkedElements size=" + getLinkedElements().size() +
+			   ", id='" + getId() + '\'' +
+			   '}';
+	}
 }

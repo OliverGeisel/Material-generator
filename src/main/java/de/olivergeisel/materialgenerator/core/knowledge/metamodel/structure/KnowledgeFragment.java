@@ -93,14 +93,14 @@ public class KnowledgeFragment extends KnowledgeObject {
 		if (id == null) {
 			throw new NoSuchElementException("id must not be null");
 		}
-		if (id.equals(getId())) {
+		if (id.equals(getIdUnified())) {
 			return true;
 		}
 		for (KnowledgeObject element : children) {
 			if (element instanceof KnowledgeFragment fragment && fragment.contains(id)) {
 				return true;
 			} else {
-				if (element.getId().equals(id)) {
+				if (id.equals(element.getIdUnified())) {
 					return true;
 				}
 			}

@@ -34,7 +34,7 @@ public class KnowledgeStructure {
 		if (id == null) {
 			throw new NoSuchElementException("id must not be null");
 		}
-		return root.contains(id);
+		return root.contains(id.toUpperCase().trim().replace('_', ' ').replace('-', ' '));
 	}
 
 	/**
