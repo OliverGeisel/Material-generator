@@ -5,10 +5,9 @@ import de.olivergeisel.materialgenerator.core.courseplan.content.ContentGoalExpr
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.relation.Relation;
 import de.olivergeisel.materialgenerator.core.knowledge.metamodel.structure.KnowledgeObject;
+import lombok.Getter;
 
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Contains all Knowledge from a KnowledgeModel, that is related to a specific topic in the structure.
@@ -16,30 +15,32 @@ import java.util.Optional;
  */
 public class KnowledgeNode {
 
-	private KnowledgeObject       structurePoint;
-	private KnowledgeElement      mainElement;
-	private KnowledgeElement[]    relatedElements;
-	private Relation[]            relations;
-	private Optional<ContentGoal> goal = Optional.empty();
+	private final   List<String>          topics = new ArrayList<>();
+	@Getter private KnowledgeObject       structurePoint;
+	@Getter private KnowledgeElement      mainElement;
+	// todo remove duplicates in relatedElements
+	@Getter private KnowledgeElement[]    relatedElements;
+	@Getter private Relation[]            relations;
+	@Getter private Optional<ContentGoal> goal   = Optional.empty();
 
 	public KnowledgeNode(KnowledgeObject structurePoint, KnowledgeElement mainElement,
-						 KnowledgeElement[] relatedElements, Relation[] relations) {
+			KnowledgeElement[] relatedElements, Relation[] relations) {
 		this.structurePoint = structurePoint;
 		this.mainElement = mainElement;
 		this.relatedElements = relatedElements;
 		this.relations = relations;
 	}
 
-	//region setter/getter
-	public Optional<ContentGoal> getGoal() {
-		return goal;
+	public void addTopic(String topic) throws IllegalArgumentException {
+		if (topic == null) {
+			throw new IllegalArgumentException("topic must not be null");
+		}
+		this.topics.add(topic);
 	}
 
-	public void setGoal(ContentGoal goal) {
-		if (goal == null) {
-			throw new IllegalArgumentException("goal must not be null");
-		}
-		this.goal = Optional.of(goal);
+	//region setter/getter
+	public List<String> getTopics() {
+		return Collections.unmodifiableList(topics);
 	}
 
 	public Optional<ContentGoalExpression> getExpression() {
@@ -50,33 +51,23 @@ public class KnowledgeNode {
 		return goal.map(ContentGoal::getMasterKeyword);
 	}
 
-	public KnowledgeObject getStructurePoint() {
-		return structurePoint;
+	public void setGoal(ContentGoal goal) {
+		if (goal == null) {
+			throw new IllegalArgumentException("goal must not be null");
+		}
+		this.goal = Optional.of(goal);
 	}
 
 	public void setStructurePoint(KnowledgeObject structurePoint) {
 		this.structurePoint = structurePoint;
 	}
 
-	public KnowledgeElement getMainElement() {
-		return mainElement;
-	}
-
 	public void setMainElement(KnowledgeElement mainElement) {
 		this.mainElement = mainElement;
 	}
 
-	public KnowledgeElement[] getRelatedElements() {
-		// todo remove duplicates
-		return relatedElements;
-	}
-
 	public void setRelatedElements(KnowledgeElement[] relatedElements) {
 		this.relatedElements = relatedElements;
-	}
-
-	public Relation[] getRelations() {
-		return relations;
 	}
 
 	public void setRelations(Relation[] relations) {

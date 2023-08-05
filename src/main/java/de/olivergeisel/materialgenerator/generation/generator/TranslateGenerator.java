@@ -35,15 +35,15 @@ import java.util.stream.Collectors;
  */
 public class TranslateGenerator implements Generator {
 
-	private static final String            UNKNOWN           = "Unknown";
-	private final        Set<TemplateInfo> basicTemplateInfo = new HashSet<>();
-	private final        Logger            logger            = org.slf4j.LoggerFactory.getLogger(
-			TranslateGenerator.class);
-	private              TemplateSet       templateSet;
-	private              KnowledgeModel    model;
-	private              CoursePlan        plan;
-	private              boolean           unchanged         = false;
-	private              GeneratorOutput   output;
+	private static final String UNKNOWN = "Unknown";
+
+	private final Logger            logger            = org.slf4j.LoggerFactory.getLogger(TranslateGenerator.class);
+	private final Set<TemplateInfo> basicTemplateInfo = new HashSet<>();
+	private       TemplateSet       templateSet;
+	private       KnowledgeModel    model;
+	private       CoursePlan        plan;
+	private       boolean           unchanged         = false;
+	private       GeneratorOutput   output;
 
 	public TranslateGenerator() {
 
@@ -122,6 +122,66 @@ public class TranslateGenerator implements Generator {
 		return new MaterialAndMapping(partListMaterial, mapping);
 	}
 
+	/**
+	 * Find a {@link Term} in a {@link KnowledgeNode} that fits the masterKeyword or one of the topics.
+	 * <p>
+	 * The topics are searched first and then the masterKeyword. So the topics have a higher priority.
+	 *
+	 * @param knowledge     Set of KnowledgeNodes to search in
+	 * @param masterKeyword Keyword to search for
+	 * @param topics        List of topics to search for
+	 * @return KnowledgeNode that fits the masterKeyword or one of the topics
+	 * @throws NoSuchElementException if no KnowledgeNode fits the masterKeyword or one of the topics
+	 */
+	private static KnowledgeNode getMainKnowledge(Set<KnowledgeNode> knowledge, String masterKeyword,
+			List<String> topics) throws NoSuchElementException {
+		return getMainKnowledge(knowledge, masterKeyword, topics, KnowledgeType.TERM);
+	}
+
+	private static KnowledgeNode getMainKnowledge(Set<KnowledgeNode> knowledge, KnowledgeNode node)
+			throws NoSuchElementException {
+		return getMainKnowledge(knowledge, node.getMasterKeyWord().orElseThrow(), node.getTopics(), KnowledgeType.TERM);
+	}
+
+	private static KnowledgeNode getMainKnowledge(Set<KnowledgeNode> knowledge, KnowledgeNode node,
+			KnowledgeType type) throws NoSuchElementException {
+		return getMainKnowledge(knowledge, node.getMasterKeyWord().orElseThrow(), node.getTopics(), type);
+	}
+
+	/**
+	 * Find a {@link KnowledgeNode} of given type in a set of {@link KnowledgeNode} that fits the masterKeyword or one
+	 * of the topics.
+	 * <p>
+	 * The topics are searched first and then the masterKeyword. So the topics have a higher priority.
+	 *
+	 * @param knowledge     Set of KnowledgeNodes to search in
+	 * @param masterKeyword Keyword to search for
+	 * @param topics        List of topics to search for
+	 * @param type          KnowledgeType to search for
+	 * @return KnowledgeNode that fits the masterKeyword or one of the topics
+	 * @throws NoSuchElementException if no KnowledgeNode fits the masterKeyword or one of the topics
+	 */
+	private static KnowledgeNode getMainKnowledge(Set<KnowledgeNode> knowledge, String masterKeyword,
+			List<String> topics, KnowledgeType type) throws NoSuchElementException {
+		for (var node : knowledge) {
+			var mainElement = node.getMainElement();
+			if (mainElement.hasType(type)
+				&& (topics.stream().anyMatch(topic -> mainElement.getContent().contains(topic))
+					|| mainElement.getContent().contains(masterKeyword))) {
+				return node;
+			}
+		}
+		throw new NoSuchElementException("No TERM found for masterKeyword " + masterKeyword + " and topics " + topics);
+	}
+
+	/**
+	 * Get a {@link KnowledgeNode} that fits the mainKeyword. The node is a {@link Term}.
+	 *
+	 * @param knowledge     Set of KnowledgeNodes to search in
+	 * @param masterKeyword Keyword to search for
+	 * @return KnowledgeNode that fits the mainKeyword
+	 * @throws NoSuchElementException if no KnowledgeNode fits the mainKeyword or no KnowledgeNode is a Term
+	 */
 	private static KnowledgeNode getMainKnowledge(Set<KnowledgeNode> knowledge, String masterKeyword) {
 		return knowledge.stream().filter(it -> it.getMainElement().hasType(KnowledgeType.TERM)
 											   && it.getMainElement().getContent().contains(masterKeyword))
@@ -129,6 +189,13 @@ public class TranslateGenerator implements Generator {
 						.orElseThrow();
 	}
 
+	/**
+	 * Get a {@link KnowledgeNode} that fits the mainKeyword. The node is a {@link Term}.
+	 *
+	 * @param knowledge Set of KnowledgeNodes to search in
+	 * @return KnowledgeNode that is the first TERM element
+	 * @throws NoSuchElementException if no KnowledgeNode is a Term
+	 */
 	private static KnowledgeNode getMainKnowledge(Set<KnowledgeNode> knowledge) {
 		return knowledge.stream().filter(it -> it.getMainElement().hasType(KnowledgeType.TERM))
 						.findFirst().orElseThrow();
@@ -138,32 +205,61 @@ public class TranslateGenerator implements Generator {
 		setUnchanged(false);
 	}
 
+	/**
+	 * Creates {@link Material} for all given goals.
+	 *
+	 * @param goals List of {@link ContentGoal} to create {@link Material} for
+	 */
 	private void processGoals(List<ContentGoal> goals) {
 		for (var goal : goals) {
+			processTargets(goal.getContent());
+		}
+	}
+
+	private void processTargets(Collection<ContentTarget> targets) throws IllegalStateException {
+		if (targets.isEmpty()) {
+			logger.warn("No targets found. This should not happen.");
+			return;
+		}
+		var goal = targets.stream().findFirst().orElseThrow().getRelatedGoal();
+		if (goal == null || targets.stream().anyMatch(it -> !it.getRelatedGoal().equals(goal))) {
+			throw new IllegalStateException("Targets with different goals found. This should not happen. Ignoring all"
+											+ " targets.");
+		} else {
+			logger.warn("Targets with different goals found. This should not happen. Ignoring all targets.");
+		}
+		int emptyCount = 0;
+		for (var target : targets) {
 			var expression = goal.getExpression();
-			var masterKeyword = goal.getMasterKeyword();
-			var topics = goal.getContent().stream().map(ContentTarget::getTopic).toList();
+			var topic = target.getTopic();
 			try {
-				var knowledge = loadKnowledgeForStructure(masterKeyword, topics);
+				var knowledge = loadKnowledgeForStructure(topic);
 				if (knowledge.isEmpty()) {
-					logger.info("No knowledge found for MasterKeyword {}", masterKeyword);
+					logger.info("No knowledge found for Topic {}", target);
+					emptyCount++;
 					continue;
 				}
-				knowledge.forEach(it -> it.setGoal(goal));
-				createMaterialForGoal(expression, knowledge);
+				knowledge.forEach(it -> {
+					it.setGoal(goal);
+					it.addTopic(topic);
+				});
+				createMaterialFor(expression, knowledge);
 			} catch (NoSuchElementException e) {
-				logger.info("No knowledge found for MasterKeyword {}", masterKeyword);
+				logger.info("No knowledge found for Target {}", target);
 			}
+		}
+		if (emptyCount == targets.size()) {
+			logger.warn("No knowledge found for any target. Goal: {} has no materials", goal);
 		}
 	}
 
 	/**
-	 * Create all Materials for a Goal
+	 * Create all Materials for a given Expression and knowledge.
 	 *
-	 * @param expression the Goal to create Materials for
-	 * @param knowledge  the Knowledge to use
+	 * @param expression the expression word to create Materials for a specific level.
+	 * @param knowledge  the Knowledge to use.
 	 */
-	private void createMaterialForGoal(ContentGoalExpression expression, Set<KnowledgeNode> knowledge) {
+	private void createMaterialFor(ContentGoalExpression expression, Set<KnowledgeNode> knowledge) {
 		var materialAndMapping = switch (expression) {
 			case FIRST_LOOK -> materialForFirstLook(knowledge);
 			case KNOW -> materialForKnow(knowledge);
@@ -173,10 +269,7 @@ public class TranslateGenerator implements Generator {
 			case COMMENT -> materialForComment(knowledge);
 			case CONTROL -> materialForControl(knowledge);
 		};
-		var material = materialAndMapping.stream().map(MaterialAndMapping::material).toList();
-		var mapping = materialAndMapping.stream().map(MaterialAndMapping::mapping).toList();
-		output.addMaterial(material);
-		output.addMapping(mapping);
+		output.addAll(materialAndMapping);
 	}
 
 	private List<MaterialAndMapping> materialForComment(Set<KnowledgeNode> knowledge) {
@@ -192,11 +285,11 @@ public class TranslateGenerator implements Generator {
 	}
 
 	private List<MaterialAndMapping> materialForUse(Set<KnowledgeNode> knowledge) {
-		var materials = materialForTranslate(knowledge);
-		return materials;
+		return materialForTranslate(knowledge);
 	}
 
 	private List<MaterialAndMapping> materialForTranslate(Set<KnowledgeNode> knowledge) {
+		// materials.add(createWikisWithExistingMaterial(knowledge, materials));
 		return materialForKnow(knowledge);
 	}
 
@@ -263,7 +356,6 @@ public class TranslateGenerator implements Generator {
 			logger.info("No Acronym found for {}",
 					knowledge.stream().findFirst().orElseThrow().getMasterKeyWord().orElse(UNKNOWN));
 		}
-		//materials.add(createWikisWithExistingMaterial(knowledge, materials));
 		if (materials.isEmpty()) {
 			logger.info("No FIRST_LOOK Material created for {}",
 					knowledge.stream().findFirst().orElseThrow().getGoal().orElseThrow());
@@ -295,8 +387,10 @@ public class TranslateGenerator implements Generator {
 			throw new IllegalArgumentException("Knowledge is empty");
 		}
 		var templateInfo = getBasicTemplateInfo(DefinitionTemplate.class);
-		var masterKeyword = knowledge.stream().findFirst().orElseThrow().getMasterKeyWord().orElseThrow();
-		var mainKnowledge = getMainKnowledge(knowledge, masterKeyword);
+		var firstNode = knowledge.stream().findFirst().orElseThrow();
+		var masterKeyword = firstNode.getMasterKeyWord().orElseThrow();
+		var topics = firstNode.getTopics();
+		var mainKnowledge = getMainKnowledge(knowledge, masterKeyword, topics);
 		List<MaterialAndMapping> back = new ArrayList<>();
 		var mainTerm = mainKnowledge.getMainElement();
 		var definitionRelations = getWantedRelationsFromRelated(mainKnowledge, RelationType.DEFINES);
@@ -491,13 +585,12 @@ public class TranslateGenerator implements Generator {
 	private List<MaterialAndMapping> createImages(Set<KnowledgeNode> knowledgeNode) throws NoTemplateInfoException,
 			NoSuchElementException {
 		var templateInfo = getBasicTemplateInfo(ImageTemplate.class);
-		var mainKnowledge = knowledgeNode.stream()
-										 .filter(it -> it.getMainElement().getType().equals(KnowledgeType.IMAGE))
-										 .findFirst().orElseThrow();
+		var first = knowledgeNode.stream().findFirst().orElseThrow();
+		var mainKnowledge = getMainKnowledge(knowledgeNode, first, KnowledgeType.TERM);
 		var mainTerm = mainKnowledge.getMainElement();
 		List<MaterialAndMapping> back = new ArrayList<>();
-		var textRelations = getWantedRelationsFromMain(mainKnowledge, RelationType.RELATED);
-		textRelations.forEach(it -> {
+		var imageRelations = getWantedRelationsFromMain(mainKnowledge, RelationType.RELATED);
+		imageRelations.forEach(it -> {
 			var imageId = it.getToId();
 			try {
 				Image imageElement = (Image) Arrays.stream(mainKnowledge.getRelatedElements())
@@ -619,16 +712,16 @@ public class TranslateGenerator implements Generator {
 						String.format("No Template %s found", templateInfoClass.getName())));
 	}
 
-	private Set<KnowledgeNode> loadKnowledgeForStructure(String structureId, Collection<String> target) {
-		return loadKnowledgeForStructure(structureId, target.toArray(new String[0]));
+	private Set<KnowledgeNode> loadKnowledgeForStructure(String structureId, Collection<String> extra) {
+		return loadKnowledgeForStructure(structureId, extra.toArray(new String[0]));
 	}
 
-	private Set<KnowledgeNode> loadKnowledgeForStructure(String structureId, String... targets) {
+	private Set<KnowledgeNode> loadKnowledgeForStructure(String structureId, String... extra) {
 		if (structureId == null) {
 			return Collections.emptySet();
 		}
 		var back = new HashSet<>(loadKnowledgeForStructure(structureId));
-		for (String target : targets) {
+		for (String target : extra) {
 			if (target == null) {
 				continue;
 			}

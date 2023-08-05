@@ -1,15 +1,16 @@
 package de.olivergeisel.materialgenerator.core.courseplan.content;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
- * A CurriculumGoal represents the educational goals of the Courseplan in MDTea.
+ * A CurriculumGoal represents the educational goals of the {@link de.olivergeisel.materialgenerator.core.courseplan.CoursePlan} in MDTea.
  * <p>
  * The Goal has an expression that is a level of complexity based on Bloom-Taxonomie. <br>
  * Every Goal has a Master-Keyword which link the goal with the structure from the knowledgemodel.
  * Normally you define an educational goal as complete sentence.
- * In the complete Sentence are more than one keyword from the knowledgemodel. So the relevant keywords are in the
+ * In the complete Sentence are more than one keyword from the {@link de.olivergeisel.materialgenerator.core.knowledge.metamodel.KnowledgeModel}. So the relevant keywords are in the
  * specific Words.
  * <br>
  * Example: "Kennenlernen der Grundlagen der Programmierung mit Java"
@@ -19,6 +20,8 @@ import java.util.List;
  * @version 1.0.0
  * @see ContentGoalExpression
  * @see ContentTarget
+ * @see de.olivergeisel.materialgenerator.core.courseplan.CoursePlan
+ * @see de.olivergeisel.materialgenerator.core.knowledge.metamodel.KnowledgeModel
  * @see de.olivergeisel.materialgenerator.core.knowledge.metamodel.element.KnowledgeElement
  * @since 0.2.0
  */
@@ -74,7 +77,7 @@ public class ContentGoal {
 
 	/**
 	 * Add a {@link ContentTarget} to the content of the goal. The target will only be added if it is not already in the
-	 * goal. Link the target with the goal.
+	 * goal. Link the target with this goal.
 	 *
 	 * @param target the target to add.
 	 * @return {@literal true} if the target was added. {@literal false} if the target is already in the content.
@@ -89,12 +92,17 @@ public class ContentGoal {
 
 	/**
 	 * Remove a {@link ContentTarget} from the content of the goal.
+	 * Remove the link between the target and this goal.
 	 *
 	 * @param target the target to remove.
 	 * @return {@literal true} if the target was removed.
 	 */
 	public boolean remove(ContentTarget target) {
-		return content.remove(target);
+		if (content.remove(target)) {
+			target.setRelatedGoal(null);
+			return true;
+		}
+		return false;
 	}
 
 	//region setter/getter
@@ -110,12 +118,12 @@ public class ContentGoal {
 	}
 
 	/**
-	 * Get the content of the goal. The content is a list of {@link ContentTarget}.
+	 * Get the content of the goal as unmodifiable list. The content is a list of {@link ContentTarget}.
 	 *
 	 * @return the content of the goal.
 	 */
 	public List<ContentTarget> getContent() {
-		return content;
+		return Collections.unmodifiableList(content);
 	}
 
 	/**
@@ -142,16 +150,16 @@ public class ContentGoal {
 	 *
 	 * @return the name of the goal.
 	 */
-	public String getName () {
+	public String getName() {
 		return name;
 	}
+//endregion
 
 	@Override
-	public String toString () {
+	public String toString() {
 		return "ContentGoal{" +
 			   "name='" + name + '\'' +
 			   ", completeSentence='" + completeSentence + '\'' +
 			   '}';
 	}
-//endregion
 }

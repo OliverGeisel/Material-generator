@@ -309,9 +309,9 @@ public class KnowledgeModel {
 	}
 
 	private KnowledgeElement[] getRelatedElements(KnowledgeElement element) {
+		var returnList = new LinkedList<KnowledgeElement>();
 		var outgoing = graph.outgoingEdgesOf(element).stream().map(graph::getEdgeTarget).toList();
 		var incoming = graph.incomingEdgesOf(element).stream().map(graph::getEdgeSource).toList();
-		var returnList = new ArrayList<KnowledgeElement>();
 		returnList.addAll(outgoing);
 		returnList.addAll(incoming);
 		return returnList.toArray(new KnowledgeElement[0]);
@@ -475,14 +475,14 @@ public class KnowledgeModel {
 				back.add(getKnowledgeNode(element.getId()));
 			}
 		} else {
-			logger.warn("No structure object with id {} found.", structureId);
+			logger.warn("No structure object with id: '{}' found.", structureId);
 		}
 		if (includeSimilar && (similarWhenFound || !hasStructureObject)) {
-			logger.info("Include similar objects for structure object {}.", structureId);
+			logger.info("Include similar objects for structure object '{}'.", structureId);
 			try {
 				back.addAll(getKnowledgeNodesForSimilar(structureId));
 			} catch (NoSuchElementException e) {
-				logger.info("No similar object for structure object {} found.", structureId);
+				logger.info("No similar object for structure object '{}' found.", structureId);
 			}
 		}
 		return back;
