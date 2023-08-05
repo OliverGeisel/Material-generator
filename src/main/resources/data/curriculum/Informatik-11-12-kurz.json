@@ -541,6 +541,7 @@
               "relevance": "MANDATORY",
               "alternatives": [
                 "RSA",
+                "Rivest–Shamir–Adleman",
                 "RSA-Verfahren",
                 "RSA-Algorithmus",
                 "Verschlüsselung"

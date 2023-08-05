@@ -194,7 +194,7 @@
       "type": "DEFINITION",
       "id": "Informatiksystem-DEFINITION",
       "structure": "Wissenschaft Informatik",
-      "content": "Der Begriff Informatiksystem beschreibt die Einheit aus Hardware und Software sowie Netzen einschlie\u00dflich aller durch sie angestrebten und verursachten Gestaltung- und Qualifizierungsprozesse bez\u00fcglich Arbeitr und Organisation.",
+      "content": "Der Begriff Informatiksystem beschreibt die Einheit aus Hardware und Software sowie Netzen einschlie\u00dflich aller durch sie angestrebten und verursachten Gestaltung- und Qualifizierungsprozesse bez\u00fcglich Arbeit und Organisation.",
       "relations": [
         {
           "relation_id": "Informatiksystem-TERM",
@@ -677,7 +677,7 @@
     {
       "type": "IMAGE",
       "id": "AsymetrischBeispiele-IMAGE",
-      "structure": "asymmetrische Verfahren",
+      "structure": "Asymmetrische Verfahren",
       "content": "imageName:AsymetrischBeispielepng;imageDescription:;headline:Beispiele der asymetrischen Verfahren",
       "relations": []
     },
@@ -726,7 +726,7 @@
     {
       "type": "IMAGE",
       "id": "RSA-IMAGE",
-      "structure": "RSA",
+      "structure": "Asymmetrische Verfahren",
       "content": "imageName:RSA.png;imageDescription:;headline:Das RSA Verfahren mit Beispiel",
       "relations": [
         {
@@ -759,14 +759,14 @@
     {
       "type": "IMAGE",
       "id": "Modern-IMAGE",
-      "structure": "Verschlüsselungsverfahren",
+      "structure": "Kryptographie",
       "content": "imageName:Modern.png;imageDescription:;headline:Moderne Verschlüsselungsverfahren",
       "relations": []
     },
     {
       "type": "IMAGE",
       "id": "Klassisch-IMAGE",
-      "structure": "Verschlüsselungsverfahren",
+      "structure": "Kryptographie",
       "content": "imageName:Klassisch.png;imageDescription:;headline:Klassische Verschlüsselungsverfahren",
       "relations": []
     },
@@ -890,6 +890,18 @@
       "structure": "Kryptologie",
       "content": "Chiffretext",
       "relations": []
+    },
+    {
+      "type": "TERM",
+      "id": "Asymmetrisches-Verfahren-TERM",
+      "structure": "Asymmetrische Verfahren",
+      "content": "Asymmetrisches Verfahren",
+      "relations": [
+        {
+          "relation_id": "RSA-TERM",
+          "relation_type": "has"
+        }
+      ]
     },
     {
       "type": "TERM",
@@ -1033,7 +1045,7 @@
       },
       {
         "key": "_root/3",
-        "name": "Praktische Informatik",
+        "name": "Angewandte Informatik",
         "children": []
       },
       {
