@@ -428,24 +428,24 @@ public class TranslateGenerator implements Generator {
 		}
 		var templateInfo = getBasicTemplateInfo(DefinitionTemplate.class);
 		var firstNode = knowledge.stream().findFirst().orElseThrow();
-		var masterKeyword = firstNode.getMasterKeyWord().orElseThrow();
-		var topics = firstNode.getTopics();
-		var mainKnowledge = getMainKnowledge(knowledge, masterKeyword, topics);
-		List<MaterialAndMapping> back = new ArrayList<>();
+		var mainKnowledge = getMainKnowledge(knowledge, firstNode);
+		List<MaterialAndMapping> back = new LinkedList<>();
 		var mainTerm = mainKnowledge.getMainElement();
-		var definitionRelations = getWantedRelationsFromRelated(mainKnowledge, RelationType.DEFINES);
+		var definitionRelations = getWantedRelationsKnowledge(knowledge, RelationType.DEFINED_BY);
 		definitionRelations.forEach(it -> {
-			var defId = it.getFromId();
+			var termElement = it.getFrom();
+			var definitionElement = it.getTo();
 			try {
-				var definitionElement = Arrays.stream(mainKnowledge.getRelatedElements())
-											  .filter(elem -> elem.getId().equals(defId)).findFirst().orElseThrow();
-				String name = getUniqueMaterialName(back, "Definition " + mainTerm.getContent(), defId);
-				var values = Map.of("term", mainTerm.getContent(), "definition", definitionElement.getContent());
-				var materialAndMapping = new MaterialCreator().createWikiMaterial(mainTerm, name, templateInfo, values,
-						definitionElement);
+				String name = getUniqueMaterialName(back, "Definition " + termElement.getContent(),
+						definitionElement.getId());
+				var values = Map.of("term", termElement.getContent(), "definition", definitionElement.getContent());
+				var materialAndMapping =
+						new MaterialCreator().createWikiMaterial(termElement, name, templateInfo, values,
+								definitionElement);
+				materialAndMapping.material().setStructureId(mainTerm.getStructureId());
 				back.add(materialAndMapping);
 			} catch (NoSuchElementException ignored) {
-				logger.warn("No definition found for {}", mainTerm.getContent());
+				logger.warn("No definition found for {}", termElement.getContent());
 			}
 		});
 		return back;
