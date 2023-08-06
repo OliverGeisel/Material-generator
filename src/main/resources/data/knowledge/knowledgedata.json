@@ -117,7 +117,7 @@
     {
       "type": "CODE",
       "id": "Java-Pattern-Matching-CODE",
-      "structure": "Java",
+      "structure": "Java 19",
       "content": "Java\nPatternMatchingBeispiel.java\npublic class PatternMatchingBeispiel{\n\tprivate int number;\n\tpublic void setNumber(int number){\n\t\tthis.number = number;\n\t}\n\tpublic int getNumber(){\n\t\treturn number;\n\t}\n\tpublic void patternMatching(){\n\t\tswitch(object):\n\t\t\tcase Integer i -> System.out.println(i);\n\t\t\tcase String s -> System.out.println(s);\n\t\t\tdefault -> System.out.println(\"Kein String oder Integer\");\n\t}\n}",
       "relations": []
     },
@@ -255,7 +255,7 @@
     {
       "type": "DEFINITION",
       "id": "Information-DEFINITION",
-      "structure": "",
+      "structure": "Wissenschaft Informatik",
       "content": "Information ist eine allgemeine Eigenschaft der uns umgebenen Welt.\nInformationen werden sowohl in der belebten und unbelebten Natur als auch in der menschlichen Gesellschaft aufgenommen, gespeichert, verarbeitet und weitergegeben.",
       "relations": [
         {
@@ -654,7 +654,7 @@
       "type": "DEFINITION",
       "id": "Integrit\u00e4t-DEFINITION",
       "structure": "Datensicherheit",
-      "content": "Integit\u00e4t ist die Eigenschaft eines Systems, die besaagt, dass es nur erlaubte und intendierte Ver\u00e4nderungegn der in ihm enthaltenen Informationen zul\u00e4sst. Eine Information ist dann integer, wenn an ihr nur zul\u00e4ssige Veranderungen vorgenommen wurden.",
+      "content": "Integit\u00e4t ist die Eigenschaft eines Systems, die besagt, dass es nur erlaubte und intendierte Ver\u00e4nderungegn der in ihm enthaltenen Informationen zul\u00e4sst. Eine Information ist dann integer, wenn an ihr nur zul\u00e4ssige Veranderungen vorgenommen wurden.",
       "relations": [
         {
           "relation_id": "Integrit\u00e4t-TERM",
@@ -676,52 +676,99 @@
     },
     {
       "type": "IMAGE",
-      "id": "AsymetrischBeispiele-IMAGE",
+      "id": "AsymmetrischBeispiele-IMAGE",
       "structure": "Asymmetrische Verfahren",
-      "content": "imageName:AsymetrischBeispielepng;imageDescription:;headline:Beispiele der asymetrischen Verfahren",
-      "relations": []
+      "content": "imageName:AsymmetrischBeispiele.png;imageDescription:;headline:Beispiele der asymmetrischen Verfahren",
+      "relations": [
+        {
+          "relation_id": "Asymmetrisches-Verfahren-TERM",
+          "relation_type": "related"
+        }
+      ]
     },
     {
       "type": "IMAGE",
-      "id": "AsymetrischeVerfahren-IMAGE",
+      "id": "AsymmetrischeVerfahren-IMAGE",
       "structure": "Datensicherheit",
-      "content": "imageName:AsymetrischeVerfahren.png;imageDescription:;headline:Erklärung des asymetrischen Verfahrens",
-      "relations": []
+      "content": "imageName:AsymmetrischeVerfahren.png;imageDescription:;headline:Erklärung des asymmetrischen Verfahrens",
+      "relations": [
+        {
+          "relation_id": "Asymmetrisches-Verfahren-TERM",
+          "relation_type": "related"
+        }
+      ]
     },
     {
       "type": "IMAGE",
       "id": "Datenschutz-IMAGE",
       "structure": "Datenschutz",
       "content": "imageName:Datenschutz.png;imageDescription:;headline:Mindmap Datenschutz",
-      "relations": []
+      "relations": [
+        {
+          "relation_id": "Datenschutz-TERM",
+          "relation_type": "related"
+        }
+      ]
     },
     {
       "type": "IMAGE",
       "id": "Datenschutzmodelle-IMAGE",
       "structure": "Datenschutz",
       "content": "imageName:Datenschutzmodelle.png;imageDescription:;headline:Datenschutzmodell",
-      "relations": []
+      "relations": [
+        {
+          "relation_id": "Datenschutz-TERM",
+          "relation_type": "related"
+        }
+      ]
     },
     {
       "type": "IMAGE",
       "id": "Mosaikmodell-IMAGE",
       "structure": "Datenschutz",
       "content": "imageName:Mosaikmodell.png;imageDescription:;headline:Das Mosakikmodell für Datenschutz",
-      "relations": []
+      "relations": [
+        {
+          "relation_id": "Datenschutz-TERM",
+          "relation_type": "related"
+        },
+        {
+          "relation_id": "Datenschutzmodell-TERM",
+          "relation_type": "is"
+        }
+      ]
     },
     {
       "type": "IMAGE",
       "id": "Rollentheorie-IMAGE",
       "structure": "Datenschutz",
       "content": "imageName:Rollentheorie.png;imageDescription:;headline:Das Rollentheorie-Modell für Datenschutz",
-      "relations": []
+      "relations": [
+        {
+          "relation_id": "Datenschutz-TERM",
+          "relation_type": "related"
+        },
+        {
+          "relation_id": "Datenschutzmodell-TERM",
+          "relation_type": "is"
+        }
+      ]
     },
     {
       "type": "IMAGE",
       "id": "Sphaere-IMAGE",
       "structure": "Datenschutz",
       "content": "imageName:Sphaerenmodell.png;imageDescription:;headline:Das Rollentheorie-Modell für Datenschutz",
-      "relations": []
+      "relations": [
+        {
+          "relation_id": "Datenschutz-TERM",
+          "relation_type": "related"
+        },
+        {
+          "relation_id": "Datenschutzmodell-TERM",
+          "relation_type": "is"
+        }
+      ]
     },
     {
       "type": "IMAGE",
@@ -747,28 +794,48 @@
       "id": "Informationssystem-IMAGE",
       "structure": "Datensicherheit",
       "content": "imageName:Informationssystem.png;imageDescription:;headline:Bestandteile eines Informationssystems",
-      "relations": []
+      "relations": [
+        {
+          "relation_id": "Informationssystem-TERM",
+          "relation_type": "related"
+        }
+      ]
     },
     {
       "type": "IMAGE",
       "id": "Kryptologie-IMAGE",
       "structure": "Kryptologie",
       "content": "imageName:Kryptologie.png;imageDescription:;headline:Übersicht der Teilgebiete der Kryptologie",
-      "relations": []
+      "relations": [
+        {
+          "relation_id": "Kryptologie-TERM",
+          "relation_type": "related"
+        }
+      ]
     },
     {
       "type": "IMAGE",
       "id": "Modern-IMAGE",
       "structure": "Kryptographie",
       "content": "imageName:Modern.png;imageDescription:;headline:Moderne Verschlüsselungsverfahren",
-      "relations": []
+      "relations": [
+        {
+          "relation_id": "Kryptographie-TERM",
+          "relation_type": "related"
+        }
+      ]
     },
     {
       "type": "IMAGE",
       "id": "Klassisch-IMAGE",
       "structure": "Kryptographie",
       "content": "imageName:Klassisch.png;imageDescription:;headline:Klassische Verschlüsselungsverfahren",
-      "relations": []
+      "relations": [
+        {
+          "relation_id": "Kryptographie-TERM",
+          "relation_type": "related"
+        }
+      ]
     },
     {
       "type": "TERM",
@@ -864,6 +931,13 @@
           "relation_type": "defines"
         }
       ]
+    },
+    {
+      "type": "TERM",
+      "id": "Informationssystem-TERM",
+      "structure": "Wissenschaft Informatik",
+      "content": "Informationssystem",
+      "relations": []
     },
     {
       "type": "TERM",
@@ -1049,6 +1123,11 @@
         "children": []
       },
       {
+        "key": "_root/9",
+        "name": "Praktische Informatik",
+        "children": []
+      },
+      {
         "key": "_root/4",
         "name": "Technische Informatik",
         "children": []
@@ -1139,7 +1218,23 @@
       {
         "key": "_root/7",
         "name": "Java",
-        "children": []
+        "children": [
+          {
+            "key": "_root/7/1",
+            "name": "Java 19",
+            "children": []
+          },
+          {
+            "key": "_root/7/2",
+            "name": "Java 20",
+            "children": []
+          },
+          {
+            "key": "_root/7/3",
+            "name": "Java 8",
+            "children": []
+          }
+        ]
       }
     ]
   }

@@ -378,26 +378,26 @@
           "key": "group-1-5",
           "name": "Dokumentmanagement",
           "alternatives": [],
-          "topic": "",
+          "topic": "Dokumentmanagement",
           "tasks": [
             {
               "key": "task-1-5-1",
               "name": "Applikationen",
-              "topic": "",
+              "topic": "Dokumentmanagement",
               "relevance": "MANDATORY",
               "alternatives": []
             },
             {
               "key": "task-1-5-2",
               "name": "Rechtestruktur",
-              "topic": "",
+              "topic": "Dokumentmanagement",
               "relevance": "MANDATORY",
               "alternatives": []
             },
             {
               "key": "task-1-5-3",
               "name": "Sicherheitseinstellung",
-              "topic": "",
+              "topic": "Dokumentmanagement",
               "relevance": "MANDATORY",
               "alternatives": []
             }
@@ -407,26 +407,26 @@
           "key": "group-1-6",
           "name": "Inhaltsmanagement",
           "alternatives": [],
-          "topic": "",
+          "topic": "Inhaltsmanagement",
           "tasks": [
             {
               "key": "task-1-6-1",
               "name": "Applikationen",
-              "topic": "",
+              "topic": "Inhaltsmanagement",
               "relevance": "MANDATORY",
               "alternatives": []
             },
             {
               "key": "task-1-6-2",
               "name": "Rechtestruktur",
-              "topic": "",
+              "topic": "Inhaltsmanagement",
               "relevance": "MANDATORY",
               "alternatives": []
             },
             {
               "key": "task-1-6-3",
               "name": "Sicherheitseinstellung",
-              "topic": "",
+              "topic": "Inhaltsmanagement",
               "relevance": "MANDATORY",
               "alternatives": []
             }
@@ -587,7 +587,7 @@
             {
               "key": "task-3-8-3",
               "name": "Datenmissbrauch",
-              "topic": "",
+              "topic": "Datensicherheit",
               "relevance": "MANDATORY",
               "alternatives": []
             }

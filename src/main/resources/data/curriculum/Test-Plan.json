@@ -61,7 +61,10 @@
         {
           "key": "group-1-1",
           "name": "Java 19 Features",
-          "alternatives": [],
+          "alternatives": [
+            "Java 19",
+            "Java"
+          ],
           "topic": "Java 19",
           "tasks": [
             {
