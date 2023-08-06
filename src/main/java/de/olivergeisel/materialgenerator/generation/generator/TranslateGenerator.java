@@ -287,6 +287,40 @@ public class TranslateGenerator implements Generator {
 		}
 	}
 
+	private void processTargets(Collection<ContentTarget> targets) throws IllegalStateException {
+		if (targets.isEmpty()) {
+			logger.warn("No targets found. This should not happen.");
+			return;
+		}
+		var goal = targets.stream().findFirst().orElseThrow().getRelatedGoal();
+		if (goal == null || targets.stream().anyMatch(it -> !it.getRelatedGoal().equals(goal)))
+			throw new IllegalStateException("Targets with different goals found. This should not happen. Ignoring all"
+											+ " targets.");
+		int emptyCount = 0;
+		for (var target : targets) {
+			var expression = goal.getExpression();
+			var topic = target.getTopic();
+			try {
+				var topicKnowledge = loadKnowledgeForStructure(topic);
+				if (topicKnowledge.isEmpty()) {
+					logger.info("No knowledge found for Topic {}", target);
+					emptyCount++;
+					continue;
+				}
+				topicKnowledge.forEach(it -> {
+					it.setGoal(goal);
+					it.addTopic(topic);
+				});
+				createMaterialFor(expression, topicKnowledge);
+			} catch (NoSuchElementException e) {
+				logger.info("No knowledge found for Target {}", target);
+			}
+		}
+		if (emptyCount == targets.size()) {
+			logger.warn("No knowledge found for any target. Goal: {} has no materials", goal);
+		}
+	}
+
 	/**
 	 * Create all Materials for a given Expression and knowledge.
 	 *
@@ -325,40 +359,6 @@ public class TranslateGenerator implements Generator {
 	private List<MaterialAndMapping> materialForTranslate(Set<KnowledgeNode> knowledge) {
 		// materials.add(createWikisWithExistingMaterial(knowledge, materials));
 		return materialForKnow(knowledge);
-	}
-
-	private void processTargets(Collection<ContentTarget> targets) throws IllegalStateException {
-		if (targets.isEmpty()) {
-			logger.warn("No targets found. This should not happen.");
-			return;
-		}
-		var goal = targets.stream().findFirst().orElseThrow().getRelatedGoal();
-		if (goal == null || targets.stream().anyMatch(it -> !it.getRelatedGoal().equals(goal)))
-			throw new IllegalStateException("Targets with different goals found. This should not happen. Ignoring all"
-											+ " targets.");
-		int emptyCount = 0;
-		for (var target : targets) {
-			var expression = goal.getExpression();
-			var topic = target.getTopic();
-			try {
-				var topicKnowledge = loadKnowledgeForStructure(topic);
-				if (topicKnowledge.isEmpty()) {
-					logger.info("No knowledge found for Topic {}", target);
-					emptyCount++;
-					continue;
-				}
-				topicKnowledge.forEach(it -> {
-					it.setGoal(goal);
-					it.addTopic(topic);
-				});
-				createMaterialFor(expression, topicKnowledge);
-			} catch (NoSuchElementException e) {
-				logger.info("No knowledge found for Target {}", target);
-			}
-		}
-		if (emptyCount == targets.size()) {
-			logger.warn("No knowledge found for any target. Goal: {} has no materials", goal);
-		}
 	}
 
 	private List<MaterialAndMapping> materialForKnow(Set<KnowledgeNode> knowledge) {
@@ -580,28 +580,22 @@ public class TranslateGenerator implements Generator {
 		var first = knowledge.stream().findFirst().orElseThrow();
 		var mainKnowledge = getMainKnowledge(knowledge, first);
 		var mainTerm = mainKnowledge.getMainElement();
-		List<String> acronyms = new LinkedList<>();
-		List<KnowledgeElement> acronymsElements = new LinkedList<>();
-
-		var mainId = mainTerm.getId();
-		var acryRelations = getWantedRelationsFromRelated(mainKnowledge, RelationType.IS_ACRONYM_FOR);
+		var acryRelations = getWantedRelationsKnowledge(knowledge, RelationType.IS_ACRONYM_FOR);
+		var acronyms = new HashMap<KnowledgeElement, List<KnowledgeElement>>();
 		for (var relation : acryRelations) {
 			var longFormElement = relation.getTo();
-			if (!longFormElement.getId().equals(mainId)) {
-				var res = createAcronym(List.of(relation.getFrom().getContent()), templateInfo, longFormElement);
-				res.mapping().add(longFormElement);
-				back.add(new MaterialAndMapping(res.material(), res.mapping()));
-			} else {
-				acronyms.add(relation.getFrom().getContent());
-				acronymsElements.add(relation.getFrom());
-			}
+			var acronymElement = relation.getFrom();
+			acronyms.putIfAbsent(longFormElement, new LinkedList<>());
+			acronyms.get(longFormElement).add(acronymElement);
 		}
-		collectElementsWithId(acryRelations, mainId, acronyms, acronymsElements);
-		if (acronyms.isEmpty()) {
-			return Collections.emptyList();
+		for (var accEntry : acronyms.entrySet()) {
+			var res = createAcronymInternal(accEntry.getValue().stream().map(KnowledgeElement::getContent).toList(),
+					templateInfo,
+					accEntry.getKey());
+			res.mapping().addAll(accEntry.getValue().toArray(new KnowledgeElement[0]));
+			res.material().setStructureId(mainTerm.getStructureId());
+			back.add(new MaterialAndMapping(res.material(), res.mapping()));
 		}
-		AcronymResult result = createAcronym(acronyms, templateInfo, mainTerm);
-		back.add(new MaterialAndMapping(result.material(), result.mapping()));
 		return back;
 	}
 
