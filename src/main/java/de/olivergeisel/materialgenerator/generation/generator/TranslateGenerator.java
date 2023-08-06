@@ -652,26 +652,32 @@ public class TranslateGenerator implements Generator {
 									 .filter(it -> it.getMainElement().getType().equals(KnowledgeType.TERM))
 									 .findFirst().orElseThrow();
 		var mainTerm = mainKnowledge.getMainElement();
-		List<MaterialAndMapping> back = new ArrayList<>();
-		var textRelations = getWantedRelationsFromMain(mainKnowledge, RelationType.RELATED);
+		List<MaterialAndMapping> back = new LinkedList<>();
+		var textRelations = getWantedRelationsKnowledge(knowledge, RelationType.RELATED);
 		textRelations.forEach(it -> {
-			var textId = it.getToId();
+			KnowledgeElement text, term;
 			try {
-				Text textElement = (Text) Arrays.stream(mainKnowledge.getRelatedElements())
-												.filter(elem -> elem.getId().equals(textId)
-																&& elem.getType().equals(KnowledgeType.TEXT))
-												.findFirst().orElseThrow();
-				Material textMaterial =
-						new TextMaterial(textElement, templateInfo);
-				textMaterial.setName(mainTerm.getContent());
-				textMaterial.setTerm(mainTerm.getContent());
+				var to = it.getTo();
+				var from = it.getFrom();
+				text = to.getType().equals(KnowledgeType.TEXT) ? to : from;
+				term = to.getType().equals(KnowledgeType.TERM) ? to : from;
+			} catch (IllegalStateException ignored) {
+				logger.warn("The relation '{}' has no complete linking", it);
+				return;
+			}
+			try {
+				Text textElement = (Text) text;
+				Material textMaterial = new TextMaterial(textElement, templateInfo);
+				textMaterial.setName(term.getContent());
+				textMaterial.setTerm(term.getContent());
 				textMaterial.setTemplateInfo(templateInfo);
-				textMaterial.setValues(Map.of("term", mainTerm.getContent(), "content", textElement.getContent()));
+				textMaterial.setValues(Map.of("term", term.getContent(), "content", textElement.getContent()));
+				textMaterial.setStructureId(mainTerm.getStructureId());
 				MaterialMappingEntry mapping = new MaterialMappingEntry(textMaterial);
-				mapping.add(mainTerm, textElement);
+				mapping.add(mainTerm, textElement, term);
 				back.add(new MaterialAndMapping(textMaterial, mapping));
-			} catch (NoSuchElementException ignored) {
-				logger.warn("No text found for {}", mainTerm.getContent());
+			} catch (ClassCastException ignored) {
+				logger.warn("No text found for {}", term.getContent());
 			}
 		});
 		return back;
