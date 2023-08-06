@@ -715,11 +715,9 @@ public class TranslateGenerator implements Generator {
 		if (codeKnowledgeNodes.isEmpty()) {
 			throw new NoSuchElementException("No code found");
 		}
-		for (var knowledge : codeKnowledgeNodes) {
-			var codeElement = (Code) knowledge.getMainElement();
+		for (var codeElement : codeKnowledgeNodes) {
 			Material codeMaterial = new CodeMaterial(codeElement.getLanguage(), codeElement.getCodeLines(),
-					codeElement.getCaption(),
-					codeElement);
+					codeElement.getCaption(), codeElement);
 			codeMaterial.setTemplateInfo(templateInfo);
 			MaterialMappingEntry mapping = new MaterialMappingEntry(codeMaterial);
 			mapping.add(codeElement);
@@ -735,21 +733,17 @@ public class TranslateGenerator implements Generator {
 									 .findFirst().orElseThrow();
 		List<MaterialAndMapping> back = new ArrayList<>();
 		var mainTerm = mainKnowledge.getMainElement();
-		var relations = getWantedRelationsFromRelated(mainKnowledge, RelationType.EXAMPLE_FOR);
+		var relations = getWantedRelationsKnowledge(knowledge, RelationType.HAS_EXAMPLE);
 		relations.forEach(it -> {
-			var mainId = it.getFromId();
-			try {
-				var example = Arrays.stream(mainKnowledge.getRelatedElements())
-									.filter(elem -> elem.getId().equals(mainId)).findFirst().orElseThrow();
-				String name = getUniqueMaterialName(back, "Beispiel " + mainTerm.getContent(), mainId);
-				var values = Map.of("term", mainTerm.getContent(), "example", example.getContent());
-				var materialAndMapping = new MaterialCreator().createExampleMaterial(example, mainTerm, name,
-						templateInfo,
-						values, example);
-				back.add(materialAndMapping);
-			} catch (Exception ignored) {
-				logger.warn("No example found for {}", mainTerm.getContent());
-			}
+			var term = it.getFrom();
+			var example = it.getTo();
+			String name = getUniqueMaterialName(back, "Beispiel " + mainTerm.getContent(), term.getId());
+			var values = Map.of("term", term.getContent(), "example", example.getContent());
+			var materialAndMapping = new MaterialCreator().createExampleMaterial(example, term, name,
+					templateInfo, values, example);
+			materialAndMapping.material().setStructureId(mainTerm.getStructureId());
+			materialAndMapping.mapping().add(mainTerm);
+			back.add(materialAndMapping);
 		});
 		return back;
 	}
