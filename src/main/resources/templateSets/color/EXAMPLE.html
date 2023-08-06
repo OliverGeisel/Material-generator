@@ -21,7 +21,7 @@
                     <img alt="Bild Fehlt" class="img-fluid" th:src="${material.imageName}">
                     <figcaption class="figure-caption" th:text="${material.values.TITLE}">Caption</figcaption>
                 </figure>
-                <p class="text-center" th:text="${material.values.text} == null ?: '' "></p>
+                <p class="text-center" th:text="${material.values.text}" th:unless="${material.values.text.blank}"></p>
             </div>
             <div th:unless="${material.imageExample}">
                 <p class="text-center" th:text="${material.values.text}"></p>

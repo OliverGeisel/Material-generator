@@ -44,7 +44,8 @@
             <h3>Themen</h3>
         </header>
         <div class="container border border-secondary border-3 m-2 " style="margin-left: 20px"
-             th:each="chapter,statc : ${course.courseOrder.chapterOrder}">
+             th:each="chapter,statc : ${course.courseOrder.chapterOrder}"
+             th:id="'chapter-'+${chapter.name.replace(' ','-')}">
             <div class="row">
                 <h4 class="col-lg order-first" th:text="${chapter.name}"></h4>
                 <span class="col-lg order">
@@ -80,7 +81,8 @@
             <div class="row">
                 <div class="container">
                     <div class="row border border-success border-2 m-2 pt-1 pb-1" style="margin-left: 15px"
-                         th:each="group, statg : ${chapter.groupOrder}">
+                         th:each="group, statg : ${chapter.groupOrder}"
+                         th:id="'group-'+${group.name.replace(' ','-')}">
                         <div class="row">
                             <h5 class="col-md order-first" th:text="${group.name}"></h5>
                             <span class="col-md order form-select bg-success-light"
@@ -115,7 +117,8 @@
                         <div class="row">
                             <div class="container">
                                 <div class="row border border-primary p-1 pt-1 mt-1" style="margin-left: 10px"
-                                     th:each="task, stat : ${group.taskOrder}">
+                                     th:each="task, stat : ${group.taskOrder}"
+                                     th:id="'task-'+${task.name.replace(' ','-')}">
                                     <div class="row">
                                         <h6 class="col-sm mt-2 order-first" th:text="${task.name}"></h6>
                                         <div class="col-sm order">
@@ -142,8 +145,7 @@
                                             <form method="post" th:unless="${stat.last}">
                                                 <input name="group" th:value="${group.id}" type="hidden">
                                                 <button class="btn badge bg-primary" name="down" th:value="${task.id}">
-                                                    <i
-                                                            class="bi bi-arrow-down-circle"></i></button>
+                                                    <i class="bi bi-arrow-down-circle"></i></button>
                                             </form>
                                         </div>
                                         <div class="col-sm-1 order-last">
@@ -158,7 +160,8 @@
                                     </div>
                                     <hr>
                                     <div class="container pt-2">
-                                        <div class="row pt-1" th:each="material,stat:${task.materialOrder}">
+                                        <div class="row pt-1" th:each="material,stat:${task.materialOrder}"
+                                             th:id="'material-'+${material.id}">
                                             <p class="col-sm order-first m-1 mt-2" th:text="${material.shortName}"></p>
                                             <div class="col-sm-3 order-last">
                                                 <div class="container">
@@ -220,7 +223,7 @@
             </div>
         </div>
     </section>
-    <section class="container">
+    <section class="container" id="export">
         <header>
             <h3>Exportieren</h3>
         </header>
@@ -231,7 +234,7 @@
             </form>
         </article>
     </section>
-    <section class="container">
+    <section class="container" id="delete">
         <header>
             <h3>Löschen</h3>
         </header>

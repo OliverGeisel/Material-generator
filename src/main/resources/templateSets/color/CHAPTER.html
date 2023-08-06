@@ -46,7 +46,7 @@
             <tbody>
             <tr th:each="group : ${chapter.groupOrder}">
                 <td th:unless="${group.materialCount == 0}">
-                    <a th:href="@{${group.name}+'/overview.html'}">
+                    <a th:href="@{${group.getSaveName()}+'/overview.html'}">
                         <h3 class="link-light" th:text="${group.name}"></h3>
                     </a>
                 </td>

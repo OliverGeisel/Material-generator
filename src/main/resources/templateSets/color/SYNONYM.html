@@ -15,8 +15,11 @@
             <h1 class="text-center text-light" style="color: var(--bs-red); " th:text="${material.headline}"></h1>
         </header>
         <hr>
-        <ul>
-            <li class="text-light" th:each="entry:${material.entries}" th:text="${entry}"></li>
+        <ol th:if="${material.numerated}">
+            <li class="text-light" th:each="synonym:${material.entries}" th:text="${synonym}"></li>
+        </ol>
+        <ul th:unless="${material.numerated}">
+            <li class="text-light" th:each="synonym:${material.entries}" th:text="${synonym}"></li>
         </ul>
     </div>
 </main>
