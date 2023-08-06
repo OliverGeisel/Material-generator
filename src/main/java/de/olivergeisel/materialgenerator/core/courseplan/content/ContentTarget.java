@@ -77,4 +77,12 @@ public class ContentTarget {
 		result = 31 * result + (relatedGoal != null ? relatedGoal.hashCode() : 0);
 		return result;
 	}
+
+	@Override
+	public String toString() {
+		return "ContentTarget{" +
+			   "value='" + value + '\'' +
+			   ", relatedGoal=" + relatedGoal +
+			   '}';
+	}
 }

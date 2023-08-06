@@ -1,5 +1,7 @@
 package de.olivergeisel.materialgenerator.core.course;
 
+import de.olivergeisel.materialgenerator.finalization.parts.CourseNavigation;
+
 import javax.persistence.*;
 import java.util.UUID;
 
@@ -20,7 +22,7 @@ public abstract class MaterialOrderPart {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", nullable = false)
 	private UUID   id;
-	private String name;
+	private String name = "";
 
 	protected MaterialOrderPart() {
 	}
@@ -48,6 +50,10 @@ public abstract class MaterialOrderPart {
 
 	public String getName() {
 		return name;
+	}
+
+	public String getSaveName() {
+		return name.replaceAll(CourseNavigation.PATH_REPLACE_REGEX, "_");
 	}
 
 	public void setName(String name) {

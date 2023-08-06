@@ -19,6 +19,6 @@ public class SynonymMaterial extends ListMaterial {
 
 	public SynonymMaterial(List<String> synonyms, boolean numerated, TemplateInfo templateInfo,
 						   KnowledgeElement element) {
-		super(MaterialType.WIKI, templateInfo, "Synonyme", synonyms, numerated, element);
+		super(MaterialType.WIKI, templateInfo, "Synonyme für" + element.getContent(), synonyms, numerated, element);
 	}
 }

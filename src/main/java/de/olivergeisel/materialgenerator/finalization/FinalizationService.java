@@ -139,7 +139,7 @@ public class FinalizationService {
 	public void generateAndDownloadTemplates(RawCourse plan, HttpServletRequest request,
 			HttpServletResponse response) {
 		var zipName = plan.getMetadata().getName().orElse("course");
-		downloadManager.createZip(zipName, plan.getTemplateName(), plan, request, response);
+		downloadManager.createDownloadZip(zipName, plan.getTemplateName(), plan, request, response);
 	}
 
 	public void setRelevance(UUID id, UUID taskId, Relevance relevance)

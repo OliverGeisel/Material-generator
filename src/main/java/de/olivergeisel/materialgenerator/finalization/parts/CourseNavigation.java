@@ -1,10 +1,14 @@
 package de.olivergeisel.materialgenerator.finalization.parts;
 
 import de.olivergeisel.materialgenerator.generation.material.Material;
+import lombok.Getter;
 
 import java.nio.file.Paths;
 
+@Getter
 public class CourseNavigation {
+	public static final String PATH_REPLACE_REGEX = "[^a-zA-Z0-9äöüÄÖÜß\\-_]";
+
 	private final int           size;
 	private final int           prevSize;
 	private final int           nextSize;
@@ -174,25 +178,6 @@ public class CourseNavigation {
 	}
 
 	//region setter/getter
-	public int getSize() {
-		return size;
-	}
-
-	public int getPrevSize() {
-		return prevSize;
-	}
-
-	public int getNextSize() {
-		return nextSize;
-	}
-
-	public int getPreviousCount() {
-		return previousCount;
-	}
-
-	public int getNextCount() {
-		return nextCount;
-	}
 
 	public MaterialHierarchy getCurrentMaterialHierarchy() {
 		return new MaterialHierarchy(level.chapter, level.group, level.task, level.material, size, count);
@@ -207,67 +192,17 @@ public class CourseNavigation {
 		return new MaterialHierarchy(nextChapter, nextGroup, nextTask, nextMaterial, nextSize, nextCount);
 	}
 
-	public String getPreviousMaterial() {
-		return previousMaterial;
-	}
-
 	public void setPreviousMaterial(String previousMaterial) {
 		this.previousMaterial = previousMaterial;
 	}
 
-	public boolean isHasPrevious() {
-		return hasPrevious;
-	}
-
-	public boolean isHasNext() {
-		return hasNext;
-	}
-
-	public int getCount() {
-		return count;
-	}
-
-	public String getNextChapter() {
-		return nextChapter;
-	}
-
-	public String getPreviousChapter() {
-		return previousChapter;
-	}
-
-	public String getOverview() {
-		return overview;
-	}
-
-	public String getNextTask() {
-		return nextTask;
-	}
-
-	public String getPreviousTask() {
-		return previousTask;
-	}
-
-	public String getNextGroup() {
-		return nextGroup;
-	}
-
-	public String getPreviousGroup() {
-		return previousGroup;
-	}
-
-	public MaterialLevel getLevel() {
-		return level;
-	}
-
-	public String getNextMaterial() {
-		return nextMaterial;
-	}
 
 	public void setNextMaterial(String nextMaterial) {
 		this.nextMaterial = nextMaterial;
 	}
 //endregion
 
+	@Getter
 	public static class MaterialLevel {
 		private String chapter;
 		private String group;
@@ -312,27 +247,11 @@ public class CourseNavigation {
 
 		//region setter/getter
 		public String getPathToRoot() {
-			var path = Paths.get(chapter.replaceAll("[^a-zA-Z0-9,\\,\\s]", "_"),
-					group.replaceAll("[^a-zA-Z0-9,\\,\\s]", "_"),
-					task.replaceAll("[^a-zA-Z0-9,\\,\\s]", "_"));
+			var path = Paths.get(chapter.replaceAll(PATH_REPLACE_REGEX, "_"),
+					group.replaceAll(PATH_REPLACE_REGEX, "_"),
+					task.replaceAll(PATH_REPLACE_REGEX, "_"));
 			var root = Paths.get("");
 			return path.relativize(root).toString().replace("\\", "/");
-		}
-
-		public Level getLevel() {
-			return level;
-		}
-
-		public String getChapter() {
-			return chapter;
-		}
-
-		public String getGroup() {
-			return group;
-		}
-
-		public String getTask() {
-			return task;
 		}
 //endregion
 
