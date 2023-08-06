@@ -14,7 +14,10 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -23,8 +26,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 /**
  * This class is responsible for creating the zip file containing the course. It uses the template engine to create the html files.
@@ -41,11 +42,13 @@ public class DownloadManager {
 	private final Logger              logger       = org.slf4j.LoggerFactory.getLogger(DownloadManager.class);
 	private final ServletContext      servletContext;
 	private final ImageService        imageService;
+	private final ZipService          zipService;
 	private       Map<String, String> overallInfos = new HashMap<>();
 
-	public DownloadManager(ServletContext servletContext, ImageService imageService) {
+	public DownloadManager(ServletContext servletContext, ImageService imageService, ZipService zipService) {
 		this.servletContext = servletContext;
 		this.imageService = imageService;
+		this.zipService = zipService;
 	}
 
 	private static MaterialHierarchy getMaterialHierarchy(CourseNavigation.MaterialLevel level,
@@ -60,12 +63,7 @@ public class DownloadManager {
 		return next;
 	}
 
-	private void cleanupTemporaryFiles(File tempDir, File zipFile) throws IOException {
-		if (zipFile != null && zipFile.exists()) {
-			Files.delete(zipFile.toPath());
-		}
-		deleteDirectory(tempDir);
-	}
+
 
 	public void createSingle(String name, HttpServletRequest request, HttpServletResponse response) {
 
@@ -83,50 +81,24 @@ public class DownloadManager {
 		}
 	}
 
-	private File createTempDirectory() throws IOException {
-		return Files.createTempDirectory("materialgenerator").toFile();
-	}
-
-	public void createZip(String name, String template, RawCourse plan, HttpServletRequest request,
+	public void createDownloadZip(String name, String template, RawCourse plan, HttpServletRequest request,
 			HttpServletResponse response) {
 		File tempDir = null;
 		File zipFile = null;
 		try {
-			tempDir = createTempDirectory();
+			tempDir = zipService.createTempDirectory();
 			exportCourse(plan, template, tempDir, request, response);
-			zipFile = createZipArchive(name, tempDir);
+			zipFile = zipService.createZipArchive(name, tempDir);
 			writeZipFileToResponse(name, zipFile, response);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
 			try {
-				cleanupTemporaryFiles(tempDir, zipFile);
+				zipService.cleanupTemporaryFiles(tempDir, zipFile);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	private File createZipArchive(String zipName, File directory) throws IOException {
-		File zipFile = File.createTempFile(zipName, ".zip");
-		try (ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(zipFile))) {
-			zipDirectory(directory, "", zipOut);
-		}
-		return zipFile;
-	}
-
-	private void deleteDirectory(File directory) throws IOException {
-		File[] files = directory.listFiles();
-		if (files != null) {
-			for (File file : files) {
-				if (file.isDirectory()) {
-					deleteDirectory(file);
-				} else {
-					Files.delete(file.toPath());
-				}
-			}
-		}
-		Files.delete(directory.toPath());
 	}
 
 	private TemplateEngine createTemplateEngine(String templateSet) {
@@ -199,7 +171,7 @@ public class DownloadManager {
 			context.setVariable(entry.getKey(), entry.getValue());
 		}
 		var course = templateEngine.process("COURSE", context);
-		saveTemplateToFile(course, outputDir, "Course.html");
+		zipService.saveToFile(course, outputDir, "Course.html");
 		saveIncludes(outputDir, templateSet);
 	}
 
@@ -209,7 +181,7 @@ public class DownloadManager {
 		setOverallInfos(context, navigation, level);
 		context.setVariable("chapter", chapter);
 		var chapterOverview = templateEngine.process("CHAPTER", context);
-		saveTemplateToFile(chapterOverview, outputDir, "overview.html");
+		zipService.saveToFile(chapterOverview, outputDir, "overview.html");
 		var groups = chapter.getGroupOrder();
 		GroupOrder previousGroup = null;
 		GroupOrder nextGroup = null;
@@ -247,7 +219,7 @@ public class DownloadManager {
 		setOverallInfos(context, navigation, level);
 		context.setVariable("group", group);
 		var chapterOverview = templateEngine.process("GROUP", context);
-		saveTemplateToFile(chapterOverview, outputDir, "overview.html");
+		zipService.saveToFile(chapterOverview, outputDir, "overview.html");
 		var tasks = group.getTaskOrder();
 		TaskOrder previousTask = null;
 		TaskOrder nextTask = null;
@@ -280,7 +252,7 @@ public class DownloadManager {
 				}
 				String taskName = concreteTask.getName() == null || concreteTask.getName().isBlank() ?
 						"Task " + (group.getTaskOrder().indexOf(concreteTask) + 1) : concreteTask.getName();
-				taskName = taskName.replaceAll("[^a-zA-Z0-9\\s]", "_");
+				taskName = taskName.replaceAll(CourseNavigation.PATH_REPLACE_REGEX, "_");
 				var subDir = new File(outputDir, taskName);
 				Files.createDirectory(subDir.toPath());
 				exportTask(concreteTask, newTaskLevel, newCourseNavigation, context, subDir, templateEngine);
@@ -331,7 +303,7 @@ public class DownloadManager {
 		context.setVariable("rootPath", materialLevel.getPathToRoot());
 		context.setVariable("title", material.getName());
 		String processedHtml = templateEngine.process("MATERIAL", context);
-		saveTemplateToFile(processedHtml, outputDir, String.format("Material_%s.html", materialNumber));
+		zipService.saveToFile(processedHtml, outputDir, String.format("Material_%s.html", materialNumber));
 		if (material instanceof ImageMaterial image) {
 			try {
 				var imageFile = getImage(image.getImageName());
@@ -352,14 +324,6 @@ public class DownloadManager {
 		}
 	}
 
-	private void saveTemplateToFile(String templateContent, File outputDir, String fileName) {
-		try (Writer writer = new BufferedWriter(new FileWriter(new File(outputDir, fileName)))) {
-			writer.write(templateContent);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 	private void writeZipFileToResponse(String name, File zipFile, HttpServletResponse response) throws IOException {
 		response.setContentType("application/zip");
 		response.setHeader("Content-Disposition", String.format("attachment; filename=%s.zip", name));
@@ -368,27 +332,6 @@ public class DownloadManager {
 			int length;
 			while ((length = fis.read(buffer)) > 0) {
 				out.write(buffer, 0, length);
-			}
-		}
-	}
-
-	private void zipDirectory(File directory, String parentDir, ZipOutputStream zipOut) throws IOException {
-		File[] files = directory.listFiles();
-		if (files == null) {
-			return;
-		}
-		for (File file : files) {
-			if (file.isDirectory()) {
-				zipDirectory(file, parentDir + file.getName() + "/", zipOut);
-			} else {
-				try (FileInputStream stream = new FileInputStream(file)) {
-					zipOut.putNextEntry(new ZipEntry(parentDir + file.getName()));
-					int length;
-					byte[] buffer = new byte[1024];
-					while ((length = stream.read(buffer)) > 0) {
-						zipOut.write(buffer, 0, length);
-					}
-				}
 			}
 		}
 	}
