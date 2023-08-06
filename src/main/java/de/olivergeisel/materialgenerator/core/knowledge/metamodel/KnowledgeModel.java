@@ -526,7 +526,7 @@ public class KnowledgeModel {
 		if (!hasStructureSimilar(structureId)) {
 			throw new NoSuchElementException("No structure object with id " + structureId + "or similar found");
 		} else {
-			var similarObject = structure.getRoot().getSimilarObjectById(structureId);
+			var similarObject = structure.getSimilarObjectById(structureId);
 			var elements = similarObject.getLinkedElements();
 			for (var element : elements) {
 				back.add(getKnowledgeNode(element.getId()));

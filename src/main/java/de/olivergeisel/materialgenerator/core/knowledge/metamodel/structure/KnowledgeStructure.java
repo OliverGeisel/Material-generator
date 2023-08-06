@@ -52,7 +52,7 @@ public class KnowledgeStructure {
 		return root.containsSimilar(structureId);
 	}
 
-	public KnowledgeObject getSimilarObjectById(String structureId) {
+	public KnowledgeObject getSimilarObjectById(String structureId) throws NoSuchElementException {
 		return root.getSimilarObjectById(structureId);
 	}
 

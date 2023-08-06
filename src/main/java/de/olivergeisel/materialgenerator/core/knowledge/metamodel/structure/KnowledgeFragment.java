@@ -26,14 +26,14 @@ public class KnowledgeFragment extends KnowledgeObject {
 		if (structureId == null) {
 			return false;
 		}
-		if (this.getId().contains(structureId)) {
+		if (getId().contains(structureId) || structureId.contains(getId())) {
 			return true;
 		}
 		for (KnowledgeObject element : children) {
 			if (element instanceof KnowledgeFragment fragment && fragment.containsSimilar(structureId)) {
 				return true;
 			} else {
-				if (element.getId().contains(structureId)) {
+				if (element.getId().contains(structureId) || structureId.contains(element.getId())) {
 					return true;
 				}
 			}
@@ -76,12 +76,12 @@ public class KnowledgeFragment extends KnowledgeObject {
 		}
 		for (KnowledgeObject element : children) {
 			if (element instanceof KnowledgeFragment fragment) {
-				KnowledgeObject object = fragment.getSimilarObjectById(id);
-				if (object != null) {
-					return object;
+				try {
+					return fragment.getSimilarObjectById(id);
+				} catch (NoSuchElementException ignored) {
 				}
 			} else {
-				if (element.getId().contains(id)) {
+				if (element.getId().contains(id) || id.contains(element.getId())) {
 					return element;
 				}
 			}
