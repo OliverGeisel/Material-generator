@@ -608,14 +608,19 @@ public class TranslateGenerator implements Generator {
 		List<MaterialAndMapping> back = new ArrayList<>();
 		var imageRelations = getWantedRelationsKnowledge(knowledge, RelationType.RELATED);
 		imageRelations.forEach(it -> {
-			var to = it.getTo();
-			var from = it.getFrom();
-			var image = to.getType().equals(KnowledgeType.IMAGE) ? to : from;
-			var term = to.getType().equals(KnowledgeType.TERM) ? to : from;
+			KnowledgeElement image, term;
+			try {
+				var to = it.getTo();
+				var from = it.getFrom();
+				image = to.getType().equals(KnowledgeType.IMAGE) ? to : from;
+				term = to.getType().equals(KnowledgeType.TERM) ? to : from;
+			} catch (IllegalStateException ignored) {
+				logger.warn("The relation '{}' has no complete linking", it);
+				return;
+			}
 			try {
 				Image imageElement = (Image) image;
-				Material imageMaterial =
-						new ImageMaterial(imageElement, templateInfo);
+				Material imageMaterial = new ImageMaterial(imageElement, templateInfo);
 				imageMaterial.setName(imageElement.getHeadline());
 				imageMaterial.setTerm(term.getContent());
 				imageMaterial.setTemplateInfo(templateInfo);
@@ -625,7 +630,7 @@ public class TranslateGenerator implements Generator {
 				mapping.add(mainTerm, imageElement, term);
 				back.add(new MaterialAndMapping(imageMaterial, mapping));
 			} catch (ClassCastException ignored) {
-				logger.warn("No images found for {}", mainTerm.getContent());
+				logger.warn("No images found for {}", term.getContent());
 			}
 		});
 		return back;
