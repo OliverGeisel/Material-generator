@@ -4,8 +4,11 @@ package de.olivergeisel.materialgenerator.finalization.material_assign;
 import de.olivergeisel.materialgenerator.finalization.parts.ChapterOrder;
 import de.olivergeisel.materialgenerator.finalization.parts.GroupOrder;
 import de.olivergeisel.materialgenerator.finalization.parts.MaterialOrderCollection;
+import de.olivergeisel.materialgenerator.finalization.parts.TaskOrder;
 import de.olivergeisel.materialgenerator.generation.material.Material;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -36,7 +39,7 @@ public class BasicMaterialAssigner extends MaterialAssigner {
 	public boolean assign(MaterialOrderCollection part) {
 		return switch (part) {
 			case ChapterOrder ignored -> false;
-			case GroupOrder groupOrder -> false;
+			case GroupOrder groupOrder -> groupAssign(groupOrder);
 			default -> {
 				boolean result = false;
 				var topic = part.getTopic();
@@ -46,13 +49,62 @@ public class BasicMaterialAssigner extends MaterialAssigner {
 				}
 				for (var material : getUnassignedMaterials()) {
 					if (selector.satisfies(material, part) && (part.assign(material))) {
-							setAssigned(material);
-							result = true;
+						setAssigned(material);
+						result = true;
 					}
 				}
 				yield result;
 			}
 		};
+	}
+
+	private boolean groupAssign(GroupOrder groupOrder) {
+		if (groupOrder.getTaskOrder().isEmpty()) {
+			logger.warn("TaskOrder of {} is empty", groupOrder);
+			return false;
+		}
+
+		var firstTask = groupOrder.getTaskOrder().get(0);
+		boolean result = false;
+		if (groupOrder.getTaskOrder().stream().anyMatch(it -> it.getTopic() == null
+															  || !it.getTopic().equals(firstTask.getTopic()))) {
+			logger.info("Tasks of {} has different topics", groupOrder);
+			for (var task : groupOrder.getTaskOrder()) {
+				if (assign(task)) {
+					result = true;
+				}
+			}
+			return result;
+		}
+
+		var materialsPerTask = new LinkedList<TaskOrderMaterial>();
+		var materialsForTopic = getUnassignedMaterials().stream().filter(it -> selector.satisfies(it,
+				firstTask.getTopic()));
+		groupOrder.getTaskOrder().forEach(it -> materialsPerTask.add(new TaskOrderMaterial(it, new LinkedList<>())));
+		for (var material : materialsForTopic.toList()) {
+			var matching = false;
+			int i = 0;
+			for (var task : groupOrder.getTaskOrder()) {
+				matching = selector.satisfies(material, task.getName());
+				if (matching) {
+					materialsPerTask.get(i).material().add(material);
+					break;
+				}
+				++i;
+			}
+			if (!matching) {
+				materialsPerTask.get(0).material.add(material);
+			}
+		}
+		for (var entry : materialsPerTask) {
+			var task = entry.taskOrder();
+			for (var material : entry.material()) {
+				task.assign(material);
+				setAssigned(material);
+				result = true;
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -116,5 +168,8 @@ public class BasicMaterialAssigner extends MaterialAssigner {
 		var back = part.assign(material);
 		materialMap.get(material).setAssigned(true);
 		return back;
+	}
+
+	private record TaskOrderMaterial(TaskOrder taskOrder, List<Material> material) {
 	}
 }
