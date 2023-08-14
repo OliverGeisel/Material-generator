@@ -75,11 +75,11 @@
       "type": "EXAMPLE",
       "id": "Algorithmus-EXAMPLE",
       "structure": "Algorithmus-Begriff",
-      "content": "image:Courseplan-Color.png;title:Example",
+      "content": "image:Algorithmus.png;title:Algorithmus",
       "relations": [
         {
           "relation_id": "Algorithmus-TERM",
-          "relation_type": "EXAMPLE_FOR"
+          "relation_type": "example-for"
         }
       ]
     },
@@ -130,7 +130,7 @@
     },
     {
       "type": "DEFINITION",
-      "id": "Informatik-Definition-DEFINITION",
+      "id": "Informatik-DEFINITION",
       "structure": "Wissenschaft Informatik",
       "content": "Informatik ist die die Wissenschaft von der systematischen Verarbeitung von Informationen mit Hilfe von Digitalrechnern.",
       "relations": [
@@ -142,7 +142,7 @@
     },
     {
       "type": "DEFINITION",
-      "id": "Informatik-Definition-2-DIFINITION",
+      "id": "Informatik-Definition-2-DEFINITION",
       "structure": "Wissenschaft Informatik",
       "content": "Informatik ist die Wissenschaft, Technik und Anwendung der maschinellen Verarbeiteung und \u00dcbermittling von Informationen.",
       "relations": [
@@ -173,7 +173,7 @@
     },
     {
       "type": "ANSWER",
-      "id": "Wissenschaft-Technik-Frage-Antwort -ANSWER",
+      "id": "Wissenschaft-Technik-Frage-Antwort-ANSWER",
       "structure": "Wissenschaft Informatik",
       "content": "Beides!",
       "relations": [
@@ -207,13 +207,6 @@
       "id": "Information-TERM",
       "structure": "Wissenschaft Informatik",
       "content": "Information",
-      "relations": []
-    },
-    {
-      "type": "DEFINITION",
-      "id": "Information-DEFINITION",
-      "structure": "Wissenschaft Informatik",
-      "content": "",
       "relations": []
     },
     {
@@ -254,7 +247,7 @@
     },
     {
       "type": "DEFINITION",
-      "id": "Information-DEFINITION",
+      "id": "Information-2-DEFINITION",
       "structure": "Wissenschaft Informatik",
       "content": "Information ist eine allgemeine Eigenschaft der uns umgebenen Welt.\nInformationen werden sowohl in der belebten und unbelebten Natur als auch in der menschlichen Gesellschaft aufgenommen, gespeichert, verarbeitet und weitergegeben.",
       "relations": [
@@ -560,10 +553,15 @@
     },
     {
       "type": "EXAMPLE",
-      "id": "Technisches-Informationssyste,-EXAMPLE",
-      "structure": "Informatik Gesellschaft",
+      "id": "Technisches-Informationssystem-EXAMPLE",
+      "structure": "Wissenschaft Informatik",
       "content": "content:;image:Informationssystem.png;title:Schematische darstellung eines Informationssystems",
-      "relations": []
+      "relations": [
+        {
+          "relation_id": "Informationssystem-TERM",
+          "relation_type": "example-for"
+        }
+      ]
     },
     {
       "type": "TERM",
@@ -629,7 +627,12 @@
       "id": "Integrit\u00e4t-TERM",
       "structure": "Datensicherheit",
       "content": "Integrit\u00e4t",
-      "relations": []
+      "relations": [
+        {
+          "relation_id": "Ziele-Kryptologie-NODE",
+          "relation_type": "part-of"
+        }
+      ]
     },
     {
       "type": "TERM",
@@ -791,18 +794,6 @@
     },
     {
       "type": "IMAGE",
-      "id": "Informationssystem-IMAGE",
-      "structure": "Datensicherheit",
-      "content": "imageName:Informationssystem.png;imageDescription:;headline:Bestandteile eines Informationssystems",
-      "relations": [
-        {
-          "relation_id": "Informationssystem-TERM",
-          "relation_type": "related"
-        }
-      ]
-    },
-    {
-      "type": "IMAGE",
       "id": "Kryptologie-IMAGE",
       "structure": "Kryptologie",
       "content": "imageName:Kryptologie.png;imageDescription:;headline:Übersicht der Teilgebiete der Kryptologie",
@@ -878,14 +869,14 @@
     {
       "type": "TERM",
       "id": "Steganographie-TERM",
-      "structure": "Kryptologie",
+      "structure": "Steganographie",
       "content": "Steganographie",
       "relations": []
     },
     {
       "type": "DEFINITION",
       "id": "Steganographie-DEFINITION",
-      "structure": "Kryptologie",
+      "structure": "Steganographie",
       "content": "Die Kunst des Verstecken einer Nachricht",
       "relations": [
         {
@@ -974,6 +965,14 @@
         {
           "relation_id": "RSA-TERM",
           "relation_type": "has"
+        },
+        {
+          "relation_id": "El-Gamal-TERM",
+          "relation_type": "has"
+        },
+        {
+          "relation_id": "Diffie-Hellman-TERM",
+          "relation_type": "has"
         }
       ]
     },
@@ -997,6 +996,22 @@
       "relations": []
     },
     {
+      "type": "TERM",
+      "id": "Diffie-Hellman-TERM",
+      "structure": "Asymmetrische Verfahren",
+      "content": "Diffie Hellman",
+      "relations": [
+      ]
+    },
+    {
+      "type": "TERM",
+      "id": "El-Gamal-TERM",
+      "structure": "Asymmetrische Verfahren",
+      "content": "El Gamal",
+      "relations": [
+      ]
+    },
+    {
       "type": "DEFINITION",
       "id": "Chiffretext-DEFINITION",
       "structure": "Kryptologie",
@@ -1013,7 +1028,12 @@
       "id": "Ziele-Kryptologie-NODE",
       "structure": "Kryptologie",
       "content": "Ziele-Kryptologie",
-      "relations": []
+      "relations": [
+        {
+          "relation_id": "Kryptologie-TERM",
+          "relation_type": "related"
+        }
+      ]
     },
     {
       "type": "TERM",
@@ -1022,7 +1042,7 @@
       "content": "Geheimhaltung",
       "relations": [
         {
-          "relation_id": "Ziele-Kryptologie-TERM",
+          "relation_id": "Ziele-Kryptologie-NODE",
           "relation_type": "part-of"
         }
       ]
@@ -1034,7 +1054,7 @@
       "content": "Integrit\u00e4t",
       "relations": [
         {
-          "relation_id": "Ziele-Kryptologie-TERM",
+          "relation_id": "Ziele-Kryptologie-NODE",
           "relation_type": "part-of"
         }
       ]
@@ -1046,7 +1066,7 @@
       "content": "Authentizit\u00e4t",
       "relations": [
         {
-          "relation_id": "Ziele-Kryptologie-TERM",
+          "relation_id": "Ziele-Kryptologie-NODE",
           "relation_type": "part-of"
         }
       ]
@@ -1058,7 +1078,7 @@
       "content": "Anonymit\u00e4t",
       "relations": [
         {
-          "relation_id": "Ziele-Kryptologie-TERM",
+          "relation_id": "Ziele-Kryptologie-NODE",
           "relation_type": "part-of"
         }
       ]
@@ -1069,6 +1089,73 @@
       "structure": "Symmetrische Verfahren",
       "content": "C\u00e4sar-Verschl\u00fcsselung",
       "relations": []
+    },
+    {
+      "type": "TEXT",
+      "id": "C\u00e4sar-Verschl\u00fcsselung-TEXT",
+      "structure": "Symmetrische Verfahren",
+      "content": "headline:Die Cäsar-Verschlüsselung;text:Die C\u00e4sar-Verschl\u00fcsselung ist ein einfaches Verschl\u00fcsselungsverfahren, bei dem jeder Buchstabe des Klartextes um eine bestimmte Anzahl von Stellen im Alphabet verschoben wird. Die Anzahl der Stellen wird als Schl\u00fcssel bezeichnet. Die C\u00e4sar-Verschl\u00fcsselung ist ein Spezialfall der Vigenere-Verschl\u00fcsselung mit dem Schl\u00fcsselwort \"A\".",
+      "relations": [
+        {
+          "relation_id": "C\u00e4sar-Verschl\u00fcsselung-TERM",
+          "relation_type": "related"
+        }
+      ]
+    },
+    {
+      "type": "EXAMPLE",
+      "id": "C\u00e4sar-Verschl\u00fcsselung-EXAMPLE",
+      "structure": "Symmetrische Verfahren",
+      "content": "content:;image:Caesar.png;title:Ein Beispiel f\u00fcr die C\u00e4sar-Verschl\u00fcsselung",
+      "relations": [
+        {
+          "relation_id": "C\u00e4sar-Verschl\u00fcsselung-TERM",
+          "relation_type": "example-for"
+        }
+      ]
+    },
+    {
+      "type": "TERM",
+      "id": "Vigenere-Verschl\u00fcsselung-TERM",
+      "structure": "Symmetrische Verfahren",
+      "content": "Vigenere-Verschl\u00fcsselung",
+      "relations": []
+    },
+    {
+      "type": "TEXT",
+      "id": "Vigenere-Verschl\u00fcsselung-TEXT",
+      "structure": "Symmetrische Verfahren",
+      "content": "headline:Die Vigenere-Verschl\u00fcsselung;text:Die Vigenere-Verschl\u00fcsselung ist ein Verschl\u00fcsselungsverfahren, bei dem jeder Buchstabe des Klartextes um eine bestimmte Anzahl von Stellen im Alphabet verschoben wird.",
+      "relations": [
+        {
+          "relation_id": "Vigenere-Verschl\u00fcsselung-TERM",
+          "relation_type": "related"
+        }
+      ]
+    },
+    {
+      "type": "EXAMPLE",
+      "id": "Vigenere-Verschl\u00fcsselung-EXAMPLE",
+      "structure": "Symmetrische Verfahren",
+      "content": "content:;image:VigenereBSP.png;title:Ein Beispiel f\u00fcr die Vigenere-Verschl\u00fcsselung",
+      "relations": [
+        {
+          "relation_id": "Vigenere-Verschl\u00fcsselung-TERM",
+          "relation_type": "example-for"
+        }
+      ]
+    },
+    {
+      "type": "IMAGE",
+      "id": "Vigenere-Verschl\u00fcsselung-IMAGE",
+      "structure": "Symmetrische Verfahren",
+      "content": "imageName:VigenereTabelle.png;headline:Ein Beispiel f\u00fcr die Vigenere-Verschl\u00fcsselung",
+      "relations": [
+        {
+          "relation_id": "Vigenere-Verschl\u00fcsselung-TERM",
+          "relation_type": "related"
+        }
+      ]
     },
     {
       "type": "TERM",
@@ -1088,6 +1175,61 @@
       "structure": "Symmetrische Verfahren",
       "content": "Digital Encription Standard",
       "relations": []
+    },
+    {
+      "type": "TERM",
+      "id": "AES-TERM",
+      "structure": "Symmetrische Verfahren",
+      "content": "AES",
+      "relations": [
+        {
+          "relation_id": "AES-Long-TERM",
+          "relation_type": "is-Acronym-for"
+        }
+      ]
+    },
+    {
+      "type": "TERM",
+      "id": "AES-Long-TERM",
+      "structure": "Symmetrische Verfahren",
+      "content": "Advanced Encryption Standard",
+      "relations": []
+    },
+    {
+      "type": "DEFINITION",
+      "id": "Geheimhaltung-DEFINITION",
+      "structure": "Kryptologie",
+      "content": "Das Ziel der Geheimhaltung ist die vertrauliche Übermittlung von Nachrichten. Als Frage formuliert: Wie kann ich jemanden eine Nachricht übermitteln, ohne dass ein Unbefugter Kenntnis vom Inhalt dieser Nachricht erlangt?",
+      "relations": [
+        {
+          "relation_id": "Geheimhaltung-TERM",
+          "relation_type": "defines"
+        }
+      ]
+    },
+    {
+      "type": "DEFINITION",
+      "id": "Authentizit\u00e4t-DEFINITION",
+      "structure": "Kryptologie",
+      "content": "Authentizität bedeutet, dass der Empfänger einer Nachricht sicher sein kann, dass die Nachricht tatsächlich von dem Absender stammt, der vorgibt, der Absender zu sein. Als Frage formuliert: Wie kann ich sicher sein, dass eine Nachricht tatsächlich von dem Absender stammt, der vorgibt, der Absender zu sein?",
+      "relations": [
+        {
+          "relation_id": "Authentizit\u00e4t-TERM",
+          "relation_type": "defines"
+        }
+      ]
+    },
+    {
+      "type": "DEFINITION",
+      "id": "Anonymität-DEFINITION",
+      "structure": "Kryptologie",
+      "content": "Anonymität ist eine spezielle Form der Geheimhaltung, im allgemeinen die Geheimhaltung des Namens.Darüber hinaus gibt es es weitere Formen der Anonymität, z.B. die Anonymität des Geldes. So ist es nicht möglich, den Weg einer Münze zurückzuverfolgen, d.h. die Vorbesitzer eines Geldstückes zu bestimmen (außer jenen, von dem man die Münze erhalten hat). Bezüglich der Kommunikation bzw. des Nachrichtenaustausches können drei Arten von Anonymität unterschieden werden: Anonymität des Absenders, Anonymität des Empfängers und Anonymität der Kommunikationsbeziehung.",
+      "relations": [
+        {
+          "relation_id": "Anonymit\u00e4t-TERM",
+          "relation_type": "defines"
+        }
+      ]
     }
   ],
   "sources": [
@@ -1172,13 +1314,24 @@
                                 "children": []
                               }
                             ]
+                          },
+                          {
+                            "key": "_root/1/1/2",
+                            "name": "Steganographie",
+                            "children": []
                           }
                         ]
                       },
                       {
                         "key": "_root/1/2",
                         "name": "Entschl\u00fcsselung",
-                        "children": []
+                        "children": [
+                          {
+                            "key": "_root/1/2/1",
+                            "name": "Kryptanalyse",
+                            "children": []
+                          }
+                        ]
                       }
                     ]
                   }
