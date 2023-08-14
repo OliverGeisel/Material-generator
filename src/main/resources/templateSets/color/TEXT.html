@@ -12,8 +12,7 @@
 <main>
     <div class="container" th:fragment="content">
         <h2 class="text-light" th:text="${material.headline}" th:unless="${material.headline.isBlank}"></h2>
-        <p>
-            <span class="text-light" th:text="${material.text}"></span>
+        <p class="text-light" th:text="${material.text}">
         </p>
     </div>
 </main>
