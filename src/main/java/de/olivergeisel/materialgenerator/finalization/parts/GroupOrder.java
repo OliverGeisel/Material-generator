@@ -39,7 +39,7 @@ public class GroupOrder extends MaterialOrderCollection {
 	 * @param part the group to be ordered
 	 * @throws IllegalArgumentException if part is null
 	 */
-	public GroupOrder (StructureElementPart part, Set<Goal> goals) throws IllegalArgumentException {
+	public GroupOrder(StructureElementPart part, Set<Goal> goals) throws IllegalArgumentException {
 		if (part == null) throw new IllegalArgumentException("group must not be null");
 		if (!(part instanceof StructureGroup group)) {
 			throw new IllegalArgumentException("part must be a StructureGroup");
@@ -59,11 +59,11 @@ public class GroupOrder extends MaterialOrderCollection {
 		part.getAlternatives().forEach(this::appendAlias);
 	}
 
-	protected GroupOrder () {
+	protected GroupOrder() {
 
 	}
 
-	public void moveUp (TaskOrder task) {
+	public void moveUp(TaskOrder task) {
 		int index = taskOrder.indexOf(task);
 		if (index > 0) {
 			taskOrder.remove(index);
@@ -71,38 +71,38 @@ public class GroupOrder extends MaterialOrderCollection {
 		}
 	}
 
-	public void moveDown (TaskOrder task) {
+	public void moveDown(TaskOrder task) {
 		int index = taskOrder.indexOf(task);
-		if (index < taskOrder.size() - 1) {
+		if (-1 < index && index < taskOrder.size() - 1) {
 			taskOrder.remove(index);
 			taskOrder.add(index + 1, task);
 		}
 	}
 
-	public boolean remove (TaskOrder task) {
+	public boolean remove(TaskOrder task) {
 		return taskOrder.remove(task);
 	}
 
-	public void append (TaskOrder task) {
+	public void append(TaskOrder task) {
 		taskOrder.add(task);
 	}
 
-	public MaterialOrderPart find (UUID id) {
+	public MaterialOrderPart find(UUID id) {
 		if (this.getId().equals(id)) return this;
 		return taskOrder.stream().map(t -> t.find(id)).filter(Objects::nonNull).findFirst().orElse(null);
 	}
 
 	@Override
-	public Relevance updateRelevance () {
+	public Relevance updateRelevance() {
 		return getRelevance();
 	}
 
-	public TaskOrder findTask (UUID taskId) {
+	public TaskOrder findTask(UUID taskId) {
 		return taskOrder.stream().filter(t -> t.getId().equals(taskId)).findFirst().orElse(null);
 	}
 
 	@Override
-	public Material findMaterial (UUID materialId) {
+	public Material findMaterial(UUID materialId) {
 		return taskOrder.stream().map(t -> t.findMaterial(materialId)).filter(Objects::nonNull).findFirst()
 						.orElse(null);
 	}
@@ -114,7 +114,7 @@ public class GroupOrder extends MaterialOrderCollection {
 	 * @return the assigned materials
 	 */
 	@Override
-	public Set<Material> assignMaterial (Set<Material> materials) {
+	public Set<Material> assignMaterial(Set<Material> materials) {
 		return taskOrder.stream().map(t -> t.assignMaterial(materials)).flatMap(Collection::stream)
 						.collect(Collectors.toSet());
 	}
@@ -125,7 +125,7 @@ public class GroupOrder extends MaterialOrderCollection {
 	 * @throws UnsupportedOperationException
 	 */
 	@Override
-	public boolean assign (Material material) throws UnsupportedOperationException {
+	public boolean assign(Material material) throws UnsupportedOperationException {
 		throw new UnsupportedOperationException("not supportet yet");
 	}
 
@@ -136,18 +136,18 @@ public class GroupOrder extends MaterialOrderCollection {
 	 * @return true if materials were assigned
 	 */
 	@Override
-	public boolean assignMaterial (MaterialAssigner assigner) {
-		taskOrder.forEach(t -> t.assignMaterial(assigner));
+	public boolean assignMaterial(MaterialAssigner assigner) {
+		assigner.assign(this);
 		return true;
 	}
 
 	@Override
-	public int materialCount () {
+	public int materialCount() {
 		return taskOrder.stream().mapToInt(TaskOrder::materialCount).sum();
 	}
 
 	@Override
-	public boolean remove (UUID partId) {
+	public boolean remove(UUID partId) {
 		if (taskOrder.stream().anyMatch(it -> it.getId().equals(partId))) {
 			taskOrder.removeIf(it -> it.getId().equals(partId));
 			return true;
@@ -163,7 +163,7 @@ public class GroupOrder extends MaterialOrderCollection {
 	 * @return the relevance of this part
 	 */
 	@Override
-	public Relevance getRelevance () {
+	public Relevance getRelevance() {
 		return taskOrder.stream().map(TaskOrder::getRelevance).max(Comparator.naturalOrder()).orElse(Relevance.TO_SET);
 	}
 
@@ -173,12 +173,12 @@ public class GroupOrder extends MaterialOrderCollection {
 	 * @return true if all parts are valid
 	 */
 	@Override
-	public boolean isValid () {
+	public boolean isValid() {
 		return taskOrder.stream().allMatch(MaterialOrderPart::isValid)
 			   && taskOrder.stream().allMatch(t -> t.getRelevance().ordinal() <= getRelevance().ordinal());
 	}
 
-	public List<TaskOrder> getTaskOrder () {
+	public List<TaskOrder> getTaskOrder() {
 		return Collections.unmodifiableList(taskOrder);
 	}
 //endregion

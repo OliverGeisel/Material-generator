@@ -10,7 +10,6 @@ import de.olivergeisel.materialgenerator.generation.material.Material;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import java.util.*;
 
@@ -27,12 +26,10 @@ import java.util.*;
  * @see Material
  * @since 0.2.0
  */
-
 @Entity
 public class TaskOrder extends MaterialOrderCollection {
 
 	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "taskOrder_id")
 	private final List<Material> materialOrder = new LinkedList<>();
 	private       Relevance      relevance     = Relevance.TO_SET;
 
@@ -67,7 +64,7 @@ public class TaskOrder extends MaterialOrderCollection {
 
 	public void moveDown(Material material) {
 		int index = materialOrder.indexOf(material);
-		if (index < materialOrder.size() - 1) {
+		if (-1 < index && index < materialOrder.size() - 1) {
 			materialOrder.remove(index);
 			materialOrder.add(index + 1, material);
 		}

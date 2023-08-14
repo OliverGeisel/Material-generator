@@ -86,7 +86,7 @@ public class CourseOrder extends de.olivergeisel.materialgenerator.core.course.C
 
 	public void moveDown(ChapterOrder chapter) {
 		int index = chapterOrder.indexOf(chapter);
-		if (index < chapterOrder.size() - 1) {
+		if (-1 < index && index < chapterOrder.size() - 1) {
 			chapterOrder.remove(index);
 			chapterOrder.add(index + 1, chapter);
 		}

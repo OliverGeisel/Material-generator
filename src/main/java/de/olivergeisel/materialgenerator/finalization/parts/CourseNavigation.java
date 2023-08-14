@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 
 @Getter
 public class CourseNavigation {
-	public static final String PATH_REPLACE_REGEX = "[^a-zA-Z0-9äöüÄÖÜß\\-_]";
+	public static final String PATH_REPLACE_REGEX = "[^a-zA-Z0-9äöüÄÖÜß\\s\\-_]";
 
 	private final int           size;
 	private final int           prevSize;

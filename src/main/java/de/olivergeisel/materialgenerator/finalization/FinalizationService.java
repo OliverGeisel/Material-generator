@@ -88,10 +88,12 @@ public class FinalizationService {
 		taskOrderRepository.saveAll(taskOrder);
 	}
 
-	public void moveUp(UUID id, UUID parentChapterId, UUID parentGroupId, UUID parentTaskId, UUID idUp) {
+	public void moveUp(UUID id, UUID parentChapterId, UUID parentGroupId, UUID parentTaskId, UUID idUp)
+			throws NoSuchElementException, IllegalStateException {
 		var course = rawCourseRepository.findById(id).orElseThrow();
 		var order = course.getCourseOrder();
-		switch (order.find(idUp)) {
+		var element = order.find(idUp);
+		switch (element) {
 			case ChapterOrder chapter -> order.moveUp(chapter);
 			case GroupOrder group -> {
 				var chapter = order.findChapter(parentChapterId);
@@ -105,15 +107,17 @@ public class FinalizationService {
 				var task = order.findTask(parentTaskId);
 				task.moveUp(material);
 			}
-			default -> throw new IllegalStateException("Unexpected value: " + order.find(idUp));
+			default -> throw new IllegalStateException("Unexpected value: " + element);
 		}
 		rawCourseRepository.save(course);
 	}
 
-	public void moveDown(UUID id, UUID parentChapterId, UUID parentGroupId, UUID parentTaskId, UUID idDown) {
+	public void moveDown(UUID id, UUID parentChapterId, UUID parentGroupId, UUID parentTaskId, UUID idDown)
+			throws NoSuchElementException, IllegalStateException {
 		var course = rawCourseRepository.findById(id).orElseThrow();
 		var order = course.getCourseOrder();
-		switch (order.find(idDown)) {
+		var element = order.find(idDown);
+		switch (element) {
 			case ChapterOrder chapter -> order.moveDown(chapter);
 			case GroupOrder group -> {
 				var chapter = order.findChapter(parentChapterId);
@@ -127,7 +131,7 @@ public class FinalizationService {
 				var task = order.findTask(parentTaskId);
 				task.moveDown(material);
 			}
-			default -> throw new IllegalStateException("Unexpected value: " + order.find(idDown));
+			default -> throw new IllegalStateException("Unexpected value: " + element);
 		}
 		rawCourseRepository.save(course);
 	}
