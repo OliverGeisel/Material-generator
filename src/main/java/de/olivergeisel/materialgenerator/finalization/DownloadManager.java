@@ -1,5 +1,6 @@
 package de.olivergeisel.materialgenerator.finalization;
 
+import de.olivergeisel.materialgenerator.StorageFileNotFoundException;
 import de.olivergeisel.materialgenerator.finalization.parts.*;
 import de.olivergeisel.materialgenerator.generation.material.ExampleMaterial;
 import de.olivergeisel.materialgenerator.generation.material.ImageMaterial;
@@ -309,7 +310,7 @@ public class DownloadManager {
 				var imageFile = getImage(image.getImageName());
 				Files.copy(imageFile.getInputStream(), new File(outputDir, image.getImageName()).toPath(),
 						StandardCopyOption.REPLACE_EXISTING);
-			} catch (IOException e) {
+			} catch (IOException | StorageFileNotFoundException e) {
 				logger.warn(e.toString());
 			}
 		}
@@ -318,7 +319,7 @@ public class DownloadManager {
 				var image = getImage(exampleMaterial.getImageName());
 				Files.copy(image.getInputStream(), new File(outputDir, exampleMaterial.getImageName()).toPath(),
 						StandardCopyOption.REPLACE_EXISTING);
-			} catch (IOException e) {
+			} catch (IOException | StorageFileNotFoundException e) {
 				logger.warn(e.toString());
 			}
 		}
@@ -336,7 +337,7 @@ public class DownloadManager {
 		}
 	}
 
-	private Resource getImage(String name) {
+	private Resource getImage(String name) throws StorageFileNotFoundException {
 		return imageService.loadAsResource(name);
 	}
 

@@ -16,7 +16,9 @@ public class Text extends KnowledgeElement {
 		HashMap<String, String> elements = new HashMap<>();
 		for (String element : content.split(";")) {
 			String[] parts = element.split(":");
-			elements.put(parts[0].trim(), parts[1].trim());
+			if (parts.length == 2) {
+				elements.put(parts[0].trim(), parts[1].trim());
+			}
 		}
 		this.text = elements.getOrDefault("text", "");
 		this.headline = elements.getOrDefault("headline", "");
@@ -26,7 +28,7 @@ public class Text extends KnowledgeElement {
 		super(content, id, type);
 	}
 
-//region setter/getter
+	//region setter/getter
 	public String getText() {
 		return text;
 	}

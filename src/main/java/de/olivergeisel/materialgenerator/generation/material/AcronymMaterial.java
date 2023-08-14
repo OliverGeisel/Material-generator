@@ -35,6 +35,6 @@ public class AcronymMaterial extends ListMaterial {
 	 */
 	public AcronymMaterial(List<String> acronyms, boolean numerated, TemplateInfo templateInfo,
 			KnowledgeElement element) {
-		super(MaterialType.WIKI, templateInfo, "Abkürzung", acronyms, numerated, element);
+		super(MaterialType.WIKI, templateInfo, "Abkürzung für " + element.getContent(), acronyms, numerated, element);
 	}
 }

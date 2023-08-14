@@ -45,6 +45,10 @@ public abstract class Relation {
 		this.name = name;
 	}
 
+	public boolean hasType(RelationType type) {
+		return this.type.equals(type);
+	}
+
 	//region setter/getter
 	public String getFromId() {
 		return fromId;
