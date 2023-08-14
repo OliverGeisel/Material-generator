@@ -124,6 +124,7 @@ public class KnowledgeModel {
 		addKnowledge(element);
 		var relations = element.getRelations();
 		relations.forEach(relation -> {
+			var type = relation.getType();
 			var toId = relation.getToId();
 			if (contains(toId)) {
 				var toElement = get(toId);
@@ -139,10 +140,10 @@ public class KnowledgeModel {
 					relation.setFrom(element);
 				}
 				// reverse relation
-				if (toElement.getRelations().stream().noneMatch(r -> r.getToId().equals(element.getId()))) {
-					var newReverseRelation = RelationGenerator.create(relation.getType().name(), toElement,
-							element);
-					link(toElement, element, relation.getType());
+				if (toElement.getRelations().stream().noneMatch(r -> r.getToId().equals(element.getId())
+																	 && r.hasType(type.getInverted()))) {
+					var newReverseRelation = RelationGenerator.create(type.getInverted(), toElement, element);
+					toElement.addRelation(newReverseRelation);
 				}
 			} else {
 				unfinishedRelations.put(relation, new RelationIdPair(element.getId(), toId));
@@ -335,9 +336,9 @@ public class KnowledgeModel {
 	 * @return true if the elements were linked, false if not
 	 */
 	public boolean link(KnowledgeElement from, KnowledgeElement to, Relation relation) {
-		var edge = new RelationEdge(relation.getType());
+		var edge = new RelationEdge<>(from, to, relation.getType());
 		boolean back = graph.addEdge(from, to, edge);
-		back = back && graph.addEdge(to, from, new RelationEdge(relation.getType().getInverted(), edge));
+		back = back && graph.addEdge(to, from, new RelationEdge<>(from, to, relation.getType().getInverted(), edge));
 		return back;
 	}
 
@@ -349,14 +350,14 @@ public class KnowledgeModel {
 	 * @param edge the edge to link with
 	 * @return true if the elements were linked, false if not
 	 */
-	public boolean link(KnowledgeElement from, KnowledgeElement to, RelationEdge edge) {
+	public boolean link(KnowledgeElement from, KnowledgeElement to, RelationEdge<KnowledgeElement> edge) {
 		graph.addEdge(from, to, edge);
-		graph.addEdge(to, from, new RelationEdge(edge.getRelation(), edge));
+		graph.addEdge(to, from, new RelationEdge<>(edge.getRelation(), edge));
 		return true;
 	}
 
 	/**
-	 * Links the given elements with the given type.
+	 * Links the given elements with the given type and creates the reverse Edge as well.
 	 *
 	 * @param from the element to link from
 	 * @param to   the element to link to
@@ -364,16 +365,16 @@ public class KnowledgeModel {
 	 * @return the created edge
 	 * @throws IllegalStateException if one of the elements is not in the model
 	 */
-	public RelationEdge link(KnowledgeElement from, KnowledgeElement to, RelationType type)
+	public RelationEdge<KnowledgeElement> link(KnowledgeElement from, KnowledgeElement to, RelationType type)
 			throws IllegalStateException {
 		if (!contains(from) || !contains(to)) {
 			throw new IllegalStateException("One of the elements is not in the model!");
 		}
-		var newEdge = new RelationEdge(type);
+		var newEdge = new RelationEdge<>(from, to, type);
 		if (!graph.addEdge(from, to, newEdge)) {
 			logger.info("Edge was already linked from {} to {}.", from.getId(), to.getId());
 		}
-		var reverseEdge = new RelationEdge(type.getInverted(), newEdge);
+		var reverseEdge = new RelationEdge<>(to, from, type.getInverted(), newEdge);
 		if (!graph.addEdge(to, from, reverseEdge)) {
 			logger.info("Edge was already linked from {} to {}.", to.getId(), from.getId());
 		}
@@ -402,16 +403,16 @@ public class KnowledgeModel {
 			if (contains(fromId) && contains(toId)) {
 				var from = get(fromId);
 				var to = get(toId);
-				completed.add(relation);
 				link(from, to, relation.getType());
-				// reverseRelation
-				if (to.getRelations().stream()
-					  .noneMatch(it -> it.getFromId().equals(toId) && it.getToId().equals(fromId))) {
-					to.addRelation(RelationGenerator.create(relation.getType().getInverted().toString(), to, from));
-					link(to, from, relation.getType().getInverted());
+				// set reverse relation
+				var reverseType = relation.getType().getInverted();
+				if (to.getRelations().stream().noneMatch(it -> it.getToId().equals(fromId)
+															   && it.hasType(reverseType))) {
+					to.addRelation(RelationGenerator.create(reverseType, to, from));
 				}
 				checkRelations(from);
 				checkRelations(to);
+				completed.add(relation);
 			}
 		}
 		completed.forEach(unfinishedRelations.keySet()::remove);
@@ -622,9 +623,11 @@ public class KnowledgeModel {
  * A relation edge between two elements.
  * It contains the type of the relation.
  */
-class RelationEdge extends DefaultEdge {
+class RelationEdge<T extends KnowledgeElement> extends DefaultEdge {
 	private final RelationType type;
 	private       RelationEdge inverted;
+	private       T            source;
+	private       T            target;
 
 	/**
 	 * Creates a new RelationEdge with the given type and inverted edge.
@@ -642,6 +645,23 @@ class RelationEdge extends DefaultEdge {
 		inverted.setInverted(this);
 		this.inverted = inverted;
 		this.type = type;
+	}
+
+	RelationEdge() {
+		this.type = RelationType.CUSTOM;
+	}
+
+	public RelationEdge(T source, T target, RelationType type) {
+		this.source = source;
+		this.target = target;
+		this.type = type;
+	}
+
+	public RelationEdge(T source, T target, RelationType type, RelationEdge inverted) {
+		this.source = source;
+		this.target = target;
+		this.type = type;
+		this.inverted = inverted;
 	}
 
 	/**
@@ -680,4 +700,22 @@ class RelationEdge extends DefaultEdge {
 		return type;
 	}
 //endregion
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof RelationEdge<?> that)) return false;
+
+		if (type != that.type) return false;
+		if (!Objects.equals(source, that.source)) return false;
+		return Objects.equals(target, that.target);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = type.hashCode();
+		result = 31 * result + (source != null ? source.hashCode() : 0);
+		result = 31 * result + (target != null ? target.hashCode() : 0);
+		return result;
+	}
 }
