@@ -2,14 +2,28 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="'Definition für '+${term} "></title>
+    <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport">
+    <title th:text="'Definition für '+${material.term} "></title>
+    <th:block th:fragment="head">
+    </th:block>
 </head>
 <body>
-<section th:fragment="content">
-    <h1>Definition für <span th:text="${term}"></span>
-    </h1>
-    <hr>
-    <p th:text="${definition}"></p>
-</section>
+<main>
+    <div th:fragment="content">
+        <header>
+            <h1 th:text="${material.term}"></h1>
+        </header>
+        <hr>
+        <section>
+            <dl>
+                <dt th:text="${material.term}"></dt>
+                ist:<br>
+                <dd th:text="${material.values.definition}"></dd>
+            </dl>
+        </section>
+    </div>
+</main>
+<footer>
+</footer>
 </body>
 </html>

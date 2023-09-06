@@ -2,8 +2,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${title}">Title</title>
     <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport">
+    <title th:text="${title}">Title</title>
     <th:block th:include="~{${material.templateInfo.templateType.type}:: head}"></th:block>
     <link href="https://fonts.googleapis.com/css?family=Inter:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&amp;display=swap"
           rel="stylesheet">
@@ -27,7 +27,7 @@
                 class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navcol-1">
             <ul class="navbar-nav mx-auto">
-                <li class="nav-item"><a class="nav-link" th:href="${rootPath}+'/course.html'"
+                <li class="nav-item"><a class="nav-link" th:href="${rootPath}+'/Course.html'"
                                         th:text="Kursübersicht"></a></li>
                 <li class="nav-item"><a class="nav-link"
                                         th:href="${rootPath}+'/'+${navigation.level.chapter}+'/overview.html'"
@@ -60,7 +60,7 @@
            th:if="${ !navigation.hasNext && !navigation.hasNextTask}">
             <button class="btn btn-info" type="submit">Zurück zur Übersicht</button>
         </a>
-        <a th:href="@{'../'+${navigation.nextGroup}+'/overview.html'}"
+        <a th:href="@{'../../'+${navigation.nextGroup}+'/overview.html'}"
            th:if="${ !navigation.hasNext && navigation.hasNextTask}">
             <button class="btn btn-info" type="submit">Nächste Gruppe</button>
         </a>

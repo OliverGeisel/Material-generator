@@ -19,7 +19,7 @@
             <div th:if="${material.numerated}">
                 <h2 class="text-light" th:text="${material.headline}"></h2>
                 <ul>
-                    <li class="text-light" th:each="entry:${material.enties}" th:text="${entry}"></li>
+                    <li class="text-light" th:each="entry:${material.entries}" th:text="${entry}"></li>
                 </ul>
             </div>
             <div th:unless="${material.numerated}">
