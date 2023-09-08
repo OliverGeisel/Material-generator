@@ -89,6 +89,11 @@ public class KnowledgeFragment extends KnowledgeObject {
 		throw new NoSuchElementException("No element with id " + id + " found");
 	}
 
+	/**
+	 * @param id id of the KnowledgeObject that should be included.
+	 * @return {@literal true} if id is the this.getIdUnified or one element has the id.
+	 * @throws NoSuchElementException if id is null
+	 */
 	public boolean contains(String id) throws NoSuchElementException {
 		if (id == null) {
 			throw new NoSuchElementException("id must not be null");

@@ -217,17 +217,17 @@ public class KnowledgeModel {
 	 * Adds a structure to the given structure element.
 	 *
 	 * @param structure the structure to add
-	 * @param part      the part to add to the structure
+	 * @param partToAdd      the part to add to the structure
 	 * @return true if the structure was added, false if not
 	 */
-	public boolean addStructureTo(KnowledgeFragment structure, KnowledgeObject part) {
-		if (structure == null || part == null) {
+	public boolean addStructureTo(KnowledgeFragment structure, KnowledgeObject partToAdd) {
+		if (structure == null || partToAdd == null) {
 			return false;
 		}
 		if (!getRoot().contains(structure)) {
 			return false;
 		}
-		structure.addObject(part);
+		structure.addObject(partToAdd);
 		return true;
 	}
 
@@ -274,9 +274,10 @@ public class KnowledgeModel {
 	 * Returns all elements that connected with the given element in the model.
 	 *
 	 * @param elementId the id of the element
-	 * @return a set of all elements that are connected with the given element
+	 * @return a set of all elements that are connected with the given element.
+	 * @throws NoSuchElementException if no element with the given id was found
 	 */
-	public Set<KnowledgeElement> findAll(String elementId) {
+	public Set<KnowledgeElement> findAll(String elementId) throws NoSuchElementException {
 		var matchingIDs = findRelatedElementIDs(elementId);
 		return graph.vertexSet().stream().filter(it -> matchingIDs.contains(it.getId())).collect(Collectors.toSet());
 	}
